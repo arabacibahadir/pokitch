@@ -3,7 +3,7 @@ const { poke } = require("./poke.class");
 const {pokeData} = require("./pokeData");
 
 const tmiClient = tmi.Client({
-  channels: ["wykonos"],
+  channels: [""],
 });
 
 tmiClient.on("connected", (address, port) => {

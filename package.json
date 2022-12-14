@@ -12,6 +12,7 @@
     "prisma:studio": "prisma studio -b none"
   },
   "dependencies": {
+    "@next/font": "^13.0.6",
     "@prisma/client": "^4.7.1",
     "@types/node": "18.11.14",
     "@types/react": "18.0.26",

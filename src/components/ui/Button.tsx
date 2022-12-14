@@ -1,11 +1,13 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
 const buttonStyles = cva(
-  "px-5 py-2 transition-colors inline-flex items-center justify-center focus:outline-none rounded tracking-wider font-medium",
+  "inline-flex items-center justify-center text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none",
   {
     variants: {
       variant: {
-        primary: "bg-blue-400 hover:bg-blue-500 text-black",
+        primary: "bg-blue-600 hover:bg-blue-700",
+        dark: "bg-gray-800 hover:bg-slate-700",
+        green: "bg-green-600 hover:bg-green-700",
       },
     },
     defaultVariants: {

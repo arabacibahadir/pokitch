@@ -1,3 +1,5 @@
+import { TwitchAccessTokenResponse, TwitchUserDetailsResponse } from "@/types";
+
 type Props = {
   authDomain: string;
   apiDomain: string;
@@ -55,7 +57,7 @@ class Twitch {
       return null;
     }
 
-    const json = await res.json();
+    const json = (await res.json()) as TwitchAccessTokenResponse;
     console.log("token: fetching response", json);
 
     return json;
@@ -78,7 +80,7 @@ class Twitch {
       return null;
     }
 
-    const json = await res.json();
+    const json = (await res.json()) as TwitchUserDetailsResponse;
     console.log("user: fetching response", json);
 
     return json;

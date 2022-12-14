@@ -14,17 +14,13 @@ class Poke {
 
   welcomePack() {
     const randomPoke = this.randomPoke();
-
     this.playerData.push({ player: this.player, pokemon: randomPoke });
-
     return this.playerData;
   }
 
   randomPoke() {
     const pokeDataIndexLength = pokeData.length - 1;
-
     const randomIndex = Math.floor(Math.random() * pokeDataIndexLength);
-
     return pokeData[randomIndex];
   }
 }

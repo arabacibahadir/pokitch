@@ -2,24 +2,26 @@ import { pokes } from "@/storage/data";
 import supabase from "@/utils/supabase";
 
 class Poke {
-  hp: number;
-  name: string | null;
-
-  constructor() {
-    this.hp = 0;
-    this.name = null;
-  }
-
-  initialize = () => {
-    this.hp = 50;
-    this.name = this.randPoke();
-  };
-
   randPoke = () => {
     const index = Math.floor(Math.random() * pokes.length - 1);
     return pokes[index];
   };
 
+  initialize = async (channel: string) => {
+    const { data } = await supabase
+      .from("channels")
+      .select()
+      .eq("channel", channel)
+      .single();
+    if (data) return;
+
+    await supabase.from("channels").insert({
+      channel: channel,
+      poke: this.randPoke(),
+    });
+  };
+
+  // !poke welcomepack
   welcomePack = async (user: string, channel: string) => {
     const { data: checkPack } = await supabase
       .from("collections")
@@ -36,28 +38,39 @@ class Poke {
     });
   };
 
+  // !poke attack
   attack = async (user: string, channel: string) => {
-    const attack = Math.floor(Math.random() * 10) + 5;
-    this.hp -= attack;
+    const damage = Math.floor(Math.random() * 10) + 5;
 
-    console.log(
-      `poke: attacking to poke -> poke: ${this.name}(${this.hp}) - user: ${user} - attack: ${attack} - channel: ${channel}`
-    );
+    const { data } = await supabase
+      .from("channels")
+      .select()
+      .eq("channel", channel)
+      .single();
 
-    if (this.hp <= 0) {
+    const newHealth = (data.hp -= damage) as number;
+    if (newHealth <= 0) {
       await supabase.from("collections").insert({
         user: user,
         channel: channel,
-        poke: this.name,
+        poke: data.poke,
       });
 
+      await supabase.from("channels").delete().eq("id", data.id);
+
       console.log(
-        `poke: cathed to poke -> poke: ${this.name} - user: ${user} - channel: ${channel}`
+        `poke: caught to poke -> poke: ${data.poke} - user: ${user} - channel: ${channel}`
       );
 
       // generate new poke
-      return this.initialize();
+      return this.initialize(channel);
     }
+
+    await supabase.from("channels").update({ hp: newHealth }).eq("id", data.id);
+
+    console.log(
+      `poke: attacking to poke -> poke: ${data.poke}(${data.hp}) - user: ${user} - attack: ${damage} - channel: ${channel}`
+    );
   };
 }
 

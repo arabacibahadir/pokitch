@@ -4,19 +4,15 @@ import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 
 export default function GameOverlay({ id }: { id: string }) {
-  const myFunc = () => {
-    tmiClient.disconnect();
-    tmiClient.removeAllListeners();
-  };
+  // connect twitch irc server with tmijs
+  tmiClient.connect();
 
   useEffect(() => {
     return () => {
-      myFunc();
+      tmiClient.disconnect();
+      tmiClient.removeAllListeners();
     };
   }, []);
-
-  // connect twitch irc server with tmijs
-  tmiClient.connect();
 
   // if connected to irc server
   tmiClient

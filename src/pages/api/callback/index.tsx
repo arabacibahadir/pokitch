@@ -35,10 +35,11 @@ export default async function handler(
       .eq("email", userEmail)
       .single();
     if (!getUserFromDB) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("accounts")
         .insert({ email: userEmail })
         .select();
+      console.log(error);
 
       return res.status(200).json(data);
       // return res.redirect(307, "/")

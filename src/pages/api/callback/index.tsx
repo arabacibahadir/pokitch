@@ -10,42 +10,40 @@ export default async function handler(
 
   try {
     // get access token from twitch
-    const getToken = await twitch.getAccessToken(code);
-    if (!getToken) {
+    const token = await twitch.getAccessToken(code);
+    if (!token) {
       return res.status(400).json({
         message: "bad request of token",
       });
     }
 
     // get user from twitch
-    const getUserFromTwitch = await twitch.getUserDetails(
-      getToken.access_token
-    );
-    const userEmail = getUserFromTwitch?.data[0].email as string;
-    if (!userEmail) {
+    const userDetails = await twitch.getUserDetails(token.access_token);
+    if (!userDetails?.data.length) {
       return res.status(400).json({
         message: "bad request of user",
       });
     }
+    const userEmail = userDetails.data[0].email as string;
 
     // get user from db
-    const { data: getUserFromDB } = await supabase
+    const { data: user } = await supabase
       .from("accounts")
       .select()
       .eq("email", userEmail)
       .single();
-    if (!getUserFromDB) {
-      const { data, error } = await supabase
+    if (!user) {
+      const { data: account, error } = await supabase
         .from("accounts")
         .insert({ email: userEmail })
         .select();
       console.log(error);
 
-      return res.status(200).json(data);
+      return res.status(200).json(account);
       // return res.redirect(307, "/")
     }
 
-    res.status(200).json(getUserFromDB);
+    res.status(200).json(user);
     //// return res.redirect(307, "/")
   } catch (error) {
     console.log(error);

@@ -15,19 +15,11 @@ export default function GameOverlay({ id }: { id: string }) {
   // connect twitch irc server with tmijs
   tmiClient.connect();
 
-  /* useEffect(() => {
+  useEffect(() => {
     return () => {
       tmiClient.disconnect();
       tmiClient.removeAllListeners();
     };
-  }, []); */
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPokeState({ ...pokeState, hp: poke.hp, name: poke.name });
-    }, 3000);
-
-    return () => clearInterval(interval);
   }, []);
 
   // if connected to irc server
@@ -36,6 +28,8 @@ export default function GameOverlay({ id }: { id: string }) {
       console.log(`tmi: connected to irc server(${address})`);
       tmiClient.join(id).then(() => {
         poke.initialize();
+        // show current poke data
+        console.log(poke.hp, poke.name);
       });
     })
     .on("disconnected", () => {
@@ -46,13 +40,19 @@ export default function GameOverlay({ id }: { id: string }) {
 
       const cmd = message.slice(1).split(" ").pop()?.toLowerCase();
       const user = tags.username as string;
+      console.log(user, cmd);
 
       // commands
       if (cmd === "welcomepack") {
-        console.log(user, cmd);
         return await poke.welcomePack(user, channel);
-      } else if (cmd === "attack") {
-        return poke.attack(user, channel);
+      }
+      if (cmd === "attack") {
+        // setPokeState not working
+        setPokeState({
+          hp: poke.hp,
+          name: poke.name,
+        });
+        return await poke.attack(user, channel);
       }
     });
 

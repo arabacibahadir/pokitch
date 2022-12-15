@@ -1,4 +1,4 @@
-import { prisma } from "@/utils/prisma";
+import supabase from "@/utils/supabase";
 import { twitch } from "@/utils/twitch";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -29,17 +29,18 @@ export default async function handler(
     }
 
     // get user from db
-    const getUserFromDB = await prisma.account.findUnique({
-      where: { email: userEmail },
-    });
+    const { data: getUserFromDB } = await supabase
+      .from("accounts")
+      .select()
+      .eq("email", userEmail)
+      .single();
     if (!getUserFromDB) {
-      const createAccount = await prisma.account.create({
-        data: {
-          email: userEmail,
-        },
-      });
+      const { data } = await supabase
+        .from("accounts")
+        .insert({ email: userEmail })
+        .select();
 
-      return res.status(200).json(createAccount);
+      return res.status(200).json(data);
       // return res.redirect(307, "/")
     }
 

@@ -23,9 +23,9 @@ export default function GameOverlay({ id }: { id: string }) {
         console.log(`tmi: connected to irc server(${address})`);
 
         if (clientConnected) {
-          tmiClient.join(id); // joint to chat
+          await tmiClient.join(id); // joint to chat
           connectDetector.setConnect(id); // push channel to connectings
-          poke.initialize(id); // up to poke
+          await poke.initialize(id); // up to poke
         }
       })
       .on("disconnected", () => {

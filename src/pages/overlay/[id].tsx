@@ -1,33 +1,75 @@
 import { connectdetector } from "@/utils/connectdetector";
-import { useRouter } from "next/router";
-import tmi from "tmi.js";
+import { poke } from "@/utils/poke";
+import supabase from "@/utils/supabase";
+import { tmiClient } from "@/utils/tmi";
+import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 
-export default function GameOverlay() {
-  let router = useRouter();
+//export const tmiClient = tmi.Client({ connection: { secure: true } });
 
-  let channel = router.query.id as string;
+export default function GameOverlay({ id }: { id: string }) {
+  const [pokeState, setPokeState] = useState<any>([]);
+  useEffect(() => {
+    if (!connectdetector.checkConnected(id)) {
+      tmiClient.connect();
+    }
 
-  const tmiClient = new tmi.Client({});
+    tmiClient
+      .on("connected", (address) => {
+        console.log(`tmi: connected to irc server(${address})`);
+        tmiClient.join(id);
+        connectdetector.connected = id;
+        poke.initialize(id);
+      })
+      .on("disconnected", () => {
+        console.log("tmi: disconnected to irc server");
+      })
+      .on("chat", async (_channel, tags, message) => {
+        if (!message.startsWith("!poke")) return;
 
-  tmiClient.on("connected", (address, port) => {
-    console.log("Connected", address, port);
-    connectdetector.connected = channel;
+        const cmd = message.slice(1).split(" ").pop()?.toLowerCase();
+        const channel = _channel.slice(1) as string;
+        const user = tags.username as string;
+        console.log(user, cmd);
 
-    console.log("connectdetector.connected", connectdetector.connected);
-    tmiClient.join(channel);
-  });
+        // commands
+        if (cmd === "welcomepack") {
+          return await poke.welcomePack(user, channel);
+        }
+        if (cmd === "attack") {
+          return await poke.attack(user, channel);
+        }
+      });
+  }, []);
 
-  tmiClient.on("message", (channel, userstate, message, self) => {
-    const username = userstate["display-name"];
-    const splitMessage = message.split(" ");
-    const command = splitMessage.shift()?.toLocaleLowerCase();
+  useEffect(() => {
+    const channel = supabase
+      .channel("public:channels")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "channels" },
+        (payload) => setPokeState([...pokeState, payload.new])
+      )
+      .subscribe();
 
-    console.log(username, command);
-  });
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [pokeState, setPokeState]);
 
-  if (!connectdetector.checkConnected(channel)) {
-    tmiClient.connect();
-  }
-
-  return <div>{channel}</div>;
+  return (
+    <div>
+      {JSON.stringify(pokeState.filter((data: any) => data.channel === id))}
+    </div>
+  );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const id = ctx.query.id as string;
+
+  return {
+    props: {
+      id: id,
+    },
+  };
+};

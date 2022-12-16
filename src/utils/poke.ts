@@ -2,9 +2,30 @@ import { pokes } from "@/storage/data";
 import supabase from "@/utils/supabase";
 
 class Poke {
+  public cooldowns = Array();
+
   randPoke = () => {
     const index = Math.floor(Math.random() * pokes.length - 1);
     return pokes[index];
+  };
+
+  damage = () => {
+    return (Math.floor(Math.random() * 10) + 5) as number;
+  };
+
+  setPlayerCooldown = (user: string, date: number) => {
+    return this.cooldowns.push({ user: user, expires_at: date });
+  };
+
+  isPlayerOnCooldown = (user: string) => {
+    const cooldown = this.cooldowns
+      .filter((cooldown) => cooldown.user === user)
+      .pop();
+    if (!cooldown) return false; // if not have cd
+
+    if (cooldown.expires_at > Date.now()) return true; // if have cd
+
+    return false;
   };
 
   initialize = async (channel: string) => {
@@ -50,7 +71,8 @@ class Poke {
 
   // !poke attack
   attack = async (user: string, channel: string) => {
-    const damage = Math.floor(Math.random() * 10) + 5;
+    if (this.isPlayerOnCooldown(user)) return;
+    this.setPlayerCooldown(user, Date.now() + 30000);
 
     const { data } = await supabase
       .from("channels")
@@ -58,7 +80,14 @@ class Poke {
       .eq("channel", channel)
       .single();
 
-    const newHealth = (data.hp -= damage) as number;
+    const damage = this.damage();
+    const newHealth = (data.hp - damage) as number;
+    await supabase.from("channels").update({ hp: newHealth }).eq("id", data.id);
+
+    console.log(
+      `poke: attacking to poke -> poke: ${data.poke}(${newHealth}) - user: ${user} - attack: ${damage} - channel: ${channel}`
+    );
+
     if (newHealth <= 0) {
       await supabase.from("collections").insert({
         user: user,
@@ -75,12 +104,6 @@ class Poke {
       // generate new poke
       return this.initialize(channel);
     }
-
-    await supabase.from("channels").update({ hp: newHealth }).eq("id", data.id);
-
-    console.log(
-      `poke: attacking to poke -> poke: ${data.poke}(${data.hp}) - user: ${user} - attack: ${damage} - channel: ${channel}`
-    );
   };
 }
 

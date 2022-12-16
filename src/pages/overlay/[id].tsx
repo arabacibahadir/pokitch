@@ -42,9 +42,10 @@ export default function GameOverlay({ id }: { id: string }) {
         // commands
         if (cmd === "welcomepack") {
           return await poke.welcomePack(userName, channelName);
-        }
-        if (cmd === "attack") {
-          return await poke.attack(userName, channelName);
+        } else if (cmd === "attack") {
+          return await poke.attack(tmiClient, userName, channelName);
+        } else if (cmd === "inventory") {
+          //return await poke.inventory(tmiClient, userName, channelName); // rework
         }
       });
   }, [clientConnected]);

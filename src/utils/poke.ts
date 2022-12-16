@@ -59,20 +59,20 @@ class Poke {
     });
   };
 
-  inventory = async (user: string, channel: string) => {
-    /* const { data: pokes } = await supabase
+  inventory = async (client: any, user: string, channel: string) => {
+    const { data: pokes } = await supabase
       .from("collections")
       .select()
       .eq("user", user)
       .eq("channel", channel);
-    return pokes; */
-    return null;
+    console.log(pokes);
+    //client.say(channel, `${pokes}`);
   };
 
   // !poke attack
-  attack = async (user: string, channel: string) => {
+  attack = async (client: any, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
-    this.setPlayerCooldown(user, Date.now() + 30000);
+    this.setPlayerCooldown(user, Date.now() + 2000);
 
     const { data } = await supabase
       .from("channels")
@@ -84,9 +84,10 @@ class Poke {
     const newHealth = (data.hp - damage) as number;
     await supabase.from("channels").update({ hp: newHealth }).eq("id", data.id);
 
-    console.log(
-      `poke: attacking to poke -> poke: ${data.poke}(${newHealth}) - user: ${user} - attack: ${damage} - channel: ${channel}`
-    );
+    // print
+    let debug = `poke: attacking to poke -> poke: ${data.poke}(${newHealth}) - user: ${user} - attack: ${damage} - channel: ${channel}`;
+    client.say(channel, debug);
+    console.log(debug);
 
     if (newHealth <= 0) {
       await supabase.from("collections").insert({
@@ -97,9 +98,10 @@ class Poke {
 
       await supabase.from("channels").delete().eq("id", data.id);
 
-      console.log(
-        `poke: caught to poke -> poke: ${data.poke} - user: ${user} - channel: ${channel}`
-      );
+      // print
+      let debug = `poke: caught to poke -> poke: ${data.poke} - user: ${user} - channel: ${channel}`;
+      client.say(channel, debug);
+      console.log(debug);
 
       // generate new poke
       return this.initialize(channel);

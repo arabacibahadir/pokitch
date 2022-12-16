@@ -1,13 +1,13 @@
 class ConnectDetector {
-  public connectedChannels = Array();
+  public connects = Array();
 
-  set connected(channelName: string) {
-    this.connectedChannels.push(channelName);
-  }
+  setConnect = (channel: string) => {
+    return this.connects.push(channel);
+  };
 
-  checkConnected(channelName: string) {
-    return this.connectedChannels.includes(channelName);
-  }
+  getConnect = (channel: string) => {
+    return this.connects.includes(channel);
+  };
 }
 
-export const connectdetector = new ConnectDetector();
+export const connectDetector = new ConnectDetector();

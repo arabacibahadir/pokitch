@@ -6,21 +6,27 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 
 export default function GameOverlay({ id }: { id: string }) {
+  const [clientConnected, setClientConnected] = useState(false);
   const [pokeState, setPokeState] = useState<any>([]);
 
   useEffect(() => {
-    // check to connects
-    if (!connectDetector.getConnect(id)) {
+    const connectedChannel = connectDetector.getConnect(id);
+
+    // Check if the client and channel is connected. If not, connect to the server and set the state to true.
+    if (!connectedChannel || !clientConnected) {
       tmiClient.connect();
+      setClientConnected(true);
     }
 
     tmiClient
       .on("connected", async (address) => {
         console.log(`tmi: connected to irc server(${address})`);
 
-        tmiClient.join(id); // joint to chat
-        connectDetector.setConnect(id); // push channel to connectings
-        poke.initialize(id); // up to poke
+        if (clientConnected) {
+          tmiClient.join(id); // joint to chat
+          connectDetector.setConnect(id); // push channel to connectings
+          poke.initialize(id); // up to poke
+        }
       })
       .on("disconnected", () => {
         console.log("tmi: disconnected to irc server");
@@ -41,7 +47,7 @@ export default function GameOverlay({ id }: { id: string }) {
           return await poke.attack(userName, channelName);
         }
       });
-  }, [id]);
+  }, [clientConnected]);
 
   // realtime subscription on supabase
   useEffect(() => {

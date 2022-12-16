@@ -16,7 +16,6 @@
 /build
 .env
 /prisma/dev.db
-/poke-bot/node_modules
 
 # misc
 .DS_Store

@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <RootLayout>
       <div className="flex h-screen items-center justify-center">
-        <Link href={twitch.createAuhotizeUrl()}>
+        <Link href={twitch.createAuthorizeUrl()}>
           <Button startIcon={<TwitchIcon />}>Sign in with Twitch</Button>
         </Link>
       </div>

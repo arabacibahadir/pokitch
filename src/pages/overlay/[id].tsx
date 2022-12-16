@@ -1,3 +1,4 @@
+import { connectdetector } from "@/utils/connectdetector";
 import { poke } from "@/utils/poke";
 import supabase from "@/utils/supabase";
 import { tmiClient } from "@/utils/tmi";
@@ -9,12 +10,15 @@ import { useEffect, useState } from "react";
 export default function GameOverlay({ id }: { id: string }) {
   const [pokeState, setPokeState] = useState<any>([]);
   useEffect(() => {
-    tmiClient.connect();
+    if (!connectdetector.checkConnected(id)) {
+      tmiClient.connect();
+    }
 
     tmiClient
       .on("connected", (address) => {
         console.log(`tmi: connected to irc server(${address})`);
         tmiClient.join(id);
+        connectdetector.connected = id;
         poke.initialize(id);
       })
       .on("disconnected", () => {

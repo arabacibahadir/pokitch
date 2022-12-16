@@ -1,4 +1,4 @@
-import { TwitchAccessTokenResponse, TwitchUserDetailsResponse } from "@/types";
+import {TwitchAccessTokenResponse, TwitchUserDetailsResponse} from "@/types";
 
 type Props = {
   authDomain: string;
@@ -15,7 +15,7 @@ class Twitch {
     this.options = options;
   }
 
-  createAuhotizeUrl = () => {
+  createAuthorizeUrl = () => {
     const { authDomain, clientId, clientCallbackUri } = this.options;
 
     const uri = `https://${authDomain}/authorize`;
@@ -26,8 +26,7 @@ class Twitch {
       scope: "user:read:email",
     };
 
-    const merge = uri + "?" + new URLSearchParams(params).toString();
-    return merge;
+    return uri + "?" + new URLSearchParams(params).toString();
   };
 
   getAccessToken = async (code: string) => {

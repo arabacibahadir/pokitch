@@ -86,7 +86,7 @@ class Poke {
 
     // print
     let debug = `poke: attacking to poke -> poke: ${data.poke}(${newHealth}) - user: ${user} - attack: ${damage} - channel: ${channel}`;
-    client.say(channel, debug);
+    await client.say(channel, debug);
     console.log(debug);
 
     if (newHealth <= 0) {
@@ -100,7 +100,7 @@ class Poke {
 
       // print
       let debug = `poke: caught to poke -> poke: ${data.poke} - user: ${user} - channel: ${channel}`;
-      client.say(channel, debug);
+      await client.say(channel, debug);
       console.log(debug);
 
       // generate new poke

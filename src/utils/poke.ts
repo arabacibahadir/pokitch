@@ -38,6 +38,16 @@ class Poke {
     });
   };
 
+  inventory = async (user: string, channel: string) => {
+    /* const { data: pokes } = await supabase
+      .from("collections")
+      .select()
+      .eq("user", user)
+      .eq("channel", channel);
+    return pokes; */
+    return null;
+  };
+
   // !poke attack
   attack = async (user: string, channel: string) => {
     const damage = Math.floor(Math.random() * 10) + 5;

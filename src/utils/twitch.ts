@@ -92,7 +92,7 @@ class Twitch {
 export const twitch = new Twitch({
   authDomain: "id.twitch.tv/oauth2",
   apiDomain: "api.twitch.tv/helix",
-  clientId: process.env.TWITCH_CLIENT_ID as string,
+  clientId: process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID as string,
   clientSecret: process.env.TWITCH_CLIENT_SECRET as string,
-  clientCallbackUri: process.env.TWITCH_CLIENT_CALLBACK_URI as string,
+  clientCallbackUri: process.env.NEXT_PUBLIC_TWITCH_CLIENT_CALLBACK_URI as string,
 });

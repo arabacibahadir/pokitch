@@ -1,7 +1,8 @@
+import GuestHeroHomePage from "@/components/GuestHeroHomePage";
 import Heading from "@/components/ui/Heading";
-import GuestHeroHomePage from "./GuestHeroHomePage";
+import UserHeroHomePage from "@/components/UserHeroHomePage";
 
-export default function HeroHomePage() {
+export default function HeroHomePage({ user }: { user: any }) {
   return (
     <section className="flex flex-col items-center justify-center py-24">
       <div className="w-full max-w-5xl">
@@ -19,7 +20,7 @@ export default function HeroHomePage() {
           </div>
 
           <div>
-            <GuestHeroHomePage />
+            {user ? <UserHeroHomePage data={user} /> : <GuestHeroHomePage />}
           </div>
 
           <div>

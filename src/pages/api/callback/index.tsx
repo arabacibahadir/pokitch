@@ -24,27 +24,28 @@ export default async function handler(
         message: "bad request of user",
       });
     }
-    const userEmail = userDetails.data[0].email as string;
+    const twitchId = userDetails.data[0].id as string;
+    const loginName = userDetails.data[0].login as string;
 
     // get user from db
     const { data: user } = await supabase
       .from("accounts")
       .select()
-      .eq("email", userEmail)
+      .eq("twitch_id", twitchId)
       .single();
     if (!user) {
-      const { data: account, error } = await supabase
+      const { data: account } = await supabase
         .from("accounts")
-        .insert({ email: userEmail })
-        .select();
-      console.log(error);
+        .insert({ twitch_id: twitchId, channel: loginName })
+        .select()
+        .single();
 
-      return res.status(200).json(account);
-      // return res.redirect(307, "/")
+      //return res.status(200).json(account);
+      return res.redirect(307, "/?id=" + account.id);
     }
 
-    res.status(200).json(user);
-    //// return res.redirect(307, "/")
+    //res.status(200).json(user);
+    return res.redirect(307, "/?id=" + user.id);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "server error" });

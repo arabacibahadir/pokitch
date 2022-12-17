@@ -45,7 +45,7 @@ class Twitch {
       client_secret: clientSecret,
       redirect_uri: clientCallbackUri,
       grant_type: "authorization_code",
-      scope: "user:read:email",
+      //scope: "user:read:email",
     };
     const res = await fetch(uri, {
       method: "POST",

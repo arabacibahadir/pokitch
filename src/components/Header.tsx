@@ -20,7 +20,7 @@ const Brand = () => {
       className="inline-flex items-center justify-center gap-x-1.5"
     >
       <MdCatchingPokemon className="h-6 w-6" />
-      <span className="text-2xl font-extrabold">Pokewars</span>
+      <span className="text-2xl font-extrabold">Pokitch</span>
     </Link>
   );
 };

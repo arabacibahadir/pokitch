@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container">
         <div className="flex flex-col items-center gap-y-2">
           <p>
-            <Link href="/">Pokewars</Link> is an open-source initiative.{" "}
+            <Link href="/">Pokitch</Link> is an open-source initiative.{" "}
             <Link href="/" target="_blank" rel="noreferrer">
               Contribute!
             </Link>

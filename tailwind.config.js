@@ -23,6 +23,9 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-custom)"],
       },
+      transitionProperty: {
+        width: "width",
+      },
     },
   },
   plugins: [],

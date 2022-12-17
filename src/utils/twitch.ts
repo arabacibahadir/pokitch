@@ -26,7 +26,6 @@ class Twitch {
       client_id: clientId,
       redirect_uri: clientCallbackUri,
       response_type: "code",
-      scope: "user:read:email",
     };
 
     return uri + "?" + new URLSearchParams(params).toString();
@@ -45,7 +44,6 @@ class Twitch {
       client_secret: clientSecret,
       redirect_uri: clientCallbackUri,
       grant_type: "authorization_code",
-      //scope: "user:read:email",
     };
     const res = await fetch(uri, {
       method: "POST",
@@ -94,5 +92,6 @@ export const twitch = new Twitch({
   apiDomain: "api.twitch.tv/helix",
   clientId: process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID as string,
   clientSecret: process.env.TWITCH_CLIENT_SECRET as string,
-  clientCallbackUri: process.env.NEXT_PUBLIC_TWITCH_CLIENT_CALLBACK_URI as string,
+  clientCallbackUri: process.env
+    .NEXT_PUBLIC_TWITCH_CLIENT_CALLBACK_URI as string,
 });

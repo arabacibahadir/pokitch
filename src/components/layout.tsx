@@ -1,6 +1,6 @@
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import React from "react";
-import Footer from "./Footer";
 
 type Props = {
   children: React.ReactNode;

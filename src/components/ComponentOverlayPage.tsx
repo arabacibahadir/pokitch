@@ -1,55 +1,62 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 
+import Heading from "@/components/ui/Heading";
 import supabase from "@/utils/supabase";
 import { useEffect, useState } from "react";
-import Heading from "./ui/Heading";
 
 type Props = {
   id: string;
 };
 
+const getPokePercentHealth = (health: number) => {
+  return (health * 2 + "%") as string;
+};
+
 export default function ComponentOverlayPage({ id }: Props) {
-  const [pokeState, setPokeState] = useState<any>({
+  const [pokeState, setPokeState] = useState<{
+    health: number;
+    name: string | null;
+  }>({
     health: 0,
     name: null,
   });
 
   const getCurrentPoke = async (channel: string) => {
     const { data } = await supabase
-      .from("channels")
+      .from("active_pokes")
       .select()
       .eq("channel", channel)
       .single();
     if (!data) return null;
 
-    setPokeState({ ...pokeState, health: data.hp, name: data.poke });
+    setPokeState({ ...pokeState, health: data.health, name: data.poke });
   };
+
   // realtime subscription on supabase
   useEffect(() => {
-    const filter = new URLSearchParams({ channel: "eq." + id }).toString();
-
     getCurrentPoke(id);
 
+    const filters = new URLSearchParams({ channel: "eq." + id }).toString();
     const channel = supabase
-      .channel("public:channels")
+      .channel("public:active_pokes")
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "INSERT", // check inserts
           schema: "public",
-          table: "channels",
-          filter: filter,
+          table: "active_pokes",
+          filter: filters,
         },
         () => getCurrentPoke(id)
       )
       .on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "UPDATE", // check attacks
           schema: "public",
-          table: "channels",
-          filter: filter,
+          table: "active_pokes",
+          filter: filters,
         },
         () => getCurrentPoke(id)
       )
@@ -60,10 +67,14 @@ export default function ComponentOverlayPage({ id }: Props) {
     };
   }, [id]);
 
+  if (!pokeState.name) {
+    return <></>;
+  }
+
   return (
     <>
       <div className="inline-flex w-full max-w-xs flex-row items-center justify-start gap-x-2 rounded-md border-4 border-yellow-400/50 bg-neutral-900/100 p-2">
-        <figure className="inline-flex h-12 w-12 shrink-0 items-center justify-center">
+        <figure className="inline-flex h-12 w-12 shrink-0 items-start justify-center overflow-hidden">
           <img
             src={`https://projectpokemon.org/images/normal-sprite/${pokeState.name}.gif`}
             alt=""
@@ -79,13 +90,11 @@ export default function ComponentOverlayPage({ id }: Props) {
           <div className="h-2 w-full overflow-hidden rounded-md bg-neutral-900/50">
             <div
               className="min-h-full bg-yellow-600 transition-width duration-1000"
-              style={{ width: pokeState.health * 2 + "%" }}
+              style={{ width: getPokePercentHealth(pokeState.health) }}
             />
           </div>
         </div>
       </div>
-
-      {/* <div>{JSON.stringify(pokeState, null, 2)}</div> */}
     </>
   );
 }

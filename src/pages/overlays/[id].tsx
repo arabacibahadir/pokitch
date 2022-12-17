@@ -2,17 +2,15 @@ import ComponentOverlayPage from "@/components/ComponentOverlayPage";
 import { connectDetector } from "@/utils/connectDetector";
 import { poke } from "@/utils/poke";
 import { tmiClient } from "@/utils/tmi";
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 
 export default function GameOverlay({ id }: { id: string }) {
-  const [clientConnected, setClientConnected] = useState(false);
+  const [clientConnected, setClientConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    const connectedChannel = connectDetector.getConnect(id);
-
     // Check if the client and channel is connected. If not, connect to the server and set the state to true.
-    if (!connectedChannel || !clientConnected) {
+    if (!clientConnected || connectDetector.getConnect(id)) {
       tmiClient.connect();
       setClientConnected(true);
     }
@@ -22,9 +20,9 @@ export default function GameOverlay({ id }: { id: string }) {
         console.log(`tmi: connected to irc server(${address})`);
 
         if (clientConnected) {
-          await tmiClient.join(id); // joint to chat
           connectDetector.setConnect(id); // push channel to connectings
           await poke.initialize(id); // up to poke
+          await tmiClient.join(id); // joint to chat
         }
       })
       .on("disconnected", () => {
@@ -40,7 +38,7 @@ export default function GameOverlay({ id }: { id: string }) {
 
         // commands
         if (cmd === "welcomepack") {
-          return await poke.welcomePack(userName, channelName);
+          return await poke.welcomePack(tmiClient, userName, channelName);
         } else if (cmd === "attack") {
           return await poke.attack(tmiClient, userName, channelName);
         } else if (cmd === "inventory") {

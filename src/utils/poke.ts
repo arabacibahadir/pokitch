@@ -2,7 +2,7 @@ import { pokes } from "@/storage/data";
 import supabase from "@/utils/supabase";
 
 class Poke {
-  public cooldowns = Array();
+  private cooldowns = Array();
 
   randPoke = () => {
     const index = Math.floor(Math.random() * pokes.length - 1);
@@ -13,8 +13,13 @@ class Poke {
     return (Math.floor(Math.random() * 10) + 5) as number;
   };
 
-  setPlayerCooldown = (user: string, date: number) => {
-    return this.cooldowns.push({ user: user, expires_at: date });
+  sendMessage = async (client: any, channel: string, message: string) => {
+    await client.say(channel, message);
+    console.log(message);
+  };
+
+  setPlayerCooldown = (user: string) => {
+    return this.cooldowns.push({ user: user, expires_at: Date.now() + 1000 });
   };
 
   isPlayerOnCooldown = (user: string) => {
@@ -30,64 +35,72 @@ class Poke {
 
   initialize = async (channel: string) => {
     const { data } = await supabase
-      .from("channels")
+      .from("active_pokes")
       .select()
       .eq("channel", channel)
       .single();
     if (data) return;
 
-    await supabase.from("channels").insert({
+    await supabase.from("active_pokes").insert({
       channel: channel,
       poke: this.randPoke(),
     });
   };
 
   // !poke welcomepack
-  welcomePack = async (user: string, channel: string) => {
-    const { data: checkPack } = await supabase
+  welcomePack = async (client: any, user: string, channel: string) => {
+    if (this.isPlayerOnCooldown(user)) return;
+    this.setPlayerCooldown(user);
+
+    const { data: collections } = await supabase
       .from("collections")
       .select()
       .eq("user", user)
       .eq("channel", channel);
-    if (checkPack?.length) return;
+    if (collections?.length) return;
 
-    const randPoke = this.randPoke();
+    const poke = this.randPoke();
     await supabase.from("collections").insert({
       user: user,
+      poke: poke,
       channel: channel,
-      poke: randPoke,
     });
+
+    this.sendMessage(
+      client,
+      channel,
+      `poke: welcome pack sended -> user: ${user} - poke: ${poke} - channel: ${channel}`
+    );
   };
 
+  // !poke inventory
   inventory = async (client: any, user: string, channel: string) => {
-    const { data: pokes } = await supabase
-      .from("collections")
-      .select()
-      .eq("user", user)
-      .eq("channel", channel);
-    console.log(pokes);
-    //client.say(channel, `${pokes}`);
+    client.say(channel, `@user`);
   };
 
   // !poke attack
   attack = async (client: any, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
-    this.setPlayerCooldown(user, Date.now() + 2000);
+    this.setPlayerCooldown(user);
 
     const { data } = await supabase
-      .from("channels")
+      .from("active_pokes")
       .select()
       .eq("channel", channel)
       .single();
 
     const damage = this.damage();
-    const newHealth = (data.hp - damage) as number;
-    await supabase.from("channels").update({ hp: newHealth }).eq("id", data.id);
+    const newHealth = (data.health - damage) as number;
+    await supabase
+      .from("active_pokes")
+      .update({ health: newHealth })
+      .eq("id", data.id);
 
-    // print
-    let debug = `poke: attacking to poke -> poke: ${data.poke}(${newHealth}) - user: ${user} - attack: ${damage} - channel: ${channel}`;
-    await client.say(channel, debug);
-    console.log(debug);
+    this.sendMessage(
+      client,
+      channel,
+      `poke: attacking to poke -> user: ${user} - poke: ${data.poke}(${newHealth}) - attack: ${damage} - channel: ${channel}`
+    );
 
     if (newHealth <= 0) {
       await supabase.from("collections").insert({
@@ -96,12 +109,13 @@ class Poke {
         poke: data.poke,
       });
 
-      await supabase.from("channels").delete().eq("id", data.id);
+      await supabase.from("active_pokes").delete().eq("id", data.id);
 
-      // print
-      let debug = `poke: caught to poke -> poke: ${data.poke} - user: ${user} - channel: ${channel}`;
-      await client.say(channel, debug);
-      console.log(debug);
+      this.sendMessage(
+        client,
+        channel,
+        `poke: caught to poke -> user: ${user} - poke: ${data.poke} - channel: ${channel}`
+      );
 
       // generate new poke
       return this.initialize(channel);

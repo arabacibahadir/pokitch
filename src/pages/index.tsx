@@ -1,17 +1,12 @@
-import RootLayout from "@/components/layout";
-import Button from "@/components/ui/Button";
-import { TwitchIcon } from "@/components/ui/Icons";
-import { twitch } from "@/utils/twitch";
-import Link from "next/link";
+import HeroHomePage from "@/components/HeroHomePage";
+import HowToUseHomePage from "@/components/HowToUseHomePage";
+import Layout from "@/components/Layout";
 
 export default function Home() {
   return (
-    <RootLayout>
-      <div className="flex h-screen items-center justify-center">
-        <Link href={twitch.createAuthorizeUrl()}>
-          <Button startIcon={<TwitchIcon />}>Sign in with Twitch</Button>
-        </Link>
-      </div>
-    </RootLayout>
+    <Layout>
+      <HeroHomePage />
+      <HowToUseHomePage />
+    </Layout>
   );
 }

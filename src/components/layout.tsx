@@ -1,18 +1,17 @@
+import Header from "@/components/Header";
 import React from "react";
+import Footer from "./Footer";
 
 type Props = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({ children }: Props) {
+export default function Layout({ children }: Props) {
   return (
     <>
-      {/* Header */}
-
-      {/* Main */}
+      <Header />
       <main>{children}</main>
-
-      {/* Footer */}
+      <Footer />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { cva, VariantProps } from "class-variance-authority";
 
-const headingStyles = cva("leading-normal font-medium", {
+const headingStyles = cva("font-bold leading-tight", {
   variants: {
     variant: {
       h1: "text-5xl",

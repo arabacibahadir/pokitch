@@ -1,4 +1,7 @@
-import {TwitchAccessTokenResponse, TwitchUserDetailsResponse} from "@/types";
+import type {
+  TwitchAccessTokenResponse,
+  TwitchUserDetailsResponse,
+} from "@/types";
 
 type Props = {
   authDomain: string;

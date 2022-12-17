@@ -21,7 +21,10 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-jbm)"],
+        sans: ["var(--font-custom)"],
+      },
+      transitionProperty: {
+        width: "width",
       },
     },
   },

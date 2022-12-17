@@ -1,13 +1,12 @@
+import ComponentOverlayPage from "@/components/ComponentOverlayPage";
 import { connectDetector } from "@/utils/connectDetector";
 import { poke } from "@/utils/poke";
-import supabase from "@/utils/supabase";
 import { tmiClient } from "@/utils/tmi";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 
 export default function GameOverlay({ id }: { id: string }) {
   const [clientConnected, setClientConnected] = useState(false);
-  const [pokeState, setPokeState] = useState<any>([]);
 
   useEffect(() => {
     const connectedChannel = connectDetector.getConnect(id);
@@ -48,33 +47,9 @@ export default function GameOverlay({ id }: { id: string }) {
           //return await poke.inventory(tmiClient, userName, channelName); // rework
         }
       });
-  }, [clientConnected]);
+  }, [id, clientConnected]);
 
-  // realtime subscription on supabase
-  useEffect(() => {
-    const channel = supabase
-      .channel("public:channels")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "channels" },
-        (payload) => setPokeState((state: any) => [...state, payload.new])
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  return (
-    <div>
-      {JSON.stringify(
-        pokeState.filter((data: any) => data.channel === id),
-        null,
-        2
-      )}
-    </div>
-  );
+  return <ComponentOverlayPage id={id} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

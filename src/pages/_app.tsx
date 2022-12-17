@@ -20,13 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="description" content="" />
         <meta name="keywords" content="" />
       </Head>
-      <div
-        id="wrapper"
-        className={cx(
-          "flex h-full min-h-screen w-full flex-col bg-black bg-gradient-to-b from-yellow-600 via-neutral-900 font-sans text-white",
-          customFont.variable
-        )}
-      >
+      <div className={cx("font-sans", customFont.variable)}>
         <Component {...pageProps} />
       </div>
     </>

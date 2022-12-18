@@ -33,10 +33,10 @@ export default function ComponentOverlayPage({ channel }: Props) {
     setPokeState({ ...pokeState, health: data.health, name: data.poke });
   };
 
-  // realtime subscription on supabase
   useEffect(() => {
     getCurrentPoke(channel);
 
+    // realtime subscription on supabase
     const filters = new URLSearchParams({
       channel: "eq." + channel,
     }).toString();
@@ -75,21 +75,21 @@ export default function ComponentOverlayPage({ channel }: Props) {
 
   return (
     <>
-      <div className="inline-flex w-full max-w-xs flex-row items-center justify-start gap-x-2 rounded-md border-4 border-yellow-400/50 bg-neutral-900/100 p-2">
-        <figure className="inline-flex h-12 w-12 shrink-0 items-start justify-center overflow-hidden">
+      <div className="inline-flex w-full max-w-xs flex-row items-center justify-start gap-x-2 rounded-md border-2 border-yellow-400/50 bg-neutral-900/95 p-3">
+        <figure className="inline-block h-12 w-12 shrink-0 items-start justify-center overflow-hidden">
           <img
             src={`https://projectpokemon.org/images/normal-sprite/${pokeState.name}.gif`}
             alt=""
           />
         </figure>
-        <div className="ml-2 w-full space-y-1.5 text-white">
-          <Heading className="flex flex-row items-center justify-between">
-            <span>{pokeState.name}</span>
+        <div className="ml-2 w-full space-y-2 text-white">
+          <div className="flex flex-row items-center justify-between">
+            <Heading variant="h5">{pokeState.name}</Heading>
             <span className="text-end text-sm font-light">
               {pokeState.health <= 0 ? 0 : pokeState.health}/50
             </span>
-          </Heading>
-          <div className="h-2 w-full overflow-hidden rounded-md bg-neutral-900/50">
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-md bg-neutral-600">
             <div
               className="min-h-full bg-yellow-600 transition-width duration-1000"
               style={{ width: getPokeHealthPercent(pokeState.health) }}

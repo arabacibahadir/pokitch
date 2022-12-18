@@ -41,10 +41,12 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 ## Brief:
 
-How did we use _Supabase Realtime_ function?
+### How did we use _Supabase Realtime_ function?
+
 We used Supabase Realtime for inserts and updates of poke's in our database. We used the event:"UPDATE" to check the realtime data of the active poke on the Twitch channel and update the overlay in realtime when its health is low. We used the event:"INSERT" to check if the active poke has been caught and swapped with the new random poke, and update the overlay with if there is the new data. 
 
-How did we use _Supabase Database_? 
+### How did we use _Supabase Database_? 
+
 Supabase Database is where we keep track of viewer poke collections and when on which Twitch channel they caught them. 
 
 

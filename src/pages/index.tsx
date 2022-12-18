@@ -1,3 +1,4 @@
+import FeaturesHomePage from "@/components/FeaturesHomePage";
 import HeroHomePage from "@/components/HeroHomePage";
 import HowToUseHomePage from "@/components/HowToUseHomePage";
 import Layout from "@/components/Layout";
@@ -8,6 +9,7 @@ export default function Home({ user }: { user: any }) {
   return (
     <Layout>
       <HeroHomePage user={user} />
+      <FeaturesHomePage />
       <HowToUseHomePage />
     </Layout>
   );

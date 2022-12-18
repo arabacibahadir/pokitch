@@ -33,7 +33,6 @@ export default function HeroHomePage({ user }: Props) {
               <figure>
                 <video
                   className="rounded-lg border-black bg-black shadow-xl"
-                  poster=""
                   width="100%"
                   height="auto"
                   autoPlay
@@ -41,7 +40,10 @@ export default function HeroHomePage({ user }: Props) {
                   muted
                   playsInline
                 >
-                  <source src="" type="video/mp4" />
+                  <source
+                    src="https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-8a4c-c329b0cfa8a6.mp4"
+                    type="video/mp4"
+                  />
                 </video>
               </figure>
             </div>

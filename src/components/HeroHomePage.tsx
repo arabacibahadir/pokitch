@@ -20,9 +20,8 @@ export default function HeroHomePage({ user }: Props) {
               <p className="w-full text-gray-300 tablet:mx-auto tablet:max-w-lg">
                 Pokitch offers a way for viewers to{" "}
                 <span className="font-bold">interact</span> with the streamer
-                and other viewers in{" "}
-                <span className="font-bold">real time</span> and is made to be
-                fun and interactive.
+                and other viewers in <span className="font-bold">realtime</span>{" "}
+                and is made to be fun and interactive.
               </p>
             </div>
 

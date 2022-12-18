@@ -7,9 +7,17 @@ export default function Footer() {
         <div className="text-center">
           <p>
             <Link href="/">Pokitch</Link> is an open-source initiative.{" "}
-            <Link href="/" target="_blank" rel="noreferrer">
+            <Link
+              href="https://github.com/arabacibahadir/pokitch"
+              target="_blank"
+              rel="noreferrer"
+            >
               Contribute!
             </Link>
+          </p>
+          <p className="text-sm">
+            Contact:{" "}
+            <Link href="mailto:pokitchbot@gmail.com">pokitchbot@gmail.com</Link>
           </p>
         </div>
       </div>

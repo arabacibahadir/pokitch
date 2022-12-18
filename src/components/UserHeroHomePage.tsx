@@ -55,6 +55,11 @@ export default function GuestHeroHomePage({ data }: { data: any }) {
           <p>{url}</p>
         </div>
       ) : null}
+      <p className="text-sm text-red-400">
+        <span className="font-bold">Important!</span> In order to use the bot
+        properly, you must assign it as a &quot;mod&quot; role:{" "}
+        <span className="font-bold">/mod pokitch_bot</span>
+      </p>
     </div>
   );
 }

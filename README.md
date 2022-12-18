@@ -1,6 +1,7 @@
 # Pokitch
 > [Supabase Hackathon Week 6](https://supabase.com/blog/launch-week-6-hackathon) Submission
 
+
 Pokitch is an interactive Twitch chat game that streamers can add as an overlay to their live streams.
 
 Homepage: [pokitch.rflct.dev](https://pokitch.rflct.dev) 
@@ -38,6 +39,8 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 > In order to use the bot properly, you must assign it as a 'mod' role: /mod pokitch_bot
 
 **Step 5: And done!**
+
+https://user-images.githubusercontent.com/32988819/208307876-4d941a2d-2bbd-4ee9-ad81-4faee840a921.mp4
 
 ## Brief:
 

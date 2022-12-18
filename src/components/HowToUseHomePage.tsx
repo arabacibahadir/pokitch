@@ -4,7 +4,7 @@ import React from "react";
 export default function HowToUseHomePage() {
   return (
     <section className="py-12">
-      <div className="flex items-center justify-center">
+      <div className="w-full tablet:mx-auto tablet:max-w-5xl">
         <div className="container">
           <div className="space-y-8">
             <Heading variant="h2">How to use?</Heading>

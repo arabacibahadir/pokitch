@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-black py-6">
       <div className="container">
-        <div className="flex flex-col items-center gap-y-2">
+        <div className="text-center">
           <p>
             <Link href="/">Pokitch</Link> is an open-source initiative.{" "}
             <Link href="/" target="_blank" rel="noreferrer">

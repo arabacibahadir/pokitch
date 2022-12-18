@@ -14,8 +14,8 @@ class Poke {
   };
 
   sendMessage = async (client: any, channel: string, message: string) => {
-    await client.say(channel, message);
-    console.log(message);
+    await client.say(channel, message.toString());
+    //console.log(message);
   };
 
   setPlayerCooldown = (user: string) => {
@@ -69,7 +69,7 @@ class Poke {
     this.sendMessage(
       client,
       channel,
-      `poke: welcome pack sended -> user: ${user} - poke: ${poke} - channel: ${channel}`
+      `${"@" + user} has won ${poke} as a welcome pack!`
     );
   };
 
@@ -99,7 +99,7 @@ class Poke {
     this.sendMessage(
       client,
       channel,
-      `poke: attacking to poke -> user: ${user} - poke: ${data.poke}(${newHealth}) - attack: ${damage} - channel: ${channel}`
+      `Attack by ${"@" + user}. Hit: ${damage}`
     );
 
     if (newHealth <= 0) {
@@ -114,7 +114,7 @@ class Poke {
       this.sendMessage(
         client,
         channel,
-        `poke: caught to poke -> user: ${user} - poke: ${data.poke} - channel: ${channel}`
+        `Caught to ${data.poke} by ${"@" + user}.`
       );
 
       // generate new poke

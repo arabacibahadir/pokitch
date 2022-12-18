@@ -19,6 +19,8 @@ export default function App({ Component, pageProps }: AppProps) {
         </title>
         <meta name="description" content="" />
         <meta name="keywords" content="" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
       </Head>
       <div className={cx("font-sans", customFont.variable)}>
         <Component {...pageProps} />

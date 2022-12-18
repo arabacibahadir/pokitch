@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Heading from "@/components/ui/Heading";
-import supabase from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
 
 type Props = {

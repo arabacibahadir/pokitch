@@ -1,5 +1,5 @@
 import { pokes } from "@/storage/data";
-import supabase from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 
 class Poke {
   private cooldowns = Array();

@@ -1,4 +1,4 @@
-import supabase from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 import { twitch } from "@/utils/twitch";
 import type { NextApiRequest, NextApiResponse } from "next";
 

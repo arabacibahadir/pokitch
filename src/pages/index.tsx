@@ -1,7 +1,7 @@
 import HeroHomePage from "@/components/HeroHomePage";
 import HowToUseHomePage from "@/components/HowToUseHomePage";
 import Layout from "@/components/Layout";
-import supabase from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 import { GetServerSideProps } from "next";
 
 export default function Home({ user }: { user: any }) {

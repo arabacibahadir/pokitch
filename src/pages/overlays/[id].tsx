@@ -1,7 +1,7 @@
 import ComponentOverlayPage from "@/components/ComponentOverlayPage";
 import { connectDetector } from "@/utils/connectDetector";
 import { poke } from "@/utils/poke";
-import supabase from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 import { tmiClient } from "@/utils/tmi";
 import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";

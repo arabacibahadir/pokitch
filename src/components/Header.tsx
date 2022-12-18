@@ -1,13 +1,27 @@
 import Link from "next/link";
 import { MdCatchingPokemon } from "react-icons/md";
 
+const menuItems = ["Inventory", "Trade"];
+
 export default function Header() {
   return (
     <header className="sticky top-0 bg-black/25 shadow-md backdrop-blur">
       <div className="container">
-        <nav className="flex flex-row items-center py-4">
+        <div className="flex flex-row items-center justify-between py-4">
           <Brand />
-        </nav>
+
+          <nav className="inline-flex items-center justify-center gap-6">
+            {menuItems.map((item) => (
+              <Link
+                key={item}
+                href="/"
+                className="cursor-not-allowed text-base font-semibold opacity-60"
+              >
+                {item}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );

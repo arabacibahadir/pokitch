@@ -19,7 +19,7 @@ class Poke {
   };
 
   setPlayerCooldown = (user: string) => {
-    return this.cooldowns.push({ user: user, expires_at: Date.now() + 1000 });
+    return this.cooldowns.push({ user: user, expires_at: Date.now() + 31000 });
   };
 
   isPlayerOnCooldown = (user: string) => {
@@ -114,7 +114,7 @@ class Poke {
       this.sendMessage(
         client,
         channel,
-        `Caught to ${data.poke} by ${"@" + user}.`
+        `Caught ${data.poke} by ${"@" + user}.`
       );
 
       // generate new poke

@@ -65,5 +65,3 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 - Brawl
 - World Boss
 - And more commands!
-
-

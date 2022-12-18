@@ -1,5 +1,6 @@
 import Button from "@/components/ui/Button";
 import Heading from "@/components/ui/Heading";
+import Link from "@/components/ui/Link";
 import { FaClipboardCheck } from "react-icons/fa";
 
 const getBaseUrl = () => {
@@ -11,9 +12,12 @@ const getBaseUrl = () => {
 
 export default function GuestHeroHomePage({ data }: { data: any }) {
   return (
-    <div className="space-y-2">
-      <Heading>Welcome {data.channel}!</Heading>
-      <p>{`${getBaseUrl()}/overlays/${data.id}`}</p>
+    <div className="space-y-3 rounded-md bg-green-400/25 p-6 shadow">
+      <Heading variant="h3">Welcome {data.channel}!</Heading>
+      <p>
+        Your Pokitch Overlay was successfully generated. Please{" "}
+        <Link href="#how-to-use">click here</Link> to follow the instructions.
+      </p>
       <Button
         variant="success"
         startIcon={<FaClipboardCheck />}

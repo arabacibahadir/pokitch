@@ -8,19 +8,21 @@ type Props = {
 
 export default function HeroHomePage({ user }: Props) {
   return (
-    <section className="py-24">
+    <section className="pt-24">
       <div className="w-full tablet:mx-auto tablet:max-w-5xl">
         <div className="container">
           <div className="space-y-6 text-center">
             <div className="space-y-2">
               <Heading variant="h1">
-                Tempore unde optio sequi, dolore velit error dolorum officiis
-                ducimus assumenda.
+                Pokitch is an interactive Twitch chat game that streamers can
+                add as an overlay to their live streams.
               </Heading>
               <p className="w-full text-gray-300 tablet:mx-auto tablet:max-w-lg">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Recusandae omnis, hic error minus ipsam veniam totam maiores
-                eveniet sunt..
+                Pokitch offers a way for viewers to{" "}
+                <span className="font-bold">interact</span> with the streamer
+                and other viewers in{" "}
+                <span className="font-bold">real time</span> and is made to be
+                fun and interactive.
               </p>
             </div>
 

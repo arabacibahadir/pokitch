@@ -6,6 +6,7 @@ const buttonStyles = cva(
     variants: {
       variant: {
         primary: "bg-yellow-600 hover:bg-yellow-700 text-yellow-50",
+        twitch: "bg-purple-700 hover:bg-purple-800 text-purple-50",
         success: "bg-green-600 hover:bg-green-700 text-green-50",
       },
     },

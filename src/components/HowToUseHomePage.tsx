@@ -19,7 +19,7 @@ export default function HowToUseHomePage() {
               />
               <ListItem
                 title="Step 3: Set up the sizes "
-                description="Width: 285, Height: 76. The dimensions should be set to 285x76 to avoid problems."
+                description="Width: 320, Height: 76. The dimensions should be set to 320x76."
               />
               <ListItem title="Step 4: And done!" description="" />
             </List>

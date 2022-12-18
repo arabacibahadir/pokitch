@@ -25,6 +25,7 @@ module.exports = {
       },
       transitionProperty: {
         width: "width",
+        display: "display",
       },
     },
   },

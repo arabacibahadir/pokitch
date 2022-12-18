@@ -23,14 +23,15 @@ export default function ComponentOverlayPage({ channel }: Props) {
   });
 
   const getCurrentPoke = async (channel: string) => {
-    const { data } = await supabase
-      .from("active_pokes")
-      .select()
-      .eq("channel", channel)
-      .single();
-    if (!data) return null;
-
-    setPokeState({ ...pokeState, health: data.health, name: data.poke });
+    await new Promise<void>(() => setTimeout(async () => {
+      const {data} = await supabase
+          .from("active_pokes")
+          .select()
+          .eq("channel", channel)
+          .single();
+      if (!data) return null;
+      setPokeState({...pokeState, health: data.health, name: data.poke});
+    }, 1000));
   };
 
   useEffect(() => {

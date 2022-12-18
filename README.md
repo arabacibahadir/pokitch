@@ -1,5 +1,5 @@
 # Pokitch
-> [Supabase Hackathon Week 6](https://supabase.com/blog/launch-week-6-hackathon) Submission
+> [Supabase Hackathon Launch Week 6](https://supabase.com/blog/launch-week-6-hackathon) Submission
 
 
 Pokitch is an interactive Twitch chat game that streamers can add as an overlay to their live streams.
@@ -42,7 +42,7 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 https://user-images.githubusercontent.com/32988819/208307876-4d941a2d-2bbd-4ee9-ad81-4faee840a921.mp4
 
-## Brief:
+## Brief
 
 ### How did we use _Supabase Realtime_ function?
 
@@ -54,7 +54,7 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 
 
 
-##  Tech-Stack:
+##  Tech-Stack
 -  [Supabase](https://supabase.com/) 
 -  [Nextjs](https://nextjs.org/) 
 -  [Typescript](https://www.typescriptlang.org/) 

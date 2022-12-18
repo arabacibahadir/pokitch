@@ -1,4 +1,4 @@
-import NextLink, { type LinkProps as NextLinkProps } from "next/link";
+import Link from "@/components/ui/Link";
 
 export default function Footer() {
   return (
@@ -16,15 +16,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-type Props = React.ComponentPropsWithoutRef<"a"> & NextLinkProps;
-
-const Link = ({ href, ...props }: Props) => {
-  return (
-    <NextLink
-      href={href}
-      className="font-semibold text-yellow-400 transition-colors hover:text-yellow-600"
-      {...props}
-    />
-  );
-};

@@ -6,14 +6,14 @@ import supabase from "@/utils/supabase";
 import { useEffect, useState } from "react";
 
 type Props = {
-  id: string;
+  channel: string;
 };
 
-const getPokePercentHealth = (health: number) => {
+const getPokeHealthPercent = (health: number) => {
   return (health * 2 + "%") as string;
 };
 
-export default function ComponentOverlayPage({ id }: Props) {
+export default function ComponentOverlayPage({ channel }: Props) {
   const [pokeState, setPokeState] = useState<{
     health: number;
     name: string | null;
@@ -35,10 +35,12 @@ export default function ComponentOverlayPage({ id }: Props) {
 
   // realtime subscription on supabase
   useEffect(() => {
-    getCurrentPoke(id);
+    getCurrentPoke(channel);
 
-    const filters = new URLSearchParams({ channel: "eq." + id }).toString();
-    const channel = supabase
+    const filters = new URLSearchParams({
+      channel: "eq." + channel,
+    }).toString();
+    const subs = supabase
       .channel("public:active_pokes")
       .on(
         "postgres_changes",
@@ -48,7 +50,7 @@ export default function ComponentOverlayPage({ id }: Props) {
           table: "active_pokes",
           filter: filters,
         },
-        () => getCurrentPoke(id)
+        () => getCurrentPoke(channel)
       )
       .on(
         "postgres_changes",
@@ -58,14 +60,14 @@ export default function ComponentOverlayPage({ id }: Props) {
           table: "active_pokes",
           filter: filters,
         },
-        () => getCurrentPoke(id)
+        () => getCurrentPoke(channel)
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(subs);
     };
-  }, [id]);
+  }, [channel]);
 
   if (!pokeState.name) {
     return <></>;
@@ -90,7 +92,7 @@ export default function ComponentOverlayPage({ id }: Props) {
           <div className="h-2 w-full overflow-hidden rounded-md bg-neutral-900/50">
             <div
               className="min-h-full bg-yellow-600 transition-width duration-1000"
-              style={{ width: getPokePercentHealth(pokeState.health) }}
+              style={{ width: getPokeHealthPercent(pokeState.health) }}
             />
           </div>
         </div>

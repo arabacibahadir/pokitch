@@ -6,7 +6,11 @@ import { tmiClient } from "@/utils/tmi";
 import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 
-export default function GameOverlay({ channel }: { channel: string }) {
+type Props = {
+  channel: string;
+};
+
+export default function GameOverlay({ channel }: Props) {
   const [clientConnected, setClientConnected] = useState<boolean>(false);
 
   useEffect(() => {
@@ -48,7 +52,7 @@ export default function GameOverlay({ channel }: { channel: string }) {
       });
   }, [channel, clientConnected]);
 
-  return <ComponentOverlayPage id={channel} />;
+  return <ComponentOverlayPage channel={channel} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

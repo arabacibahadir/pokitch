@@ -1,4 +1,4 @@
-import Button from "@/components/ui/Button";
+import Button from "@/ui/Button";
 import { twitch } from "@/utils/twitch";
 import Link from "next/link";
 import { BsTwitch } from "react-icons/bs";

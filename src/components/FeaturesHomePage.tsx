@@ -1,4 +1,4 @@
-import Heading from "@/components/ui/Heading";
+import Heading from "@/ui/Heading";
 import { cx } from "class-variance-authority";
 import {
   BsArchiveFill,

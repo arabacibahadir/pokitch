@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 
-import Heading from "@/components/ui/Heading";
+import Heading from "@/ui/Heading";
 import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
 

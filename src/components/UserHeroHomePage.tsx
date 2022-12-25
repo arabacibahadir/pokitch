@@ -1,6 +1,6 @@
-import Button from "@/components/ui/Button";
-import Heading from "@/components/ui/Heading";
-import Link from "@/components/ui/Link";
+import Button from "@/ui/Button";
+import Heading from "@/ui/Heading";
+import Link from "@/ui/Link";
 import { useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FaClipboardCheck } from "react-icons/fa";

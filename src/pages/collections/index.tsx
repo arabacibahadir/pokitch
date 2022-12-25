@@ -12,6 +12,7 @@ type Props = {
 };
 
 export default function Inventory({ user, collections }: Props) {
+  // const poke_url = 'https://projectpokemon.org/images/normal-sprite/';
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
@@ -42,6 +43,7 @@ export default function Inventory({ user, collections }: Props) {
                 <Thead>
                   <tr>
                     <Th />
+                    <Th></Th>
                     <Th>Poke Name</Th>
                     <Th>User</Th>
                     <Th>Channel</Th>
@@ -52,6 +54,7 @@ export default function Inventory({ user, collections }: Props) {
                   {collections.map((collection: any, index: number) => (
                     <Tr key={collection.id}>
                       <Td>{index + 1}</Td>
+                      <Td><img width={60} height={60} src={`https://projectpokemon.org/images/normal-sprite/${collection.poke}.gif`} alt="" /></Td>
                       <Td>{collection.poke}</Td>
                       <Td>{collection.user}</Td>
                       <Td>{collection.channel}</Td>

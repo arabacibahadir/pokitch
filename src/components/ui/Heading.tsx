@@ -3,7 +3,7 @@ import { cva, VariantProps } from "class-variance-authority";
 const headingStyles = cva("font-bold leading-tight", {
   variants: {
     variant: {
-      h1: "text-5xl",
+      h1: "text-4xl tablet:text-5xl",
       h2: "text-3xl",
       h3: "text-2xl",
       h4: "text-xl",

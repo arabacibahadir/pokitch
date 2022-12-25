@@ -55,7 +55,7 @@ export default function Inventory({ user, collections }: Props) {
                       <Td>{collection.poke}</Td>
                       <Td>{collection.user}</Td>
                       <Td>{collection.channel}</Td>
-                      <Td>{collection.created_at}</Td>
+                      <Td>{new Date(collection.created_at).toLocaleString("en-GB")}</Td>
                     </Tr>
                   ))}
                 </tbody>

@@ -1,4 +1,4 @@
-import Heading from "@/components/ui/Heading";
+import Heading from "@/ui/Heading";
 import { cx } from "class-variance-authority";
 import {
   BsArchiveFill,
@@ -64,7 +64,7 @@ export default function FeaturesHomePage() {
           <ListItem
             icon={<BsArchiveFill />}
             colorClass="bg-teal-900/50 text-teal-300"
-            title="Inventory (coming soon)"
+            title="Inventory"
             description="It is possible to view your pokitch inventory."
           />
           <ListItem

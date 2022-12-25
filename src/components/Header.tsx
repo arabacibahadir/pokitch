@@ -1,7 +1,19 @@
+import { cx } from "class-variance-authority";
 import Link from "next/link";
 import { MdCatchingPokemon } from "react-icons/md";
 
-const menuItems = ["Inventory", "Trade"];
+const menuItems = [
+  {
+    name: "Inventory",
+    path: "/collections",
+    isDisabled: false,
+  },
+  {
+    name: "Trade",
+    path: "/trade",
+    isDisabled: true,
+  },
+];
 
 export default function Header() {
   return (
@@ -13,11 +25,13 @@ export default function Header() {
           <nav className="inline-flex items-center justify-center gap-6">
             {menuItems.map((item) => (
               <Link
-                key={item}
-                href="/"
-                className="cursor-not-allowed text-base font-semibold opacity-60"
+                key={item.name}
+                href={item.path}
+                className={cx("text-base font-semibold", [
+                  item.isDisabled ? "cursor-not-allowed opacity-60" : "",
+                ])}
               >
-                {item}
+                {item.name}
               </Link>
             ))}
           </nav>

@@ -1,6 +1,6 @@
 import GuestHeroHomePage from "@/components/GuestHeroHomePage";
-import Heading from "@/components/ui/Heading";
 import UserHeroHomePage from "@/components/UserHeroHomePage";
+import Heading from "@/ui/Heading";
 
 type Props = {
   user: object;
@@ -8,7 +8,7 @@ type Props = {
 
 export default function HeroHomePage({ user }: Props) {
   return (
-    <section className="pt-24">
+    <section className="pt-12 tablet:pt-24">
       <div className="w-full tablet:mx-auto tablet:max-w-5xl">
         <div className="container">
           <div className="space-y-6 text-center">

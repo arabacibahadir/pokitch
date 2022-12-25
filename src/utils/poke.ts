@@ -1,5 +1,6 @@
 import { pokes } from "@/storage/data";
 import { supabase } from "@/utils/supabase";
+import { getBaseUrl } from "@/components/UserHeroHomePage";
 
 class Poke {
   private cooldowns = Array();
@@ -75,7 +76,17 @@ class Poke {
 
   // !poke inventory
   inventory = async (client: any, user: string, channel: string) => {
-    client.say(channel, `@user`);
+    if (this.isPlayerOnCooldown(user)) return;
+    this.setPlayerCooldown(user);
+
+    const url = getBaseUrl() + "/collections/?user=" + user;
+    console.log(url);
+
+    this.sendMessage(
+        client,
+        channel,
+        `@${user}'s inventory: ${url}`
+    );
   };
 
   // !poke attack

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 
-import Heading from "@/components/ui/Heading";
+import Heading from "@/ui/Heading";
 import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
 
@@ -79,7 +79,7 @@ export default function ComponentOverlayPage({ channel }: Props) {
   return (
     <>
       <div className="inline-flex w-full max-w-xs flex-row items-center justify-start gap-x-2 rounded-md border-2 border-yellow-400/50 bg-neutral-900/95 p-3">
-        <figure className="inline-block h-12 w-12 shrink-0 items-start justify-center overflow-hidden">
+        <figure className="inline-flex h-12 w-12 shrink-0">
           <img
             src={`https://projectpokemon.org/images/normal-sprite/${pokeState.name}.gif`}
             alt=""

@@ -1,8 +1,8 @@
-import Link from "@/components/ui/Link";
+import Link from "@/ui/Link";
 
 export default function Footer() {
   return (
-    <footer className="bg-black py-6">
+    <footer className="mt-auto bg-black py-6">
       <div className="container">
         <div className="text-center">
           <p>

@@ -47,7 +47,7 @@ export default function GameOverlay({ channel }: Props) {
         } else if (cmd === "attack") {
           return await poke.attack(tmiClient, userName, channelName);
         } else if (cmd === "inventory") {
-          //return await poke.inventory(tmiClient, userName, channelName); // rework
+          return await poke.inventory(tmiClient, userName, channelName);
         }
       });
   }, [channel, clientConnected]);

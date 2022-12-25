@@ -1,4 +1,4 @@
-import Heading from "@/components/ui/Heading";
+import Heading from "@/ui/Heading";
 import React from "react";
 
 export default function HowToUseHomePage() {

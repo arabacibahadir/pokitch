@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 import Layout from "@/components/Layout";
 import SearchBar from "@/components/SearchBar";
 import Heading from "@/ui/Heading";
@@ -12,7 +14,6 @@ type Props = {
 };
 
 export default function Inventory({ user, collections }: Props) {
-  // const poke_url = 'https://projectpokemon.org/images/normal-sprite/';
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
@@ -24,7 +25,7 @@ export default function Inventory({ user, collections }: Props) {
                 <caption className="space-y-1 bg-neutral-900/25 p-5 text-left">
                   {user ? (
                     <>
-                      <Heading variant="h3">{user}&apos;s Pokes</Heading>
+                      <Heading variant="h3">{user}&apos;s Inventory</Heading>
                       <div className="text-sm font-normal text-gray-300">
                         <p>
                           On this page, you can see pokes that you have caught.
@@ -33,7 +34,7 @@ export default function Inventory({ user, collections }: Props) {
                     </>
                   ) : (
                     <>
-                      <Heading variant="h3">Leaderboard</Heading>
+                      <Heading variant="h3">Latest Caught Pokes</Heading>
                       <div className="text-sm font-normal text-gray-300">
                         <p>On this page, you can see all pokes that caught.</p>
                       </div>
@@ -54,11 +55,22 @@ export default function Inventory({ user, collections }: Props) {
                   {collections.map((collection: any, index: number) => (
                     <Tr key={collection.id}>
                       <Td>{index + 1}</Td>
-                      <Td><img width={60} height={60} src={`https://projectpokemon.org/images/normal-sprite/${collection.poke}.gif`} alt="" /></Td>
+                      <Td>
+                        <figure className="inline-flex h-14 w-14 shrink-0">
+                          <img
+                            src={`https://projectpokemon.org/images/normal-sprite/${collection.poke}.gif`}
+                            alt=""
+                          />
+                        </figure>
+                      </Td>
                       <Td>{collection.poke}</Td>
                       <Td>{collection.user}</Td>
                       <Td>{collection.channel}</Td>
-                      <Td>{new Date(collection.created_at).toLocaleString("en-GB")}</Td>
+                      <Td>
+                        {new Date(collection.created_at).toLocaleString(
+                          "en-GB"
+                        )}
+                      </Td>
                     </Tr>
                   ))}
                 </tbody>

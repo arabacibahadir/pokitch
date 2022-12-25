@@ -64,8 +64,9 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 -  [React-Icons](https://react-icons.github.io/react-icons/) 
 
 ## Work in progress
-- Support Trade/Gift system
-- Store for Twitch channel loyalty points
-- Brawl
-- World Boss
+* [x] Inventory showcase
+* [ ] Support Trade/Gift system
+* [ ] Store for Twitch channel loyalty points
+* [ ] Brawl
+* [ ] World Boss
 - And more commands!

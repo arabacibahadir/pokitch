@@ -56,7 +56,7 @@ export default function Inventory({ user, collections }: Props) {
                     <Tr key={collection.id}>
                       <Td>{index + 1}</Td>
                       <Td>
-                        <figure className="inline-flex h-14 w-14 shrink-0">
+                        <figure className="inline-flex h-14 w-14 shrink-0 items-center justify-center">
                           <img
                             src={`https://projectpokemon.org/images/normal-sprite/${collection.poke}.gif`}
                             alt=""

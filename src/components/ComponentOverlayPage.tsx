@@ -31,6 +31,7 @@ export default function ComponentOverlayPage({ channel }: Props) {
           .eq("channel", channel)
           .single();
         if (!data) return null;
+
         setPokeState({ ...pokeState, health: data.health, name: data.poke });
       }, 1000)
     );
@@ -38,31 +39,24 @@ export default function ComponentOverlayPage({ channel }: Props) {
 
   useEffect(() => {
     getCurrentPoke(channel);
+  }, [channel]);
 
-    // realtime subscription on supabase
+  // realtime subscription on supabase
+  useEffect(() => {
     const filters = new URLSearchParams({
       channel: "eq." + channel,
     }).toString();
+
     const subs = supabase
-      .channel("public:active_pokes")
+      .channel("active_pokes")
       .on(
         "postgres_changes",
-        {
-          event: "INSERT", // check inserts
-          schema: "public",
-          table: "active_pokes",
-          filter: filters,
-        },
+        { event: "UPDATE", schema: "public", filter: filters },
         () => getCurrentPoke(channel)
       )
       .on(
         "postgres_changes",
-        {
-          event: "UPDATE", // check attacks
-          schema: "public",
-          table: "active_pokes",
-          filter: filters,
-        },
+        { event: "INSERT", schema: "public", filter: filters },
         () => getCurrentPoke(channel)
       )
       .subscribe();
@@ -70,7 +64,7 @@ export default function ComponentOverlayPage({ channel }: Props) {
     return () => {
       supabase.removeChannel(subs);
     };
-  }, [channel]);
+  }, []);
 
   if (!pokeState.name) {
     return <></>;

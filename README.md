@@ -4,9 +4,9 @@
 
 Pokitch is an interactive Twitch chat game that streamers can add as an overlay to their live streams.
 
-Homepage: [pokitch.rflct.dev](https://pokitch.rflct.dev) 
+Homepage: [pokitch.vercel.app](https://pokitch.vercel.app) 
 
-Online overlay demo: [pokitch.rflct.dev/overlays/:id](https://pokitch.rflct.dev/overlays/a9f2a8c7-bdfc-4b41-945a-e27e2dad9372)
+Online overlay demo: [pokitch.vercel.app/overlays/:id](https://pokitch.vercel.app/overlays/a9f2a8c7-bdfc-4b41-945a-e27e2dad9372)
 
 
 |Maintainers|Socials|

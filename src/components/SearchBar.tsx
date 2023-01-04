@@ -34,7 +34,7 @@ export default function SearchBar({}: Props) {
   return (
     <div className="flex items-center justify-center ">
         <Button variant="transparent" className="mt-2" onClick={()=>setUserSearch(!userSearch)}>
-            User <FiRefreshCcw className="mx-2"/> Channel
+            {userSearch ? "User" : "Channel"} <FiRefreshCcw className="mx-2"/> {userSearch ? "Channel" : "User"}
         </Button>
 
         {userSearch ?<form className="w-full tablet:max-w-xs" onSubmit={handleUserSearchSubmit}>

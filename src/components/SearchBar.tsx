@@ -2,6 +2,7 @@ import Input from "@/ui/Input";
 import {useRouter} from "next/router";
 import {useState} from "react";
 import {FiRefreshCcw} from "react-icons/fi";
+import Button from "@/ui/Button";
 
 type Props = {};
 
@@ -32,10 +33,9 @@ export default function SearchBar({}: Props) {
 
   return (
     <div className="flex items-center justify-center ">
-        <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-neutral-900/25 hover:bg-neutral-900/50 m-3"
-                onClick={()=>setUserSearch(!userSearch)}>
-        User<FiRefreshCcw/>Channel
-        </button>
+        <Button variant="transparent" className="mt-2" onClick={()=>setUserSearch(!userSearch)}>
+            User <FiRefreshCcw className="mx-2"/> Channel
+        </Button>
 
         {userSearch ?<form className="w-full tablet:max-w-xs" onSubmit={handleUserSearchSubmit}>
         <Input placeholder= "Search for users..." value={searchValue ?? ""} onChange={(e)=>setSearchValue(e.target.value)}/>

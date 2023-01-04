@@ -1,7 +1,7 @@
 import Input from "@/ui/Input";
 import {useRouter} from "next/router";
 import {useState} from "react";
-import {FiRefreshCcw} from "react-icons/Fi";
+import {FiRefreshCcw} from "react-icons/fi";
 
 type Props = {};
 

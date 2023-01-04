@@ -1,6 +1,4 @@
 # Pokitch
-> [Supabase Hackathon Launch Week 6](https://supabase.com/blog/launch-week-6-hackathon) Submission
-
 
 Pokitch is an interactive Twitch chat game that streamers can add as an overlay to their live streams.
 
@@ -8,17 +6,8 @@ Homepage: [pokitch.vercel.app](https://pokitch.vercel.app)
 
 Online overlay demo: [pokitch.vercel.app/overlays/:id](https://pokitch.vercel.app/overlays/a9f2a8c7-bdfc-4b41-945a-e27e2dad9372)
 
-
-|Maintainers|Socials|
-| ------------- | --------------------------------------------------------------------------------------- |
-| Bahadir Arabaci  | [GitHub](https://github.com/arabacibahadir) - [Twitter](https://twitter.com/wykonos)  |
-| Rasit Durmus  | [GitHub](https://github.com/durmusrasit) - [Twitter](https://twitter.com/cfi_go) |
-| Ahmet Tongul | [GitHub](https://github.com/eckoln) - [Twitter](https://twitter.com/eckoln)
-
 ## Features
-- Supabase Realtime data
-- Supabase Database
-- Twitch API
+- Twitch Bot
 - Stream overlay
 
 ## Demo video
@@ -62,6 +51,8 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 -  [Tailwind CSS](https://tailwindcss.com/) 
 -  [CVA](https://github.com/joe-bell/cva)
 -  [React-Icons](https://react-icons.github.io/react-icons/) 
+
+
 
 ## Work in progress
 * [x] Inventory showcase

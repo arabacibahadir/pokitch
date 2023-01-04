@@ -9,11 +9,11 @@ import type { GetServerSideProps } from "next";
 
 type Props = {
   user: string | null;
-  channel: string;
+  channel: string | null;
   collections: any;
 };
 
-export default function Inventory({ user, collections }: Props) {
+export default function Inventory({ user, channel, collections }: Props) {
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
@@ -23,9 +23,11 @@ export default function Inventory({ user, collections }: Props) {
             <div className="overflow-auto rounded-lg shadow">
               <Table>
                 <caption className="space-y-1 bg-neutral-900/25 p-5 text-left">
-                  {user ? (
+                  {user || channel ? (
                     <>
-                      <Heading variant="h3">{user}&apos;s Inventory</Heading>
+                      <Heading variant="h3">
+                        {user ? user+"'s" : channel+" Twitch Channel"} Inventory
+                      </Heading>
                       <div className="text-sm font-normal text-gray-300">
                         <p>
                           On this page, you can see pokes that you have caught.
@@ -85,9 +87,10 @@ export default function Inventory({ user, collections }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = ctx.query.user as string;
+  const channel = ctx.query.channel as string;
 
   //
-  if (!user) {
+  if (!user && !channel) {
     const { data } = await supabase
       .from("collections")
       .select()
@@ -96,21 +99,22 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       props: {
         user: null,
+        channel: null,
         collections: data,
       },
     };
   }
 
-  //
   const { data } = await supabase
     .from("collections")
     .select()
-    .eq("user", user)
+    .or(`user.eq.${user},channel.eq.${channel}`)
     .order("created_at", { ascending: false });
 
   return {
     props: {
-      user: user,
+      user: user ? user : null,
+      channel: channel ? channel : null,
       collections: data,
     },
   };

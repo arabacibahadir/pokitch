@@ -27,7 +27,7 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 ## Instructions
 **Step 1: Copy the overlay url**
-> Go to [homepage](https://pokitch.rflct.dev) and login. Copy the link we gave you after you signed in.
+> Go to [homepage](https://pokitch.vercel.app) and login. Copy the link we gave you after you signed in.
 
 **Step 2: Open your broadcasting tool**
 > Open your broadcasting tool and add a new browser source. Paste the overlay link into the URL field.

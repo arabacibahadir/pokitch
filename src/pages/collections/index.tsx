@@ -26,7 +26,8 @@ export default function Inventory({ user, channel, collections }: Props) {
                   {user || channel ? (
                     <>
                       <Heading variant="h3">
-                        {user ? user+"'s" : channel+" Twitch Channel"} Inventory
+                        {user ? user + "'s" : channel + " Twitch Channel"}{" "}
+                        Inventory
                       </Heading>
                       <div className="text-sm font-normal text-gray-300">
                         <p>

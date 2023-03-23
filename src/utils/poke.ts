@@ -82,11 +82,7 @@ class Poke {
     const url = getBaseUrl() + "/collections/?user=" + user;
     console.log(url);
 
-    this.sendMessage(
-        client,
-        channel,
-        `@${user}'s inventory: ${url}`
-    );
+    this.sendMessage(client, channel, `@${user}'s inventory: ${url}`);
   };
 
   // !poke attack

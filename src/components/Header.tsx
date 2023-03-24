@@ -9,6 +9,11 @@ const menuItems = [
     isDisabled: false,
   },
   {
+    name: "Gift",
+    path: "/gift",
+    isDisabled: false,
+  },
+  {
     name: "Trade",
     path: "/trade",
     isDisabled: true,

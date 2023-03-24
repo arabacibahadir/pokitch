@@ -1,17 +1,14 @@
+import { getBaseUrl } from "@/components/UserHeroHomePage";
 import { pokes } from "@/storage/data";
 import { supabase } from "@/utils/supabase";
-import { getBaseUrl } from "@/components/UserHeroHomePage";
 
 class Poke {
   private cooldowns = Array();
 
-  randPoke = () => {
-    const index = Math.floor(Math.random() * pokes.length - 1);
-    return pokes[index];
-  };
+  randPoke = () => pokes[Math.floor(Math.random() * pokes.length)];
 
   damage = () => {
-    return (Math.floor(Math.random() * 10) + 5) as number;
+    return Math.floor(Math.random() * 10) + 5;
   };
 
   sendMessage = async (client: any, channel: string, message: string) => {

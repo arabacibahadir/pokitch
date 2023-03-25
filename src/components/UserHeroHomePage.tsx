@@ -3,7 +3,7 @@ import Heading from "@/ui/Heading";
 import Link from "@/ui/Link";
 import { useState } from "react";
 import { BiShow } from "react-icons/bi";
-import { FaClipboardCheck } from "react-icons/fa";
+import { FaClipboardCheck, FaTwitch } from "react-icons/fa";
 
 export const getBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_APP_URL) {
@@ -20,11 +20,18 @@ const copyURL = (id: string) => {
 export default function GuestHeroHomePage({ data }: { data: any }) {
   const [showURL, setShowURL] = useState(false);
   const url = getBaseUrl() + `/overlays/${data.id}`;
-
+  const signout = () => {
+    console.log("signout");
+  };
   return (
     <div className="space-y-3 rounded-md bg-green-400/25 p-6 shadow">
       <div className="space-y-3">
-        <Heading variant="h3">Welcome {data.channel}!</Heading>
+        <Heading variant="h3">
+          Welcome {data.channel}!{" "}
+          <Button color="primary" onClick={signout}>
+            <FaTwitch style={{ marginRight: "8px" }} /> logout
+          </Button>
+        </Heading>
         <p>
           Your Pokitch Overlay was successfully generated. Please{" "}
           <Link href="#how-to-use">click here</Link> to follow the instructions.

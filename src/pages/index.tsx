@@ -2,7 +2,7 @@ import FeaturesHomePage from "@/components/FeaturesHomePage";
 import HeroHomePage from "@/components/HeroHomePage";
 import HowToUseHomePage from "@/components/HowToUseHomePage";
 import Layout from "@/components/Layout";
-import { supabase } from "@/utils/supabase";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
 
 export default function Home({ user }: { user: any }) {
@@ -16,24 +16,17 @@ export default function Home({ user }: { user: any }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const id = ctx.query.id as string;
-
+  const supabase = createServerSupabaseClient(ctx);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const { data } = await supabase
     .from("accounts")
     .select()
-    .eq("id", id)
+    .eq("user_id", session?.user?.id)
     .single();
 
-  const user = id ? data : null;
-  if (id && !user) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
+  const user = data ? data : null;
   return {
     props: {
       user: user,

@@ -60,7 +60,7 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 ## Work in progress
 
 - [x] Inventory showcase
-- [ ] Support Trade/Index system
+- [ ] Support Trade/Gift system
 - [ ] Store for Twitch channel loyalty points
 - [ ] Brawl
 - [ ] World Boss

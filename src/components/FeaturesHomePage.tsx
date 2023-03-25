@@ -76,8 +76,8 @@ export default function FeaturesHomePage() {
           <ListItem
             icon={<BsGift />}
             colorClass="bg-red-900/50 text-red-300"
-            title="Index (coming soon)"
-            description="Index your pokitch whoever you want."
+            title="Gift (coming soon)"
+            description="Gift your pokitch whoever you want."
           />
         </div>
       </div>

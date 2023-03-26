@@ -1,7 +1,9 @@
 import Layout from "@/components/Layout";
 import Button from "@/ui/Button";
+import { supabase } from "@/utils/supabase";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function Gift({ user }: { user: any }) {
@@ -9,13 +11,12 @@ export default function Gift({ user }: { user: any }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [giftRecipient, setGiftRecipient] = useState("");
+  const [selectedPokemonName, setSelectedPokemonName] = useState("");
   const uniqueUserNames = new Set(
     user.otherUserNames.map((userName: any) => userName.user)
   );
   const count = user.pokemonCollection ? user.pokemonCollection.length : 0;
-  const sortedPokemon = user.pokemonCollection
-    .map((pokemon: any) => pokemon.poke)
-    .sort();
+  const router = useRouter();
   function handleDropdownToggle() {
     setIsDropdownOpen((prevIsOpen) => !prevIsOpen);
   }
@@ -31,13 +32,35 @@ export default function Gift({ user }: { user: any }) {
   }
 
   function handleGift() {
-    console.log(
-      user.pokemonCollection.sort((a: any, b: any) =>
-        a.poke.localeCompare(b.poke)
-      )
-    );
-    console.log(user.channel, "Gifted", selectedPokemon, "to", giftRecipient);
-    const senderName = user.username;
+    const removePokemon = async () => {
+      const { error } = await supabase
+        .from("collections")
+        .delete()
+        .match({ id: selectedPokemon, user: user.channel });
+
+      if (error) {
+        console.log("remove error", error);
+      }
+    };
+    const addPokemon = async () => {
+      const { error } = await supabase.from("collections").insert([
+        {
+          poke: selectedPokemonName,
+          user: giftRecipient,
+          channel: user.channel,
+        },
+      ]);
+      if (error) {
+        console.log("add error", error);
+      }
+    };
+    removePokemon();
+    addPokemon();
+
+    setSelectedPokemonName("");
+    setSelectedPokemon("");
+    setGiftRecipient("");
+    router.replace(router.asPath);
   }
 
   useEffect(() => {
@@ -70,10 +93,12 @@ export default function Gift({ user }: { user: any }) {
                     }}
                     onClick={handleDropdownToggle}
                   >
-                    {selectedPokemon ? selectedPokemon : "Select Pokemon"}
+                    {selectedPokemonName
+                      ? selectedPokemonName
+                      : "Select Pokemon"}
                     <img
-                      src={`https://projectpokemon.org/images/normal-sprite/${selectedPokemon}.gif`}
-                      alt={selectedPokemon}
+                      src={`https://projectpokemon.org/images/normal-sprite/${selectedPokemonName}.gif`}
+                      alt={selectedPokemonName}
                       style={{
                         objectFit: "contain",
                         objectPosition: "center",
@@ -118,7 +143,8 @@ export default function Gift({ user }: { user: any }) {
                                 className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 type="button"
                                 onClick={() => {
-                                  setSelectedPokemon(pokemon.poke);
+                                  setSelectedPokemon(pokemon.id);
+                                  setSelectedPokemonName(pokemon.poke);
                                   handleDropdownToggle();
                                 }}
                               >

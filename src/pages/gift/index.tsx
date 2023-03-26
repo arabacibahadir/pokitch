@@ -78,51 +78,41 @@ export default function Gift({ user }: { user: any }) {
               <div>
                 <p>Your collection: {count}</p>
                 <div className="relative">
-                  <button
+                  <Button
                     id="dropdownDefaultButton"
                     data-dropdown-toggle="dropdown"
-                    className="inline-flex items-center rounded-lg bg-amber-900 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-amber-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-amber-900 dark:hover:bg-amber-800 dark:focus:ring-amber-500"
-                    type="button"
-                    style={{
-                      minWidth: "200px",
-                      width: "200px",
-                      height: "60px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
+                    className="inline-flex items-center rounded-lg bg-amber-900 px-8 py-3 text-center text-sm font-medium text-white hover:bg-amber-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-amber-900 dark:hover:bg-amber-800 dark:focus:ring-amber-500"
                     onClick={handleDropdownToggle}
                   >
-                    {selectedPokemonName
-                      ? selectedPokemonName
-                      : "Select Pokemon"}
-                    <img
-                      src={`https://projectpokemon.org/images/normal-sprite/${selectedPokemonName}.gif`}
-                      alt={selectedPokemonName}
-                      style={{
-                        objectFit: "contain",
-                        objectPosition: "center",
-                        maxWidth: "40px",
-                        maxHeight: "40px",
-                      }}
-                      className="inline-block"
-                    />
-                    <svg
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
+                    <div className="flex">
+                      <div className="m-3">
+                        {selectedPokemonName
+                          ? selectedPokemonName
+                          : "Select Pokemon"}
+                      </div>
+                      <img
+                        src={`https://projectpokemon.org/images/normal-sprite/${selectedPokemonName}.gif`}
+                        alt={selectedPokemonName}
+                        className="max-w-2 inline-block max-h-12 object-contain object-center"
                       />
-                    </svg>
-                  </button>
+
+                      <svg
+                        className="mt-4 ml-3 h-4 w-4"
+                        aria-hidden="true"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </Button>
 
                   {isDropdownOpen && (
                     <div
@@ -155,18 +145,12 @@ export default function Gift({ user }: { user: any }) {
                                       textAlign: "center",
                                     }}
                                   >
-                                    <div className="m-2">{pokemon.poke}</div>
+                                    <div className="m-2 ">{pokemon.poke}</div>
                                   </div>
                                   <img
                                     src={`https://projectpokemon.org/images/normal-sprite/${pokemon.poke}.gif`}
                                     alt={selectedPokemon}
-                                    style={{
-                                      objectFit: "contain",
-                                      objectPosition: "center",
-                                      maxWidth: "40px",
-                                      maxHeight: "40px",
-                                    }}
-                                    className="ml-5 inline-block"
+                                    className="max-w-2 ml-3 inline-block max-h-10 object-contain object-center"
                                   />
                                 </div>
                               </button>
@@ -186,22 +170,15 @@ export default function Gift({ user }: { user: any }) {
             <div>
               <p>Gift recipient</p>
               <div className="relative">
-                <button
+                <Button
                   id="dropdownOtherUserButton"
                   data-dropdown-toggle="dropdown"
-                  className="inline-flex items-center rounded-lg bg-amber-900 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-amber-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-amber-900 dark:hover:bg-amber-800 dark:focus:ring-amber-500"
-                  type="button"
+                  className="inline-flex items-center rounded-lg bg-amber-900 px-5 py-5 text-center text-sm font-medium text-white hover:bg-amber-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-amber-900 dark:hover:bg-amber-800 dark:focus:ring-amber-500"
                   onClick={handleUserDropdownToggle}
-                  style={{
-                    minWidth: "200px",
-                    width: "200px",
-                    height: "60px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
                 >
-                  {giftRecipient ? giftRecipient : "Select user"}
+                  <div className="m-1">
+                    {giftRecipient ? giftRecipient : "Select user"}
+                  </div>
                   <svg
                     className="ml-2 h-4 w-4"
                     aria-hidden="true"
@@ -217,11 +194,11 @@ export default function Gift({ user }: { user: any }) {
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
-                </button>
+                </Button>
                 {isUserDropdownOpen && (
                   <div
                     id="dropdown"
-                    className="absolute z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+                    className="absolute z-10 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
                   >
                     <ul
                       className="relative max-h-80 overflow-y-auto overflow-x-hidden text-sm text-gray-700 dark:text-gray-200"
@@ -250,7 +227,7 @@ export default function Gift({ user }: { user: any }) {
             </div>
           )}
           <Button
-            className="w-30 mt-8 flex h-10 items-center justify-between"
+            className="mt-8 h-10"
             onClick={() => {
               handleGift();
             }}

@@ -12,7 +12,7 @@ export default function GuestHeroHomePage() {
   }
 
   return (
-    <Button color="primary" onClick={signInWithTwitch}>
+    <Button variant="twitch" onClick={signInWithTwitch}>
       <FaTwitch style={{ marginRight: "8px" }} /> Sign in with Twitch
     </Button>
   );

@@ -4,7 +4,7 @@ import { MdCatchingPokemon } from "react-icons/md";
 
 const menuItems = [
   {
-    name: "Inventory",
+    name: "Collections",
     path: "/collections",
     isDisabled: false,
   },
@@ -16,7 +16,7 @@ const menuItems = [
   {
     name: "Trade",
     path: "/trade",
-    isDisabled: true,
+    isDisabled: false,
   },
 ];
 

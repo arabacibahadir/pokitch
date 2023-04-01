@@ -5,15 +5,23 @@ import Button from "@/ui/Button";
 import { supabase } from "@/utils/supabase";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { SetStateAction, useState } from "react";
 
 export default function Gift({ user }: { user: any }) {
   const [selectedPokemon, setSelectedPokemon] = useState("");
   const [giftRecipient, setGiftRecipient] = useState("");
   const [pokemonID, setPokemonID] = useState("");
-  // const router = useRouter();
+  const router = useRouter();
 
+  if (!user) {
+    router.push("/");
+    return null;
+  }
   function handleGift() {
+    if (!pokemonID || !giftRecipient) {
+      return null;
+    }
     const removePokemon = async () => {
       const { error } = await supabase
         .from("collections")
@@ -40,15 +48,17 @@ export default function Gift({ user }: { user: any }) {
     addPokemon();
     setSelectedPokemon("");
     setGiftRecipient("");
-    // router.replace(router.asPath);
+    router.replace(router.asPath);
   }
 
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
+        <h1>Gift</h1>
         <div className="container container flex flex-row space-x-8">
           <div className="space-y-6">
             <UserPokemonsDropdown
+              key={user.pokemonCollection}
               user={user}
               onChange={(selectedPokemon, pokemonID) => {
                 setSelectedPokemon(selectedPokemon);
@@ -57,13 +67,12 @@ export default function Gift({ user }: { user: any }) {
             />
           </div>
           <GiftRecipientDropdown
+            key={user.otherUserNames}
             user={user}
             onChange={(selectedUser: SetStateAction<string>) => {
-              // console.log("selectedUser", selectedUser);
               setGiftRecipient(selectedUser);
             }}
           />
-
           <Button
             className="mt-5"
             onClick={() => {

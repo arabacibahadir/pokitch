@@ -37,7 +37,7 @@ export default function UserPokemonsDropdown({
         <img
           src={`https://projectpokemon.org/images/normal-sprite/${pokemon.poke}.gif`}
           alt={pokemon.poke}
-          className="max-h-11 object-contain object-center"
+          className="max-h-12 w-12 object-contain object-center"
         />
         <div className="cursor-pointer pl-3">{pokemon.poke}</div>
       </div>
@@ -69,7 +69,9 @@ export default function UserPokemonsDropdown({
     <>
       {user.pokemonCollection ? (
         <div>
-          <p>Your collection: {count}</p>
+          <p>
+            {user.channel} Collection: {count}
+          </p>
           <div className="relative">
             <Dropdown label={label} menuItems={itemList} />
           </div>

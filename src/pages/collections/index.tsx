@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-
 import Layout from "@/components/Layout";
 import SearchBar from "@/components/SearchBar";
+import Button from "@/ui/Button";
 import Heading from "@/ui/Heading";
 import { Table, Td, Th, Thead, Tr } from "@/ui/Table";
 import { supabase } from "@/utils/supabase";
 import type { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { FiX } from "react-icons/fi";
 
 type Props = {
   user: string | null;
@@ -19,7 +21,7 @@ export default function Inventory({ user, channel, collections }: Props) {
   const pokemonsPerPage = 50;
   const totalPokemons = collections.length;
   const totalPages = Math.ceil(totalPokemons / pokemonsPerPage);
-
+  const router = useRouter();
   const getPokemonsForCurrentPage = () => {
     const lastIndex = currentPage * pokemonsPerPage;
     const firstIndex = lastIndex - pokemonsPerPage;
@@ -41,10 +43,23 @@ export default function Inventory({ user, channel, collections }: Props) {
                 <caption className="space-y-1 bg-neutral-900/25 p-5 text-left">
                   {user || channel ? (
                     <>
-                      <Heading variant="h3">
-                        {user ? user + "'s" : channel + " Twitch Channel"}{" "}
-                        Inventory
-                      </Heading>
+                      <div className="flex justify-between">
+                        <Heading variant="h3">
+                          {user
+                            ? user + "'s Inventory "
+                            : channel + " Twitch Channel"}
+                          <Button
+                            variant="transparent"
+                            className="left-0 mt-2 ml-2"
+                            onClick={() => {
+                              router.push("/collections");
+                            }}
+                          >
+                            <FiX className="h-4 w-4" />
+                          </Button>
+                        </Heading>
+                        <Heading variant="h4">Total: {totalPokemons}</Heading>
+                      </div>
                       <div className="text-sm font-normal text-gray-300">
                         <p>
                           On this page, you can see pokes that you have caught.
@@ -125,34 +140,37 @@ export default function Inventory({ user, channel, collections }: Props) {
                 <div>
                   <span className="mr-2">Page:</span>
                   {Array.from({ length: totalPages }, (_, i) => (
-                    <button
+                    <Button
                       key={i}
-                      className={`mr-2 rounded-full px-2 py-1 hover:bg-orange-700 ${
-                        currentPage === i + 1
-                          ? "bg-yellow-600 text-white"
-                          : "bg-white text-gray-700"
-                      }`}
+                      variant="primary"
+                      className={`rounded-full px-2 py-1 hover:bg-orange-700`}
                       onClick={() => setCurrentPage(i + 1)}
                     >
                       {i + 1}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 <div>
-                  <button
-                    className="mr-2 rounded-full bg-yellow-600 px-3 py-2 hover:bg-orange-700"
+                  <Button
+                    variant="primary"
+                    className={`mr-2 rounded-full bg-yellow-600 px-3 py-2 ${
+                      currentPage === 1 ? "" : "hover:bg-orange-600"
+                    }`}
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(currentPage - 1)}
                   >
                     Prev
-                  </button>
-                  <button
-                    className="rounded-full bg-yellow-600 px-3 py-2 hover:bg-orange-700"
+                  </Button>
+                  <Button
+                    variant="primary"
+                    className={`mr-2 rounded-full bg-yellow-600 px-3 py-2 ${
+                      currentPage === totalPages ? "" : "hover:bg-orange-600"
+                    }`}
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage(currentPage + 1)}
                   >
                     Next
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -23,6 +23,7 @@ export interface ButtonProps
     VariantProps<typeof buttonStyles> {
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -31,10 +32,15 @@ export default function Button({
   endIcon,
   className,
   children,
+  disabled,
   ...props
 }: ButtonProps) {
   return (
-    <button className={buttonStyles({ variant, className })} {...props}>
+    <button
+      className={buttonStyles({ variant, className })}
+      disabled={disabled}
+      {...props}
+    >
       {startIcon && <span className="mr-1.5">{startIcon}</span>}
       {children}
       {endIcon && <span className="ml-1.5">{endIcon}</span>}

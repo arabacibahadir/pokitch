@@ -51,7 +51,7 @@ export default function SearchBar({}: Props) {
 
         {userSearch ? (
           <form
-            className="w-full w-[20vw] tablet:max-w-xs"
+            className="w-full tablet:max-w-xs"
             onSubmit={handleUserSearchSubmit}
           >
             <Input

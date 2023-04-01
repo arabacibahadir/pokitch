@@ -9,6 +9,7 @@ const buttonStyles = cva(
         twitch: "bg-purple-700 hover:bg-purple-800 text-purple-50",
         success: "bg-green-600 hover:bg-green-700 text-green-50",
         transparent: "bg-neutral-900/25 hover:bg-neutral-900/50",
+        danger: "bg-red-600 hover:bg-red-700 text-red-50",
       },
     },
     defaultVariants: {

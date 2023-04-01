@@ -54,8 +54,7 @@ export default function Gift({ user }: { user: any }) {
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
-        <h1>Gift</h1>
-        <div className="container container flex flex-row space-x-8">
+        <div className="container flex flex-row items-center  justify-center space-x-8">
           <div className="space-y-6">
             <UserPokemonsDropdown
               key={user.pokemonCollection}
@@ -74,12 +73,12 @@ export default function Gift({ user }: { user: any }) {
             }}
           />
           <Button
-            className="mt-5"
+            className="mt-8"
             onClick={() => {
               handleGift();
             }}
           >
-            <div className="inline-flex items-center space-x-2">
+            <div className="inline-flex items-center">
               <span>Gift pokemon</span>
             </div>
           </Button>

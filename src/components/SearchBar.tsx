@@ -44,8 +44,9 @@ export default function SearchBar({}: Props) {
           className="mt-2 ml-2"
           onClick={() => setUserSearch(!userSearch)}
         >
-          {userSearch ? "User" : "Channel"} <FiRefreshCcw className="mx-2" />{" "}
-          {userSearch ? "Channel" : "User"}
+          <span className={userSearch ? "underline" : ""}>{"User"}</span>
+          <FiRefreshCcw className="mx-2" />
+          <span className={!userSearch ? "underline" : ""}>{"Channel"}</span>
         </Button>
 
         {userSearch ? (

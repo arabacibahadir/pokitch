@@ -7,6 +7,7 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { SetStateAction, useState } from "react";
+import { FiRefreshCcw } from "react-icons/fi";
 interface Trade {
   id: any;
   user: any;
@@ -33,7 +34,7 @@ export default function Gift({
   const [pokemonTradeName, setPokemonTradeName] = useState("");
   const router = useRouter();
   const [selectedTrades, setSelectedTrades] = useState([]);
-
+  const [showSentOffers, setShowSentOffers] = useState(true);
   if (!user) {
     router.push("/");
     return null;
@@ -168,8 +169,7 @@ export default function Gift({
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
-        <h1>Trade</h1>
-        <div className="container container flex flex-row space-x-8">
+        <div className="container flex flex-row justify-center space-x-8">
           <div className="space-y-6">
             <UserPokemonsDropdown
               key={user.pokemonCollection}
@@ -203,7 +203,7 @@ export default function Gift({
             }}
           />
           <Button
-            className="mt-5"
+            className="mt-5 "
             onClick={() => {
               handleTrade();
             }}
@@ -213,111 +213,142 @@ export default function Gift({
             </div>
           </Button>
         </div>
-        <h2 className="mb-2 text-xl font-bold">Sent Trade offers</h2>
-        <table className="w-full">
-          <thead>
-            <tr className="">
-              <th className="p-3 text-left">My Offered Pokemon</th>
-              <th className="p-3 text-left">User I'm Offering to</th>
-              <th className="p-3 text-left">Their Pokemon</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {trades.map((trade: Trade) => (
-              <tr key={trade.id}>
-                <td className="p-3">
-                  <img
-                    src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
-                    alt={trade.poke}
-                    className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                  />
-                  {trade.poke}{" "}
-                </td>
-                <td className="p-3">{trade.recipient}</td>
-                <td className="p-3">
-                  <img
-                    src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
-                    alt={trade.recipientpoke}
-                    className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                  />
-                  {trade.recipientpoke}{" "}
-                </td>
-                <td className="p-3">
-                  <Button
-                    className=""
-                    onClick={() => {
-                      handleCancel(trade.id);
-                      router.replace(router.asPath);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <h2 className="mb-2 text-xl font-bold">Received Trade offers</h2>
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th className="p-3 text-left">Offerer</th>
-              <th className="p-3 text-left">Their Offered Pokemon</th>
-              <th className="p-3 text-left">Requested Pokemon</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {trades2.map((trade: Trade) => (
-              <tr key={trade.id}>
-                <td className="p-3">{trade.user}</td>
-                <td className="p-3">
-                  <img
-                    src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
-                    alt={trade.poke}
-                    className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                  />
-                  {trade.poke}{" "}
-                </td>
-                <td className="p-3">
-                  <img
-                    src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
-                    alt={trade.recipientpoke}
-                    className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                  />
-                  {trade.recipientpoke}{" "}
-                </td>
-                <td className="p-3">
-                  <Button
-                    className=""
-                    onClick={() => {
-                      handleAccept(
-                        trade.id,
-                        trade.pokeid,
-                        trade.recipientpokeid,
-                        trade.user,
-                        trade.recipient,
-                        trade.poke,
-                        trade.recipientpoke
-                      );
-                      router.replace(router.asPath);
-                    }}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    className=""
-                    onClick={() => {
-                      handleDeny(trade.id);
-                      router.replace(router.asPath);
-                    }}
-                  >
-                    Deny
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="container flex flex-col items-center justify-center">
+          <Button
+            variant="transparent"
+            className="mt-5"
+            onClick={() => setShowSentOffers(!showSentOffers)}
+          >
+            <span className={showSentOffers ? "underline" : ""}>
+              {"Sent Offers"}
+            </span>
+            <FiRefreshCcw className="mx-2" />{" "}
+            <span className={showSentOffers ? "" : "underline"}>
+              {"Received Offers"}
+            </span>{" "}
+          </Button>
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+          {showSentOffers ? (
+            <div>
+              <h2 className="my-2 flex flex-col items-center justify-center text-xl font-bold underline">
+                Sent Offers
+              </h2>
+              <table className="w-full text-center">
+                <thead>
+                  <tr>
+                    <th className="p-3 underline">My Offered Pokemon</th>
+                    <th className="p-3 underline">Trade with</th>
+                    <th className="p-3 underline">Desired Pokemon</th>
+                    <th className="p-3 underline"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trades.map((trade: Trade) => (
+                    <tr key={trade.id}>
+                      <td className="p-3">
+                        <img
+                          src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
+                          alt={trade.poke}
+                          className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
+                        />
+                        {trade.poke}
+                      </td>
+                      <td className="p-3">{trade.recipient}</td>
+                      <td className="p-3">
+                        <img
+                          src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
+                          alt={trade.recipientpoke}
+                          className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
+                        />
+                        {trade.recipientpoke}
+                      </td>
+                      <td className="p-3">
+                        <Button
+                          variant="danger"
+                          onClick={() => {
+                            handleCancel(trade.id);
+                            router.replace(router.asPath);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div>
+              <h2 className="my-2 flex flex-col items-center justify-center text-xl font-bold underline">
+                Received Offers
+              </h2>
+              <table className="w-full text-center">
+                <thead>
+                  <tr>
+                    <th className="p-3 underline">Offerer</th>
+                    <th className="p-3 underline">Their Offered Pokemon</th>
+                    <th className="p-3 underline">Requested Pokemon from me</th>
+                    <th className="p-3 underline"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trades2.map((trade: Trade) => (
+                    <tr key={trade.id}>
+                      <td className="p-3">{trade.user}</td>
+                      <td className="p-3">
+                        <img
+                          src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
+                          alt={trade.poke}
+                          className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
+                        />
+                        {trade.poke}
+                      </td>
+                      <td className="p-3">
+                        <img
+                          src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
+                          alt={trade.recipientpoke}
+                          className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
+                        />
+                        {trade.recipientpoke}
+                      </td>
+                      <td className="p-3">
+                        <Button
+                          variant="success"
+                          onClick={() => {
+                            handleAccept(
+                              trade.id,
+                              trade.pokeid,
+                              trade.recipientpokeid,
+                              trade.user,
+                              trade.recipient,
+                              trade.poke,
+                              trade.recipientpoke
+                            );
+                            router.replace(router.asPath);
+                          }}
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => {
+                            handleDeny(trade.id);
+                            router.replace(router.asPath);
+                          }}
+                        >
+                          Deny
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </section>
     </Layout>
   );

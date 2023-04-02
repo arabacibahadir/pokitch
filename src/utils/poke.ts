@@ -13,7 +13,6 @@ class Poke {
 
   sendMessage = async (client: any, channel: string, message: string) => {
     await client.say(channel, message.toString());
-    //console.log(message);
   };
 
   setPlayerCooldown = (user: string) => {

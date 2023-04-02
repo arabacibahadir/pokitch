@@ -238,9 +238,9 @@ export default function Gift({
               <table className="w-full text-center">
                 <thead>
                   <tr>
-                    <th className="p-3 underline">My Pokemon</th>
+                    <th className="p-3 underline">My Poke</th>
                     <th className="p-3 underline">Trade with</th>
-                    <th className="p-3 underline">Desired Pokemon</th>
+                    <th className="p-3 underline">Desired Poke</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -288,8 +288,8 @@ export default function Gift({
                 <thead>
                   <tr>
                     <th className="p-3 underline">Offerer</th>
-                    <th className="p-3 underline">Offered Pokemon</th>
-                    <th className="p-3 underline">My Pokemon</th>
+                    <th className="p-3 underline">Offered Poke</th>
+                    <th className="p-3 underline">My Poke</th>
                   </tr>
                 </thead>
                 <tbody>

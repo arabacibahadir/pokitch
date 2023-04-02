@@ -63,7 +63,7 @@ export default function UserPokemonsDropdown({
       },
     }));
 
-  const label = selectedPokemonName ? selectedPokemonName : "Select Pokemon";
+  const label = selectedPokemonName ? selectedPokemonName : "Select Poke";
 
   return (
     <>

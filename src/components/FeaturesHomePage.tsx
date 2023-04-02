@@ -53,8 +53,9 @@ export default function FeaturesHomePage() {
             icon={<BsStarFill />}
             colorClass="bg-yellow-900/50 text-yellow-300"
             title="Commands"
-            description="!poke welcomepack(If you don't have any poke, it will give you random pokitch), !poke attack(You can hit once every 30 seconds). More commands will be added."
+            description="!poke welcomepack - Random poke for beginner players, !poke attack - You can hit once every 30 seconds in chat, !poke inventory - You can see your poke collection"
           />
+
           <ListItem
             icon={<BsShieldShaded />}
             colorClass="bg-green-900/50 text-green-300"
@@ -64,20 +65,20 @@ export default function FeaturesHomePage() {
           <ListItem
             icon={<BsArchiveFill />}
             colorClass="bg-teal-900/50 text-teal-300"
-            title="Inventory"
-            description="It is possible to view your pokitch inventory."
+            title="Collection"
+            description="It is possible to view your poke collection."
           />
           <ListItem
             icon={<BsBoxArrowRight />}
             colorClass="bg-blue-900/50 text-blue-300"
-            title="Trade (coming soon)"
-            description="Trade your pokitch with someone else."
+            title="Trade"
+            description="Trade your poke with someone else."
           />
           <ListItem
             icon={<BsGift />}
             colorClass="bg-red-900/50 text-red-300"
-            title="Gift (coming soon)"
-            description="Gift your pokitch whoever you want."
+            title="Gift"
+            description="Gift your poke whoever you want."
           />
         </div>
       </div>

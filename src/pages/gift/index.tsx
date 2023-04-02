@@ -79,7 +79,7 @@ export default function Gift({ user }: { user: any }) {
             }}
           >
             <div className="inline-flex items-center">
-              <span>Gift pokemon</span>
+              <span>Gift poke</span>
             </div>
           </Button>
         </div>

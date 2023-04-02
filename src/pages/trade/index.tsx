@@ -243,21 +243,21 @@ export default function Gift({
         <div className="flex flex-col items-center justify-center">
           {showSentOffers ? (
             <div>
-              <h2 className="my-2 flex flex-col items-center justify-center text-xl font-bold underline">
+              <h2 className="my-5 flex flex-col items-center justify-center text-3xl font-bold underline">
                 Sent Offers
               </h2>
               <table className="w-full text-center">
-                <thead>
+                <thead className="underline">
                   <tr>
-                    <th className="p-3 underline">My Poke</th>
-                    <th className="p-3 underline">Trade with</th>
-                    <th className="p-3 underline">Desired Poke</th>
+                    <th className="py-3 text-xl">My Poke</th>
+                    <th className="py-3 text-xl">Trade with</th>
+                    <th className="py-3 text-xl">Requested Poke</th>
                   </tr>
                 </thead>
                 <tbody>
                   {trades.map((trade: Trade) => (
                     <tr key={trade.id}>
-                      <td className="p-3">
+                      <td className="px-8">
                         <img
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
                           alt={trade.poke}
@@ -265,8 +265,8 @@ export default function Gift({
                         />
                         {trade.poke}
                       </td>
-                      <td className="p-3">{trade.recipient}</td>
-                      <td className="p-3">
+                      <td className="px-10">{trade.recipient}</td>
+                      <td className="px-10">
                         <img
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
                           alt={trade.recipientpoke}
@@ -274,7 +274,7 @@ export default function Gift({
                         />
                         {trade.recipientpoke}
                       </td>
-                      <td className="p-3">
+                      <td className="px-10">
                         <Button
                           variant="danger"
                           onClick={() => {
@@ -292,22 +292,22 @@ export default function Gift({
             </div>
           ) : (
             <div>
-              <h2 className="my-2 flex flex-col items-center justify-center text-xl font-bold underline">
+              <h2 className="my-5 flex flex-col items-center justify-center text-3xl font-bold underline">
                 Received Offers
               </h2>
               <table className="w-full text-center">
-                <thead>
+                <thead className="underline ">
                   <tr>
-                    <th className="p-3 underline">Offerer</th>
-                    <th className="p-3 underline">Offered Poke</th>
-                    <th className="p-3 underline">My Poke</th>
+                    <th className="py-3 text-xl">Offerer</th>
+                    <th className="py-3 text-xl">Offered Poke</th>
+                    <th className="py-3 text-xl">My Poke</th>
                   </tr>
                 </thead>
                 <tbody>
                   {trades2.map((trade: Trade) => (
                     <tr key={trade.id}>
-                      <td className="p-3">{trade.user}</td>
-                      <td className="p-3">
+                      <td className="px-10">{trade.user}</td>
+                      <td className="px-10">
                         <img
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
                           alt={trade.poke}
@@ -315,7 +315,7 @@ export default function Gift({
                         />
                         {trade.poke}
                       </td>
-                      <td className="p-3">
+                      <td className="px-10">
                         <img
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
                           alt={trade.recipientpoke}
@@ -323,7 +323,7 @@ export default function Gift({
                         />
                         {trade.recipientpoke}
                       </td>
-                      <td className="p-3">
+                      <td className="px-10">
                         <Button
                           variant="success"
                           onClick={() => {

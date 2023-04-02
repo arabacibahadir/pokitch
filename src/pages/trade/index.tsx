@@ -230,11 +230,11 @@ export default function Gift({
             className="mt-5"
             onClick={() => setShowSentOffers(!showSentOffers)}
           >
-            <span className={showSentOffers ? "underline" : ""}>
+            <span className={showSentOffers ? "font-bold underline" : ""}>
               Sent Offers
             </span>
             <FiRefreshCcw className="mx-2" />{" "}
-            <span className={showSentOffers ? "" : "underline"}>
+            <span className={showSentOffers ? "" : "font-bold underline"}>
               Received Offers
             </span>
           </Button>

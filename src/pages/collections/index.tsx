@@ -14,9 +14,10 @@ type Props = {
   user: string | null;
   channel: string | null;
   collections: any;
+  poke: string | null;
 };
 
-export default function Inventory({ user, channel, collections }: Props) {
+export default function Inventory({ user, channel, collections, poke }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const pokemonsPerPage = 50;
   const totalPokemons = collections.length;
@@ -41,15 +42,12 @@ export default function Inventory({ user, channel, collections }: Props) {
             <div className="overflow-auto rounded-lg shadow">
               <Table>
                 <caption className="space-y-1 bg-neutral-900/25 p-5 text-left">
-                  {user || channel ? (
+                  {user || channel || poke ? (
                     <>
                       <div className="flex justify-between">
                         <Heading variant="h3">
-                          {user
-                            ? user + "'s Inventory "
-                            : channel + " Twitch Channel"}
                           <Button
-                            variant="transparent"
+                            variant="primary"
                             className="left-0 mt-2 ml-2"
                             onClick={() => {
                               router.push("/collections");
@@ -57,6 +55,11 @@ export default function Inventory({ user, channel, collections }: Props) {
                           >
                             <FiX className="h-4 w-4" />
                           </Button>
+                          {user
+                            ? user + "'s Collection"
+                            : channel === "Pokemon"
+                            ? "Pokemon Collection"
+                            : poke}
                         </Heading>
                         <Heading variant="h4">Total: {totalPokemons}</Heading>
                       </div>
@@ -107,7 +110,15 @@ export default function Inventory({ user, channel, collections }: Props) {
                             />
                           </figure>
                         </Td>
-                        <Td>{collection.poke}</Td>
+                        <Td>
+                          <a
+                            href={`/collections?poke=${encodeURIComponent(
+                              collection.poke
+                            )}`}
+                          >
+                            {collection.poke}
+                          </a>
+                        </Td>
                         <Td>
                           <a
                             href={`/collections?user=${encodeURIComponent(
@@ -184,9 +195,10 @@ export default function Inventory({ user, channel, collections }: Props) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = ctx.query.user as string;
   const channel = ctx.query.channel as string;
+  const poke = ctx.query.poke as string;
 
   //
-  if (!user && !channel) {
+  if (!user && !channel && !poke) {
     const { data } = await supabase
       .from("collections")
       .select()
@@ -194,6 +206,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     return {
       props: {
+        poke: null,
         user: null,
         channel: null,
         collections: data,
@@ -204,11 +217,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { data } = await supabase
     .from("collections")
     .select()
-    .or(`user.eq.${user},channel.eq.${channel}`)
+    .or(`user.eq.${user},channel.eq.${channel},poke.eq.${poke}`)
     .order("created_at", { ascending: false });
 
   return {
     props: {
+      poke: poke ? poke : null,
       user: user ? user : null,
       channel: channel ? channel : null,
       collections: data,

@@ -22,6 +22,17 @@ export default function Gift({ user }: { user: any }) {
     if (!pokemonID || !giftRecipient) {
       return null;
     }
+
+    const removeTrade = async () => {
+      const { error } = await supabase
+        .from("trades")
+        .delete()
+        .match({ poke: selectedPokemon, user: user.channel });
+
+      if (error) {
+        console.log("remove error", error);
+      }
+    };
     const removePokemon = async () => {
       const { error } = await supabase
         .from("collections")
@@ -45,6 +56,7 @@ export default function Gift({ user }: { user: any }) {
       }
     };
     removePokemon();
+    removeTrade();
     addPokemon();
     setSelectedPokemon("");
     setGiftRecipient("");

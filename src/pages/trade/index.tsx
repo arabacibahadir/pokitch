@@ -146,6 +146,17 @@ export default function Gift({
     }
 
     const tradeRequest = async () => {
+      const { data: existingTrade } = await supabase
+        .from("trades")
+        .select("id")
+        .eq("pokeid", pokemonID)
+        .eq("user", user.channel)
+        .single();
+
+      if (existingTrade) {
+        console.log("You have already requested a trade for this Pokemon.");
+        return;
+      }
       const { error } = await supabase.from("trades").insert([
         {
           user: user.channel,

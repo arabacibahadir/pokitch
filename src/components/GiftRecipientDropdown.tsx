@@ -34,7 +34,7 @@ export default function GiftRecipientDropdown({
     <>
       {user.otherUserNames && (
         <div>
-          <p>Recipient</p>
+          <p>Trade with</p>
           <Dropdown label={label} menuItems={menuItems} />
         </div>
       )}

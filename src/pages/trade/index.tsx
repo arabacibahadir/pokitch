@@ -220,12 +220,12 @@ export default function Gift({
             onClick={() => setShowSentOffers(!showSentOffers)}
           >
             <span className={showSentOffers ? "underline" : ""}>
-              {"Sent Offers"}
+              Sent Offers
             </span>
             <FiRefreshCcw className="mx-2" />{" "}
             <span className={showSentOffers ? "" : "underline"}>
-              {"Received Offers"}
-            </span>{" "}
+              Received Offers
+            </span>
           </Button>
         </div>
 
@@ -238,10 +238,9 @@ export default function Gift({
               <table className="w-full text-center">
                 <thead>
                   <tr>
-                    <th className="p-3 underline">My Offered Pokemon</th>
+                    <th className="p-3 underline">My Pokemon</th>
                     <th className="p-3 underline">Trade with</th>
                     <th className="p-3 underline">Desired Pokemon</th>
-                    <th className="p-3 underline"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -289,9 +288,8 @@ export default function Gift({
                 <thead>
                   <tr>
                     <th className="p-3 underline">Offerer</th>
-                    <th className="p-3 underline">Their Offered Pokemon</th>
-                    <th className="p-3 underline">Requested Pokemon from me</th>
-                    <th className="p-3 underline"></th>
+                    <th className="p-3 underline">Offered Pokemon</th>
+                    <th className="p-3 underline">My Pokemon</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -35,6 +35,7 @@ export default function Gift({
   const router = useRouter();
   const [selectedTrades, setSelectedTrades] = useState([]);
   const [showSentOffers, setShowSentOffers] = useState(true);
+  const [isRotated, setIsRotated] = useState(false);
   if (!user) {
     router.push("/");
     return null;
@@ -228,13 +229,32 @@ export default function Gift({
           <Button
             variant="transparent"
             className="mt-5"
-            onClick={() => setShowSentOffers(!showSentOffers)}
+            onClick={() => {
+              setShowSentOffers(!showSentOffers);
+              setIsRotated(!isRotated);
+            }}
           >
-            <span className={showSentOffers ? "font-bold underline" : ""}>
+            <span
+              className={
+                showSentOffers
+                  ? "font-bold underline decoration-amber-400"
+                  : "opacity-50"
+              }
+            >
               Sent Offers
             </span>
-            <FiRefreshCcw className="mx-2" />{" "}
-            <span className={showSentOffers ? "" : "font-bold underline"}>
+            <FiRefreshCcw
+              className={`mx-2 transform ${
+                isRotated ? "rotate-180" : ""
+              } transition-transform duration-300 ease-in-out`}
+            />{" "}
+            <span
+              className={
+                showSentOffers
+                  ? "opacity-50"
+                  : "font-bold underline decoration-amber-200"
+              }
+            >
               Received Offers
             </span>
           </Button>
@@ -243,11 +263,8 @@ export default function Gift({
         <div className="flex flex-col items-center justify-center">
           {showSentOffers ? (
             <div>
-              <h2 className="my-5 flex flex-col items-center justify-center text-3xl font-bold underline">
-                Sent Offers
-              </h2>
               <table className="w-full text-center">
-                <thead className="underline">
+                <thead className="underline decoration-amber-300">
                   <tr>
                     <th className="py-3 text-xl">My Poke</th>
                     <th className="py-3 text-xl">Trade with</th>
@@ -292,11 +309,8 @@ export default function Gift({
             </div>
           ) : (
             <div>
-              <h2 className="my-5 flex flex-col items-center justify-center text-3xl font-bold underline">
-                Received Offers
-              </h2>
               <table className="w-full text-center">
-                <thead className="underline ">
+                <thead className="underline decoration-amber-300">
                   <tr>
                     <th className="py-3 text-xl">Offerer</th>
                     <th className="py-3 text-xl">Offered Poke</th>

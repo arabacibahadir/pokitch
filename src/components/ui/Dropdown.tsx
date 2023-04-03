@@ -10,7 +10,7 @@ const dropdownMenuLinkStyles = cva(
 );
 
 const toggleButtonStyles = cva(
-  "inline-flex justify-center w-full rounded-md border border-yellow-300 shadow-sm px-4 py-2 bg-amber-900 text-sm font-medium hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-100 focus:ring-yellow-500",
+  "inline-flex justify-center w-full rounded-md border border-yellow-300 shadow-sm px-6 py-2 bg-amber-900 text-sm font-medium hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-100 focus:ring-yellow-500",
   {
     variants: {
       size: {

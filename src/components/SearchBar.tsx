@@ -10,7 +10,7 @@ export default function SearchBar({}: Props) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState<boolean | null>(true);
-
+  const [isRotated, setIsRotated] = useState(false);
   const handleUserSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!searchValue) return;
@@ -42,13 +42,32 @@ export default function SearchBar({}: Props) {
         <Button
           variant="transparent"
           className="mt-2 ml-2"
-          onClick={() => setUserSearch(!userSearch)}
+          onClick={() => {
+            setUserSearch(!userSearch);
+            setIsRotated(!isRotated);
+          }}
         >
-          <span className={userSearch ? "font-bold underline" : ""}>
+          <span
+            className={
+              userSearch
+                ? "font-bold underline decoration-amber-400"
+                : "opacity-50"
+            }
+          >
             {"User"}
           </span>
-          <FiRefreshCcw className="mx-2" />
-          <span className={!userSearch ? "font-bold underline" : ""}>
+          <FiRefreshCcw
+            className={`mx-2 transform ${
+              isRotated ? "rotate-180" : ""
+            } transition-transform duration-300 ease-in-out`}
+          />{" "}
+          <span
+            className={
+              !userSearch
+                ? "font-bold underline decoration-amber-400"
+                : "opacity-50"
+            }
+          >
             {"Channel"}
           </span>
         </Button>

@@ -72,11 +72,15 @@ export default function ComponentOverlayPage({ channel }: Props) {
 
   return (
     <>
-      <div className="inline-flex w-full max-w-xs flex-row items-center justify-start gap-x-2 rounded-md border-2 border-yellow-400/50 bg-neutral-900/95 p-3">
+      <div className="inline-flex w-full max-w-[16rem] flex-row items-center justify-start gap-x-2 rounded-md border-2 border-yellow-400/50 bg-neutral-900/95 p-3">
         <figure className="inline-flex h-12 w-12 shrink-0">
           <img
             src={`https://projectpokemon.org/images/normal-sprite/${pokeState.name}.gif`}
             alt=""
+            style={{
+              objectFit: "contain",
+              objectPosition: "center",
+            }}
           />
         </figure>
         <div className="ml-2 w-full space-y-2 text-white">

@@ -9,6 +9,7 @@ const buttonStyles = cva(
         twitch: "bg-purple-700 hover:bg-purple-800 text-purple-50",
         success: "bg-green-600 hover:bg-green-700 text-green-50",
         transparent: "bg-neutral-900/25 hover:bg-neutral-900/50",
+        danger: "bg-red-600 hover:bg-red-700 text-red-50",
       },
     },
     defaultVariants: {
@@ -22,6 +23,7 @@ export interface ButtonProps
     VariantProps<typeof buttonStyles> {
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -30,10 +32,15 @@ export default function Button({
   endIcon,
   className,
   children,
+  disabled,
   ...props
 }: ButtonProps) {
   return (
-    <button className={buttonStyles({ variant, className })} {...props}>
+    <button
+      className={buttonStyles({ variant, className })}
+      disabled={disabled}
+      {...props}
+    >
       {startIcon && <span className="mr-1.5">{startIcon}</span>}
       {children}
       {endIcon && <span className="ml-1.5">{endIcon}</span>}

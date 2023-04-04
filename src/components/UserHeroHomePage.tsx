@@ -3,7 +3,7 @@ import Heading from "@/ui/Heading";
 import Link from "@/ui/Link";
 import { useState } from "react";
 import { BiShow } from "react-icons/bi";
-import { FaClipboardCheck } from "react-icons/fa";
+import { FaClipboardCheck, FaTwitch } from "react-icons/fa";
 
 export const getBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_APP_URL) {
@@ -17,14 +17,22 @@ const copyURL = (id: string) => {
   return alert("The URL has been copied!");
 };
 
+const signout = async () => {
+  document.cookie.split(";").forEach(function (c) {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/");
+  });
+  window.location.reload();
+};
+
 export default function GuestHeroHomePage({ data }: { data: any }) {
   const [showURL, setShowURL] = useState(false);
   const url = getBaseUrl() + `/overlays/${data.id}`;
-
   return (
     <div className="space-y-3 rounded-md bg-green-400/25 p-6 shadow">
       <div className="space-y-3">
-        <Heading variant="h3">Welcome {data.channel}!</Heading>
+        <Heading variant="h3">Welcome {data.channel}! </Heading>
         <p>
           Your Pokitch Overlay was successfully generated. Please{" "}
           <Link href="#how-to-use">click here</Link> to follow the instructions.
@@ -44,6 +52,9 @@ export default function GuestHeroHomePage({ data }: { data: any }) {
           onClick={() => setShowURL(!showURL)}
         >
           Show URL
+        </Button>
+        <Button variant="twitch" onClick={signout}>
+          <FaTwitch className="mr-2" /> Log Out
         </Button>
       </div>
       {showURL ? (

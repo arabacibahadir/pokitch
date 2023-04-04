@@ -1,15 +1,23 @@
 import "@/styles/globals.css";
 import { Open_Sans } from "@next/font/google";
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { Session, SessionContextProvider } from "@supabase/auth-helpers-react";
 import { cx } from "class-variance-authority";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useState } from "react";
 
 const customFont = Open_Sans({
   subsets: ["latin"],
   variable: "--font-custom",
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+}: AppProps<{ initialSession: Session }>) {
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+
   return (
     <>
       <Head>
@@ -23,9 +31,14 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
       </Head>
-      <div className={cx("font-sans", customFont.variable)}>
-        <Component {...pageProps} />
-      </div>
+      <SessionContextProvider
+        supabaseClient={supabaseClient}
+        initialSession={pageProps.initialSession}
+      >
+        <div className={cx("font-sans", customFont.variable)}>
+          <Component {...pageProps} />
+        </div>
+      </SessionContextProvider>
     </>
   );
 }

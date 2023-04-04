@@ -1,6 +1,5 @@
 import Button from "@/ui/Button";
 import { supabase } from "@/utils/supabase";
-import { useEffect } from "react";
 import { FaTwitch } from "react-icons/fa";
 
 export default function GuestHeroHomePage() {
@@ -10,16 +9,6 @@ export default function GuestHeroHomePage() {
     });
     if (error) console.log(error);
   }
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (document.cookie.includes("supabase-auth-token")) {
-        clearInterval(interval);
-        window.location.reload();
-      }
-    }, 1200);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <Button variant="twitch" onClick={signInWithTwitch}>

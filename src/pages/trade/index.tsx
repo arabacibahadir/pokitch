@@ -36,10 +36,7 @@ export default function Gift({
   const [selectedTrades, setSelectedTrades] = useState([]);
   const [showSentOffers, setShowSentOffers] = useState(true);
   const [isRotated, setIsRotated] = useState(false);
-  if (!user) {
-    router.push("/");
-    return null;
-  }
+
   function handleCancel(tradeId: any) {
     const cancelTrade = async () => {
       const { error } = await supabase
@@ -404,6 +401,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         otherUserNames: otherUserNames,
       }
     : null;
+  if (!user) {
+    return {
+      notFound: true,
+    };
+  }
 
   const { data: tradesData } = await supabase
     .from("trades")

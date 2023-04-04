@@ -17,7 +17,7 @@ export default function GuestHeroHomePage() {
         clearInterval(interval);
         window.location.reload();
       }
-    }, 500);
+    }, 1200);
     return () => clearInterval(interval);
   }, []);
 

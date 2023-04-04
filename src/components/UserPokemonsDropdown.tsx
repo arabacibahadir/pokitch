@@ -1,10 +1,11 @@
 import Dropdown from "@/ui/Dropdown";
-import { useState } from "react";
+import { PokeGifName } from "@/ui/PokeGifName";
+import { useMemo, useState } from "react";
 
-interface IUserPokemonsDropdownProps {
+type IUserPokemonsDropdownProps = {
   user: any;
   onChange: (selectedUser: string, id: any) => void;
-}
+};
 
 export default function UserPokemonsDropdown({
   user,
@@ -15,53 +16,32 @@ export default function UserPokemonsDropdown({
   const [selectedPokemon, setSelectedPokemon] = useState("");
   const [pokemonID, setPokemonID] = useState("");
 
-  interface IPokemonItemProps {
-    pokemon: any;
-    selectedPokemonName: string;
-    onClick: () => void;
-  }
-
-  const PokemonItem: React.FC<IPokemonItemProps> = ({
-    pokemon,
+  const itemList = useMemo(() => {
+    return user.pokemonCollection
+      .sort((a: any, b: any) => a.poke.localeCompare(b.poke))
+      .map((pokemon: any) => ({
+        label: (
+          <PokeGifName
+            pokemon={pokemon}
+            selectedPokemonName={selectedPokemonName}
+            onClick={() => {
+              setSelectedPokemon(pokemon);
+              setSelectedPokemonName(pokemon.poke);
+            }}
+          />
+        ),
+        onClick: () => {
+          setPokemonID(pokemon.id);
+          onChange(pokemon.poke, pokemon.id);
+        },
+      }));
+  }, [
+    user.pokemonCollection,
     selectedPokemonName,
-    onClick,
-  }) => {
-    return (
-      <div
-        className="flex items-center"
-        onClick={() => {
-          setSelectedPokemonName(pokemon.poke);
-          setSelectedPokemon(pokemon);
-        }}
-      >
-        <img
-          src={`https://projectpokemon.org/images/normal-sprite/${pokemon.poke}.gif`}
-          alt={pokemon.poke}
-          className="max-h-12 w-12 object-contain object-center"
-        />
-        <div className="cursor-pointer pl-3">{pokemon.poke}</div>
-      </div>
-    );
-  };
-
-  const itemList = user.pokemonCollection
-    .sort((a: any, b: any) => a.poke.localeCompare(b.poke))
-    .map((pokemon: any) => ({
-      label: (
-        <PokemonItem
-          pokemon={pokemon}
-          selectedPokemonName={selectedPokemonName}
-          onClick={() => {
-            setSelectedPokemon(pokemon);
-          }}
-        />
-      ),
-      onClick: () => {
-        setSelectedPokemon(pokemon.poke);
-        setPokemonID(pokemon.id);
-        onChange(pokemon.poke, pokemon.id);
-      },
-    }));
+    setSelectedPokemon,
+    setPokemonID,
+    onChange,
+  ]);
 
   const label = selectedPokemonName ? selectedPokemonName : "Select Poke";
 
@@ -77,7 +57,7 @@ export default function UserPokemonsDropdown({
           </div>
         </div>
       ) : (
-        <p>No Pokemon found in collection.</p>
+        <p>Poke not found in collection.</p>
       )}
     </>
   );

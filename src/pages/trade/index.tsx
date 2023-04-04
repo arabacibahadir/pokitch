@@ -266,9 +266,9 @@ export default function Gift({
               <table className="w-full text-center">
                 <thead className="underline decoration-amber-300">
                   <tr>
-                    <th className="py-3 text-xl">My Poke</th>
-                    <th className="py-3 text-xl">Trade with</th>
-                    <th className="py-3 text-xl">Requested Poke</th>
+                    <th className="py-3 px-10 text-xl">My Poke</th>
+                    <th className="py-3 px-10 text-xl">Trade with</th>
+                    <th className="py-3 px-10 text-xl">Requested Poke</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -312,9 +312,9 @@ export default function Gift({
               <table className="w-full text-center">
                 <thead className="underline decoration-amber-300">
                   <tr>
-                    <th className="py-3 text-xl">Offerer</th>
-                    <th className="py-3 text-xl">Offered Poke</th>
-                    <th className="py-3 text-xl">My Poke</th>
+                    <th className="py-3 px-10 text-xl">Offerer</th>
+                    <th className="py-3 px-10 text-xl">Offered Poke</th>
+                    <th className="py-3 px-10 text-xl">My Poke</th>
                   </tr>
                 </thead>
                 <tbody>

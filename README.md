@@ -27,7 +27,7 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 **Step 3: Set up the sizes**
 
-> Width: 320, Height: 76. The dimensions should be set to 320x76.
+> Width: 256, Height: 76. The dimensions should be set to 256x76.
 
 **Step 4: Assign as moderator role**
 
@@ -59,8 +59,8 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 
 ## Work in progress
 
-- [x] Inventory showcase
-- [ ] Support Trade/Gift system
+- [x] Inventory/Collection showcase
+- [X] Support Trade/Gift system
 - [ ] Store for Twitch channel loyalty points
 - [ ] Brawl
 - [ ] World Boss

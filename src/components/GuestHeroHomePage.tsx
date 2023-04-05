@@ -7,7 +7,7 @@ export default function GuestHeroHomePage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "twitch",
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_APP_URL + "redirectlogin/",
+        redirectTo: process.env.NEXT_PUBLIC_APP_URL + "/redirectlogin/",
       },
     });
     if (error) console.log(error);

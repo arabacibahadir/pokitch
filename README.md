@@ -2,9 +2,9 @@
 
 Pokitch is an interactive Twitch chat game that streamers can add as an overlay to their live streams.
 
-Homepage: [pokitch.vercel.app](https://pokitch.vercel.app)
+Homepage: [pokitch.app](https://pokitch.app)
 
-Online overlay demo: [pokitch.vercel.app/overlays/:id](https://pokitch.vercel.app/overlays/a9f2a8c7-bdfc-4b41-945a-e27e2dad9372)
+Online overlay demo: [pokitch.app/overlays/:id](https://pokitch.app/overlays/fc439c64-7a77-4808-99e8-ae35b075a394)
 
 ## Features
 
@@ -19,7 +19,7 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 **Step 1: Copy the overlay url**
 
-> Go to [homepage](https://pokitch.vercel.app) and login. Copy the link we gave you after you signed in.
+> Go to [homepage](https://pokitch.app) and login. Copy the link we gave you after you signed in.
 
 **Step 2: Open your broadcasting tool**
 
@@ -65,4 +65,4 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 - [ ] Brawl
 - [ ] World Boss
 
-* And more commands!
+* And more!

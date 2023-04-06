@@ -54,7 +54,7 @@ export default async function twitchCallback(req, res) {
           if (profileError) {
             console.log(
               "Error inserting user profile to database:",
-              profileError
+              profileError,
             );
             return null;
           }
@@ -65,7 +65,7 @@ export default async function twitchCallback(req, res) {
             return null;
           }
         },
-      }
+      },
     );
 
     if (error) {

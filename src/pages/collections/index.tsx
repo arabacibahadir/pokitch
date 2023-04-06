@@ -113,7 +113,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                         <Td>
                           <a
                             href={`/collections?poke=${encodeURIComponent(
-                              collection.poke
+                              collection.poke,
                             )}`}
                           >
                             {collection.poke}
@@ -122,7 +122,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                         <Td>
                           <a
                             href={`/collections?user=${encodeURIComponent(
-                              collection.user
+                              collection.user,
                             )}`}
                           >
                             {collection.user}
@@ -131,7 +131,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                         <Td>
                           <a
                             href={`/collections?channel=${encodeURIComponent(
-                              collection.channel
+                              collection.channel,
                             )}`}
                           >
                             {collection.channel}
@@ -139,11 +139,11 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                         </Td>
                         <Td>
                           {new Date(collection.created_at).toLocaleString(
-                            "en-GB"
+                            "en-GB",
                           )}
                         </Td>
                       </Tr>
-                    )
+                    ),
                   )}
                 </tbody>
               </Table>

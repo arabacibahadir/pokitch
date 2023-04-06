@@ -7,7 +7,7 @@ export default function Input({ ...props }: Props) {
   return (
     <input
       className={cx(
-        "block w-full rounded-lg border-2 border-neutral-800 border-transparent bg-neutral-900/50 p-2.5 text-sm text-white placeholder-gray-400 focus:outline-none"
+        "block w-full rounded-lg border-2 border-neutral-800 border-transparent bg-neutral-900/50 p-2.5 text-sm text-white placeholder-gray-400 focus:outline-none",
       )}
       {...props}
     />

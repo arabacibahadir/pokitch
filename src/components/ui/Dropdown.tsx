@@ -2,11 +2,11 @@ import { cva } from "class-variance-authority";
 import { useEffect, useRef, useState } from "react";
 
 const dropdownMenuStyles = cva(
-  "absolute w-40 py-2 mt-1 bg-amber-800 rounded-md shadow-lg z-10  max-h-80 overflow-y-auto overflow-x-hidden"
+  "absolute w-40 py-2 mt-1 bg-amber-800 rounded-md shadow-lg z-10  max-h-80 overflow-y-auto overflow-x-hidden",
 );
 
 const dropdownMenuLinkStyles = cva(
-  "block w-full px-1 py-1 text-sm text-gray-100 hover:bg-amber-700 "
+  "block w-full px-1 py-1 text-sm text-gray-100 hover:bg-amber-700 ",
 );
 
 const toggleButtonStyles = cva(
@@ -29,7 +29,7 @@ const toggleButtonStyles = cva(
       size: "md",
       variant: "primary",
     },
-  }
+  },
 );
 
 export interface DropdownProps {

@@ -25,7 +25,7 @@ const ListItem = ({
       <div
         className={cx(
           "inline-flex h-12 w-12 items-center justify-center rounded-md",
-          colorClass
+          colorClass,
         )}
       >
         {icon}

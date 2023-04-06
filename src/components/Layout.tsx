@@ -12,7 +12,7 @@ export default function Layout({ children }: Props) {
     <div
       id="wrapper"
       className={cx(
-        "flex h-full min-h-screen w-full flex-col bg-black bg-gradient-to-b from-yellow-600 via-neutral-900 text-white"
+        "flex h-full min-h-screen w-full flex-col bg-black bg-gradient-to-b from-yellow-600 via-neutral-900 text-white",
       )}
     >
       <Header />

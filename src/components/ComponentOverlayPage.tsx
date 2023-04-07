@@ -33,7 +33,7 @@ export default function ComponentOverlayPage({ channel }: Props) {
         if (!data) return null;
 
         setPokeState({ ...pokeState, health: data.health, name: data.poke });
-      }, 1000)
+      }, 1000),
     );
   };
 
@@ -52,12 +52,12 @@ export default function ComponentOverlayPage({ channel }: Props) {
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", filter: filters },
-        () => getCurrentPoke(channel)
+        () => getCurrentPoke(channel),
       )
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", filter: filters },
-        () => getCurrentPoke(channel)
+        () => getCurrentPoke(channel),
       )
       .subscribe();
 

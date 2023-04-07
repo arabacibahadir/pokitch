@@ -66,7 +66,7 @@ class Poke {
     this.sendMessage(
       client,
       channel,
-      `${"@" + user} has won ${poke} as a welcome pack!`
+      `${"@" + user} has won ${poke} as a welcome pack!`,
     );
   };
 
@@ -102,7 +102,7 @@ class Poke {
     this.sendMessage(
       client,
       channel,
-      `Attack by ${"@" + user}. Hit: ${damage}`
+      `Attack by ${"@" + user}. Hit: ${damage}`,
     );
 
     if (newHealth <= 0) {
@@ -117,7 +117,7 @@ class Poke {
       this.sendMessage(
         client,
         channel,
-        `Caught ${data.poke} by ${"@" + user}.`
+        `Caught ${data.poke} by ${"@" + user}.`,
       );
 
       // generate new poke

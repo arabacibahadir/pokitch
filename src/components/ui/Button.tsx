@@ -15,7 +15,7 @@ const buttonStyles = cva(
     defaultVariants: {
       variant: "primary",
     },
-  }
+  },
 );
 
 export interface ButtonProps

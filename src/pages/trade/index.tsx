@@ -48,7 +48,7 @@ export default function Gift({
       } else {
         // remove the canceled trade from the list of selected trades
         setSelectedTrades((prevSelectedTrades) =>
-          prevSelectedTrades.filter((trade: Trade) => trade.id !== tradeId)
+          prevSelectedTrades.filter((trade: Trade) => trade.id !== tradeId),
         );
       }
     };
@@ -63,7 +63,7 @@ export default function Gift({
     pokemonTradeID: any,
     pokemonTradeName: any,
     selectedPokemon: any,
-    trade: any
+    trade: any,
   ) {
     const removeMyPokemon = async () => {
       const { error } = await supabase
@@ -345,7 +345,7 @@ export default function Gift({
                               trade.user,
                               trade.recipient,
                               trade.poke,
-                              trade.recipientpoke
+                              trade.recipientpoke,
                             );
                             router.replace(router.asPath);
                           }}

@@ -13,7 +13,7 @@ export default function GiftRecipientDropdown({
   const [giftRecipient, setGiftRecipient] = useState("");
 
   const uniqueUserNames = new Set(
-    user.otherUserNames.map((userName: any) => userName.user)
+    user.otherUserNames.map((userName: any) => userName.user),
   );
 
   const listItem = (userName: any) => {

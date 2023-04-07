@@ -51,8 +51,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                             className="left-0 mt-2 ml-2"
                             onClick={() => {
                               router.push("/collections");
-                            }}
-                          >
+                            }}>
                             <FiX className="h-4 w-4" />
                           </Button>
                           {user
@@ -114,27 +113,30 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                           <a
                             href={`/collections?poke=${encodeURIComponent(
                               collection.poke,
-                            )}`}
-                          >
-                            {collection.poke}
+                            )}`}>
+                            <span className="decoration-amber-400 hover:underline">
+                              {collection.poke}
+                            </span>
                           </a>
                         </Td>
                         <Td>
                           <a
                             href={`/collections?user=${encodeURIComponent(
                               collection.user,
-                            )}`}
-                          >
-                            {collection.user}
+                            )}`}>
+                            <span className="decoration-amber-400 hover:underline">
+                              {collection.user}
+                            </span>
                           </a>
                         </Td>
                         <Td>
                           <a
                             href={`/collections?channel=${encodeURIComponent(
                               collection.channel,
-                            )}`}
-                          >
-                            {collection.channel}
+                            )}`}>
+                            <span className="decoration-amber-400 hover:underline">
+                              {collection.channel}
+                            </span>
                           </a>
                         </Td>
                         <Td>
@@ -154,9 +156,10 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                     <Button
                       key={i}
                       variant="primary"
-                      className={`rounded-full px-2 py-1 hover:bg-orange-700`}
-                      onClick={() => setCurrentPage(i + 1)}
-                    >
+                      className={`rounded-full px-2 py-1 hover:bg-orange-700 ${
+                        currentPage === i + 1 ? "bg-orange-700 text-white" : ""
+                      }`}
+                      onClick={() => setCurrentPage(i + 1)}>
                       {i + 1}
                     </Button>
                   ))}
@@ -168,8 +171,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                       currentPage === 1 ? "" : "hover:bg-orange-600"
                     }`}
                     disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                  >
+                    onClick={() => setCurrentPage(currentPage - 1)}>
                     Prev
                   </Button>
                   <Button
@@ -178,8 +180,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                       currentPage === totalPages ? "" : "hover:bg-orange-600"
                     }`}
                     disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                  >
+                    onClick={() => setCurrentPage(currentPage + 1)}>
                     Next
                   </Button>
                 </div>

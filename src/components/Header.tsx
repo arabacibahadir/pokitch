@@ -27,16 +27,17 @@ export default function Header() {
         <div className="flex flex-row items-center justify-between py-4">
           <Brand />
 
-          <nav className="inline-flex items-center justify-center gap-6">
+          <nav className="inline-flex items-center justify-center gap-8">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.path}
                 className={cx("text-base font-semibold", [
                   item.isDisabled ? "cursor-not-allowed opacity-60" : "",
-                ])}
-              >
-                {item.name}
+                ])}>
+                <span className="decoration-amber-400 hover:underline">
+                  {item.name}
+                </span>
               </Link>
             ))}
           </nav>
@@ -50,8 +51,7 @@ const Brand = () => {
   return (
     <Link
       href="/"
-      className="inline-flex items-center justify-center gap-x-1.5"
-    >
+      className="inline-flex items-center justify-center gap-x-1.5">
       <MdCatchingPokemon className="h-6 w-6" />
       <span className="text-2xl font-extrabold">Pokitch</span>
     </Link>

@@ -9,22 +9,22 @@ import { useRouter } from "next/router";
 import { SetStateAction, useState } from "react";
 import { FiRefreshCcw } from "react-icons/fi";
 interface Trade {
-  id: any;
-  user: any;
-  poke: any;
-  pokeid: any;
-  recipient: any;
-  recipientpoke: any;
-  recipientpokeid: any;
+  id: number;
+  user: string;
+  poke: string;
+  pokeid: number;
+  recipient: string;
+  recipientpoke: string;
+  recipientpokeid: number;
 }
 export default function Gift({
   user,
-  trades,
-  trades2,
+  sentTrades,
+  receivedTrades,
 }: {
   user: any;
-  trades: any;
-  trades2: any;
+  sentTrades: any;
+  receivedTrades: any;
 }) {
   const [selectedPokemon, setSelectedPokemon] = useState("");
   const [giftRecipient, setGiftRecipient] = useState("");
@@ -37,44 +37,42 @@ export default function Gift({
   const [showSentOffers, setShowSentOffers] = useState(true);
   const [isRotated, setIsRotated] = useState(false);
 
-  function handleCancel(tradeId: any) {
+  function handleCancel(tradeID: any) {
     const cancelTrade = async () => {
       const { error } = await supabase
         .from("trades")
         .delete()
-        .match({ id: tradeId });
+        .match({ id: tradeID });
       if (error) {
         console.log("remove error", error);
       } else {
-        // remove the canceled trade from the list of selected trades
         setSelectedTrades((prevSelectedTrades) =>
-          prevSelectedTrades.filter((trade: Trade) => trade.id !== tradeId),
+          prevSelectedTrades.filter((trade: Trade) => trade.id !== tradeID),
         );
       }
     };
-    // console.log("canceling trade", tradeId);
     cancelTrade();
   }
 
   function handleAccept(
-    tradeId: any,
+    tradeID: any,
     pokemonID: any,
-    giftRecipient: any,
-    pokemonTradeID: any,
-    pokemonTradeName: any,
-    selectedPokemon: any,
-    trade: any,
+    giftRecipientID: any,
+    offererTwitchName: any,
+    userTwitchName: any,
+    offeredPokemon: any,
+    myPokeItem: any,
   ) {
     const removeMyPokemon = async () => {
       const { error } = await supabase
         .from("collections")
         .delete()
-        .match({ id: giftRecipient });
+        .match({ id: giftRecipientID });
       if (error) {
         console.log("remove error", error);
       }
     };
-    const removeTheirPokemon = async () => {
+    const removeOffererPokemon = async () => {
       const { error } = await supabase
         .from("collections")
         .delete()
@@ -86,20 +84,20 @@ export default function Gift({
     const addMyPokemon = async () => {
       const { error } = await supabase.from("collections").insert([
         {
-          poke: selectedPokemon,
+          poke: offeredPokemon,
           user: user.channel,
-          channel: pokemonTradeID,
+          channel: offererTwitchName,
         },
       ]);
       if (error) {
         console.log("add error", error);
       }
     };
-    const addTheirPokemon = async () => {
+    const addOffererPokemon = async () => {
       const { error } = await supabase.from("collections").insert([
         {
-          poke: trade,
-          user: pokemonTradeID,
+          poke: myPokeItem,
+          user: offererTwitchName,
           channel: user.channel,
         },
       ]);
@@ -112,15 +110,15 @@ export default function Gift({
       const { error } = await supabase
         .from("trades")
         .delete()
-        .match({ id: tradeId });
+        .match({ id: tradeID });
       if (error) {
         console.log("remove error", error);
       }
     };
     removeMyPokemon();
-    removeTheirPokemon();
+    removeOffererPokemon();
     addMyPokemon();
-    addTheirPokemon();
+    addOffererPokemon();
     acceptTrade();
   }
 
@@ -215,8 +213,7 @@ export default function Gift({
             className="mt-5 "
             onClick={() => {
               handleTrade();
-            }}
-          >
+            }}>
             <div className="inline-flex items-center space-x-2">
               <span>Trade request</span>
             </div>
@@ -229,16 +226,14 @@ export default function Gift({
             onClick={() => {
               setShowSentOffers(!showSentOffers);
               setIsRotated(!isRotated);
-            }}
-          >
+            }}>
             <span
               className={
                 showSentOffers
                   ? "font-bold underline decoration-amber-400"
                   : "opacity-50"
-              }
-            >
-              Sent Offers
+              }>
+              Sent Offers {sentTrades.length ? ` (${sentTrades.length})` : ""}
             </span>
             <FiRefreshCcw
               className={`mx-2 transform ${
@@ -250,9 +245,9 @@ export default function Gift({
                 showSentOffers
                   ? "opacity-50"
                   : "font-bold underline decoration-amber-200"
-              }
-            >
-              Received Offers
+              }>
+              Received Offers{" "}
+              {receivedTrades.length ? ` (${receivedTrades.length})` : ""}
             </span>
           </Button>
         </div>
@@ -269,7 +264,7 @@ export default function Gift({
                   </tr>
                 </thead>
                 <tbody>
-                  {trades.map((trade: Trade) => (
+                  {sentTrades.map((trade: Trade) => (
                     <tr key={trade.id}>
                       <td className="px-8">
                         <img
@@ -294,8 +289,7 @@ export default function Gift({
                           onClick={() => {
                             handleCancel(trade.id);
                             router.replace(router.asPath);
-                          }}
-                        >
+                          }}>
                           Cancel
                         </Button>
                       </td>
@@ -315,7 +309,7 @@ export default function Gift({
                   </tr>
                 </thead>
                 <tbody>
-                  {trades2.map((trade: Trade) => (
+                  {receivedTrades.map((trade: Trade) => (
                     <tr key={trade.id}>
                       <td className="px-10">{trade.user}</td>
                       <td className="px-10">
@@ -348,8 +342,7 @@ export default function Gift({
                               trade.recipientpoke,
                             );
                             router.replace(router.asPath);
-                          }}
-                        >
+                          }}>
                           Accept
                         </Button>
                         <Button
@@ -357,8 +350,7 @@ export default function Gift({
                           onClick={() => {
                             handleDeny(trade.id);
                             router.replace(router.asPath);
-                          }}
-                        >
+                          }}>
                           Deny
                         </Button>
                       </td>
@@ -411,22 +403,22 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const { data: tradesData } = await supabase
+  const { data: sentTradesData } = await supabase
     .from("trades")
     .select()
     .eq("user", session?.user.user_metadata.name);
-  const trades = tradesData ? tradesData : null;
+  const sentTrades = sentTradesData ? sentTradesData : null;
 
-  const { data: tradesData2 } = await supabase
+  const { data: receivedTradesData } = await supabase
     .from("trades")
     .select()
     .eq("recipient", user?.channel);
-  const trades2 = tradesData2 ? tradesData2 : null;
+  const receivedTrades = receivedTradesData ? receivedTradesData : null;
   return {
     props: {
       user: user,
-      trades: trades,
-      trades2: trades2,
+      sentTrades: sentTrades,
+      receivedTrades: receivedTrades,
     },
   };
 };

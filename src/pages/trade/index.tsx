@@ -1,5 +1,6 @@
 import GiftRecipientDropdown from "@/components/GiftRecipientDropdown";
 import Layout from "@/components/Layout";
+import PokemonCard from "@/components/PokeCard";
 import UserPokemonsDropdown from "@/components/UserPokemonsDropdown";
 import Button from "@/ui/Button";
 import { supabase } from "@/utils/supabase";
@@ -36,7 +37,7 @@ export default function Gift({
   const [selectedTrades, setSelectedTrades] = useState([]);
   const [showSentOffers, setShowSentOffers] = useState(true);
   const [isRotated, setIsRotated] = useState(false);
-
+  const [hoveredPokemon, setHoveredPokemon] = useState<string | null>(null);
   function handleCancel(tradeID: any) {
     const cancelTrade = async () => {
       const { error } = await supabase
@@ -176,6 +177,11 @@ export default function Gift({
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
+        {hoveredPokemon && (
+          <div className="fixed left-20 z-10 -translate-x-1/2 translate-y-1/3 transform shadow-2xl">
+            <PokemonCard poke={hoveredPokemon} />
+          </div>
+        )}
         <div className="container flex flex-row justify-center space-x-8">
           <div className="space-y-6">
             <UserPokemonsDropdown
@@ -271,7 +277,8 @@ export default function Gift({
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
                           alt={trade.poke}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                        />
+                          onMouseEnter={() => setHoveredPokemon(trade.poke)}
+                          onMouseLeave={() => setHoveredPokemon(null)}></img>
                         {trade.poke}
                       </td>
                       <td className="px-10">{trade.recipient}</td>
@@ -280,7 +287,8 @@ export default function Gift({
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
                           alt={trade.recipientpoke}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                        />
+                          onMouseEnter={() => setHoveredPokemon(trade.poke)}
+                          onMouseLeave={() => setHoveredPokemon(null)}></img>
                         {trade.recipientpoke}
                       </td>
                       <td className="px-10">
@@ -317,7 +325,8 @@ export default function Gift({
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
                           alt={trade.poke}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                        />
+                          onMouseEnter={() => setHoveredPokemon(trade.poke)}
+                          onMouseLeave={() => setHoveredPokemon(null)}></img>
                         {trade.poke}
                       </td>
                       <td className="px-10">
@@ -325,7 +334,8 @@ export default function Gift({
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
                           alt={trade.recipientpoke}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
-                        />
+                          onMouseEnter={() => setHoveredPokemon(trade.poke)}
+                          onMouseLeave={() => setHoveredPokemon(null)}></img>
                         {trade.recipientpoke}
                       </td>
                       <td className="px-10">

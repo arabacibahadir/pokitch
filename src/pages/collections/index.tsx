@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Layout from "@/components/Layout";
+import PokemonCard from "@/components/PokeCard";
 import SearchBar from "@/components/SearchBar";
 import Button from "@/ui/Button";
 import Heading from "@/ui/Heading";
@@ -23,6 +24,8 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
   const totalPokemons = collections.length;
   const totalPages = Math.ceil(totalPokemons / pokemonsPerPage);
   const router = useRouter();
+  const [hoveredPokemon, setHoveredPokemon] = useState<string | null>(null);
+
   const getPokemonsForCurrentPage = () => {
     const lastIndex = currentPage * pokemonsPerPage;
     const firstIndex = lastIndex - pokemonsPerPage;
@@ -36,6 +39,11 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
   return (
     <Layout>
       <section className="py-12 tablet:py-24">
+        {hoveredPokemon && (
+          <div className="fixed left-20 z-10 -translate-x-1/2 translate-y-1/3 transform shadow-2xl">
+            <PokemonCard poke={hoveredPokemon} />
+          </div>
+        )}
         <div className="container">
           <div className="space-y-6">
             <SearchBar />
@@ -106,14 +114,23 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                                 objectFit: "contain",
                                 objectPosition: "center",
                               }}
-                            />
+                              onMouseEnter={() =>
+                                setHoveredPokemon(collection.poke)
+                              }
+                              onMouseLeave={() =>
+                                setHoveredPokemon(null)
+                              }></img>
                           </figure>
                         </Td>
                         <Td>
                           <a
                             href={`/collections?poke=${encodeURIComponent(
                               collection.poke,
-                            )}`}>
+                            )}`}
+                            onMouseEnter={() =>
+                              setHoveredPokemon(collection.poke)
+                            }
+                            onMouseLeave={() => setHoveredPokemon(null)}>
                             <span className="decoration-amber-400 hover:underline">
                               {collection.poke}
                             </span>

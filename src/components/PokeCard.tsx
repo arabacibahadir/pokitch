@@ -85,7 +85,13 @@ const PokemonCard = (pokename: any) => {
   }, []);
 
   return (
-    <div className="w-32 rounded-lg bg-amber-800 p-2 shadow-2xl">
+    <div className="w-36 rounded-lg border-2 border-amber-900 bg-red-700 p-2 shadow-2xl">
+      <div className="flex">
+        <div className="h-8 w-8 animate-pulse rounded-full border-2 border-amber-300 bg-sky-500"></div>
+        <div className="mx-1 ml-6 h-4 w-4 rounded-full  bg-red-400"></div>
+        <div className="mx-1 h-4 w-4  rounded-full  bg-yellow-300"></div>
+        <div className="mx-1 h-4 w-4 rounded-full  bg-green-700"></div>
+      </div>
       {isLoading ? (
         <div className="text-center">
           <MdCatchingPokemon className="h-6 w-6 animate-spin" />
@@ -93,13 +99,17 @@ const PokemonCard = (pokename: any) => {
       ) : pokemon ? (
         <>
           <div className="text-center">
+            <div className="mt-2 rounded-xl border-2 border-black bg-amber-100">
+              <div className="m-1 rounded-xl border-2 border-amber-900 bg-amber-500">
+                <img
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+                  alt={pokemon.name}
+                  className="h-30 w-30 mx-auto"
+                />
+              </div>
+            </div>
             <h2 className="text-xl font-bold"> {pokemon.name}</h2>
             <span className="small"> #{pokemon.id}</span>
-            <img
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
-              alt={pokemon.name}
-              className="h-30 w-30 mx-auto"
-            />
           </div>
           <div className="">
             <p className="text-sm font-bold">Types:</p>

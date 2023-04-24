@@ -102,7 +102,7 @@ const PokemonCard = (pokename: any) => {
             <div className="mt-2 rounded-xl border-2 border-black bg-amber-100">
               <div className="m-1 rounded-xl border-2 border-amber-900 bg-amber-500">
                 <img
-                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
                   alt={pokemon.name}
                   className="h-30 w-30 mx-auto"
                 />

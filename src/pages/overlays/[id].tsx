@@ -42,11 +42,11 @@ export default function GameOverlay({ channel }: Props) {
         console.log(userName, cmd); // remove
 
         // commands
-        if (cmd === "welcomepack") {
+        if (cmd === "welcomepack" || cmd === "wp") {
           return await poke.welcomePack(tmiClient, userName, channelName);
-        } else if (cmd === "attack") {
+        } else if (cmd === "attack" || cmd === "a") {
           return await poke.attack(tmiClient, userName, channelName);
-        } else if (cmd === "inventory") {
+        } else if (cmd === "inventory" || cmd === "i") {
           return await poke.inventory(tmiClient, userName, channelName);
         }
       });

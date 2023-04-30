@@ -44,7 +44,7 @@ class Poke {
     });
   };
 
-  // !poke welcomepack
+  // !poke welcomepack or !poke wp
   welcomePack = async (client: any, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);
@@ -70,7 +70,7 @@ class Poke {
     );
   };
 
-  // !poke inventory
+  // !poke inventory or !poke i
   inventory = async (client: any, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);
@@ -81,7 +81,7 @@ class Poke {
     this.sendMessage(client, channel, `@${user}'s inventory: ${url}`);
   };
 
-  // !poke attack
+  // !poke attack or !poke a
   attack = async (client: any, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);

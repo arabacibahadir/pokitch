@@ -134,7 +134,7 @@ class Poke {
       .update({ health: newHealth })
       .eq("id", data.id);
 
-    const attacks = [
+    const attackMessages = [
       `${"@" + user} lands a hit! Dealt ${damage} damage.`,
       `${"@" + user} strikes with a forceful blow, dealing ${damage} damage.`,
       `Attack initiated by ${"@" + user} Damage dealt: ${damage}.`,
@@ -173,7 +173,7 @@ class Poke {
       `Attack from ${"@" + user} successfully hits for ${damage} damage.`,
     ];
     const randomAttackMessage =
-      attacks[Math.floor(Math.random() * attacks.length)];
+      attackMessages[Math.floor(Math.random() * attackMessages.length)];
 
     this.sendMessage(client, channel, randomAttackMessage);
 
@@ -186,7 +186,7 @@ class Poke {
 
       await supabase.from("active_pokes").delete().eq("id", data.id);
 
-      const caughtMessages = [
+      const catchtMessages = [
         `${"@" + user} has successfully captured a ${data.poke}!`,
         `A wild ${data.poke} has been caught by ${"@" + user}!`,
         `Congratulations, ${"@" + user} 've added a ${
@@ -200,10 +200,10 @@ class Poke {
         `Another successful catch! ${"@" + user} 've caught a ${data.poke}!`,
         `${"@" + user} can now celebrate - caught a ${data.poke}!`,
       ];
-      const randomCaughtMessage =
-        caughtMessages[Math.floor(Math.random() * caughtMessages.length)];
+      const randomCatchMessage =
+        catchtMessages[Math.floor(Math.random() * catchtMessages.length)];
 
-      this.sendMessage(client, channel, randomCaughtMessage);
+      this.sendMessage(client, channel, randomCatchMessage);
 
       // generate new poke
       return this.initialize(channel);

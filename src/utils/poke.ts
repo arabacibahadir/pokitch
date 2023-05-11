@@ -186,22 +186,22 @@ class Poke {
 
       await supabase.from("active_pokes").delete().eq("id", data.id);
 
-      const catchtMessages = [
+      const catchMessages = [
         `${"@" + user} has successfully captured a ${data.poke}!`,
         `A wild ${data.poke} has been caught by ${"@" + user}!`,
         `Congratulations, ${"@" + user} 've added a ${
           data.poke
-        } to your collection.`,
+        } to collection!`,
         `${"@" + user} is now the proud owner of a new ${data.poke}!`,
         `A round of applause for ${"@" + user} who's caught a ${data.poke}!`,
         `${"@" + user} has just caught a ${data.poke} - great job!`,
         `The hunt is over, ${"@" + user} has caught a ${data.poke}!`,
-        `${"@" + user} has added a new member to their team - a ${data.poke}!`,
+        `${"@" + user} has added a new member to collection - a ${data.poke}!`,
         `Another successful catch! ${"@" + user} 've caught a ${data.poke}!`,
         `${"@" + user} can now celebrate - caught a ${data.poke}!`,
       ];
       const randomCatchMessage =
-        catchtMessages[Math.floor(Math.random() * catchtMessages.length)];
+        catchMessages[Math.floor(Math.random() * catchMessages.length)];
 
       this.sendMessage(client, channel, randomCatchMessage);
 

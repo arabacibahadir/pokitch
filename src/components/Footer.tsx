@@ -8,7 +8,7 @@ export default function Footer() {
           <p>
             <Link href="/">Pokitch</Link> is an open-source initiative.{" "}
             <Link
-              href="https://github.com/arabacibahadir/pokitch"
+              href="https://github.com/pokitch-app/pokitch"
               target="_blank"
               rel="noreferrer"
             >

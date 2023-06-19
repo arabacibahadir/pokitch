@@ -34,12 +34,11 @@ export default function GameOverlay({ channel }: Props) {
         console.log("tmi: disconnected to irc server");
       })
       .on("chat", async (channel, tags, message) => {
-        if (!message.startsWith("!poke")) return;
+        if (!message.toLowerCase().startsWith("!poke")) return;
 
         const cmd = message.slice(1).split(" ").pop()?.toLowerCase(); // remove (!) and pick up to last word as command
         const channelName = channel.slice(1) as string; // remove (#) from channel
         const userName = tags.username as string;
-        console.log(userName, cmd); // remove
 
         // commands
         if (cmd === "welcomepack" || cmd === "wp") {

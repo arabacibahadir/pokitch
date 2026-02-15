@@ -13,8 +13,8 @@
     "@supabase/supabase-js": "^2.47.10",
     "class-variance-authority": "^0.7.0",
     "next": "15.5.12",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-icons": "^4.7.1",
     "tmi.js": "^1.8.5"
   },
@@ -30,7 +30,7 @@
     "prettier": "^2.8.7",
     "prettier-plugin-organize-imports": "^3.2.1",
     "prettier-plugin-tailwindcss": "^0.2.1",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "3.2.4",
     "typescript": "^5.7.2"
   }
 }

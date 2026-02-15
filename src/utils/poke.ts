@@ -1,9 +1,10 @@
 import { getBaseUrl } from "@/components/UserHeroHomePage";
 import { pokes } from "@/storage/data";
 import { supabase } from "@/utils/supabase";
+import type { Client } from "tmi.js";
 
 class Poke {
-  private cooldowns = Array();
+  private cooldowns: { user: string; expires_at: number }[] = [];
 
   randPoke = () => pokes[Math.floor(Math.random() * pokes.length)];
 
@@ -11,7 +12,7 @@ class Poke {
     return Math.floor(Math.random() * 10) + 5;
   };
 
-  sendMessage = async (client: any, channel: string, message: string) => {
+  sendMessage = async (client: Client, channel: string, message: string) => {
     await client.say(channel, message);
   };
 
@@ -45,7 +46,7 @@ class Poke {
   };
 
   // !poke welcomepack or !poke wp
-  welcomePack = async (client: any, user: string, channel: string) => {
+  welcomePack = async (client: Client, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);
 
@@ -106,7 +107,7 @@ class Poke {
   };
 
   // !poke inventory or !poke i
-  inventory = async (client: any, user: string, channel: string) => {
+  inventory = async (client: Client, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);
 
@@ -117,7 +118,7 @@ class Poke {
   };
 
   // !poke attack or !poke a
-  attack = async (client: any, user: string, channel: string) => {
+  attack = async (client: Client, user: string, channel: string) => {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);
 

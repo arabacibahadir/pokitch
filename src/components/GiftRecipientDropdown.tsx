@@ -2,7 +2,9 @@ import Dropdown from "@/ui/Dropdown";
 import { useState } from "react";
 
 type GiftRecipientDropdownProps = {
-  user: any;
+  user: {
+    otherUserNames?: { user: string }[];
+  };
   onChange: (selectedUser: string) => void;
 };
 
@@ -13,10 +15,10 @@ export default function GiftRecipientDropdown({
   const [giftRecipient, setGiftRecipient] = useState("");
 
   const uniqueUserNames = new Set(
-    user.otherUserNames.map((userName: any) => userName.user),
+    (user.otherUserNames ?? []).map((userName) => userName.user),
   );
 
-  const listItem = (userName: any) => {
+  const listItem = (userName: string) => {
     return {
       label: userName,
       onClick: () => {
@@ -26,7 +28,7 @@ export default function GiftRecipientDropdown({
     };
   };
   const menuItems = Array.from(uniqueUserNames)
-    .sort((a: any, b: any) => a.localeCompare(b))
+    .sort((a, b) => a.localeCompare(b))
     .map(listItem);
 
   const label = giftRecipient ? giftRecipient : "Select user";

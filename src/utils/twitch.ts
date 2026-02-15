@@ -32,8 +32,6 @@ class Twitch {
   };
 
   getAccessToken = async (code: string) => {
-    console.log("token: fetching with client credentials", this.options);
-
     const { authDomain, clientId, clientSecret, clientCallbackUri } =
       this.options;
 
@@ -58,13 +56,11 @@ class Twitch {
     }
 
     const json = (await res.json()) as TwitchAccessTokenResponse;
-    console.log("token: fetching response", json);
 
     return json;
   };
 
   getUserDetails = async (token: string) => {
-    console.log("user: fetching with client credentials", this.options);
     const { apiDomain, clientId } = this.options;
 
     const uri = `https://${apiDomain}/users`;
@@ -81,7 +77,6 @@ class Twitch {
     }
 
     const json = (await res.json()) as TwitchUserDetailsResponse;
-    console.log("user: fetching response", json);
 
     return json;
   };

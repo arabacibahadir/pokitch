@@ -39,7 +39,11 @@ const pokeTypeColors: { [key: string]: string } = {
   fairy: "bg-pink-500",
 };
 
-const PokemonCard = (pokename: any) => {
+type PokemonCardProps = {
+  poke: string;
+};
+
+const PokemonCard = ({ poke }: PokemonCardProps) => {
   const [pokemon, setPokemon] = useState<Pokemon>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const getTypeColor = (type: string): string => {
@@ -50,12 +54,12 @@ const PokemonCard = (pokename: any) => {
     const fetchPokemon = async () => {
       try {
         const response = await fetch(
-          "https://pokeapi.co/api/v2/pokemon/" + pokename.poke,
+          "https://pokeapi.co/api/v2/pokemon/" + poke,
         );
         const data = await response.json();
 
         const abilities = data.abilities.map(
-          (ability: any) => ability.ability.name,
+          (ability: { ability: { name: string } }) => ability.ability.name,
         );
 
         const stats = {
@@ -70,7 +74,7 @@ const PokemonCard = (pokename: any) => {
         setPokemon({
           name: data.name,
           id: data.id,
-          types: data.types.map((type: any) => type.type.name),
+          types: data.types.map((type: { type: { name: string } }) => type.type.name),
           height: data.height,
           weight: data.weight,
           abilities,
@@ -83,7 +87,7 @@ const PokemonCard = (pokename: any) => {
     };
 
     fetchPokemon();
-  }, [pokename.poke]);
+  }, [poke]);
 
   return (
     <div className="w-36 rounded-lg border-2 border-amber-900 bg-red-700 p-2 shadow-2xl">

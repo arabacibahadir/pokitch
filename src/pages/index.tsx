@@ -5,7 +5,12 @@ import Layout from "@/components/Layout";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { GetServerSideProps } from "next";
 
-export default function Home({ user }: { user: any }) {
+type HomeUser = {
+  id: string;
+  channel: string;
+};
+
+export default function Home({ user }: { user: HomeUser | null }) {
   return (
     <Layout>
       <HeroHomePage user={user} />

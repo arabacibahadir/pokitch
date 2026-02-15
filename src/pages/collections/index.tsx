@@ -6,16 +6,23 @@ import Button from "@/ui/Button";
 import Heading from "@/ui/Heading";
 import { Table, Td, Th, Thead, Tr } from "@/ui/Table";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
-import { supabase } from "@/utils/supabase";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FiX } from "react-icons/fi";
 
+type CollectionRow = {
+  id: number;
+  poke: string;
+  user: string;
+  channel: string;
+  created_at: string;
+};
+
 type Props = {
   user: string | null;
   channel: string | null;
-  collections: any;
+  collections: CollectionRow[];
   poke: string | null;
 };
 
@@ -101,7 +108,7 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
                 </Thead>
                 <tbody>
                   {getPokemonsForCurrentPage().map(
-                    (collection: any, index: number) => (
+                    (collection: CollectionRow, index: number) => (
                       <Tr key={collection.id}>
                         <Td>
                           {(currentPage - 1) * pokemonsPerPage + index + 1}
@@ -233,11 +240,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const { data } = await supabase
-    .from("collections")
-    .select()
-    .or(`user.eq.${user},channel.eq.${channel},poke.eq.${poke}`)
-    .order("created_at", { ascending: false });
+  let query = supabase.from("collections").select();
+  if (user) {
+    query = query.eq("user", user);
+  } else if (channel) {
+    query = query.eq("channel", channel);
+  } else if (poke) {
+    query = query.eq("poke", poke);
+  }
+
+  const { data } = await query.order("created_at", { ascending: false });
 
   return {
     props: {

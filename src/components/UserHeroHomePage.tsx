@@ -1,6 +1,7 @@
 import Button from "@/ui/Button";
 import Heading from "@/ui/Heading";
 import Link from "@/ui/Link";
+import { supabase } from "@/utils/supabase";
 import { useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FaClipboardCheck, FaTwitch } from "react-icons/fa";
@@ -18,15 +19,19 @@ const copyURL = (id: string) => {
 };
 
 const signout = async () => {
-  document.cookie.split(";").forEach(function (c) {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/");
-  });
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.log("signout error", error);
+  }
   window.location.reload();
 };
 
-export default function GuestHeroHomePage({ data }: { data: any }) {
+type UserHeroData = {
+  id: string;
+  channel: string;
+};
+
+export default function UserHeroHomePage({ data }: { data: UserHeroData }) {
   const [showURL, setShowURL] = useState(false);
   const url = getBaseUrl() + `/overlays/${data.id}`;
   return (

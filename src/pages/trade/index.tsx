@@ -8,8 +8,20 @@ import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import { FiRefreshCcw } from "react-icons/fi";
+
+type PokemonCollectionItem = {
+  id: number;
+  poke: string;
+  user: string;
+  channel: string;
+};
+
+type OtherUserName = {
+  user: string;
+};
+
 interface Trade {
   id: number;
   user: string;
@@ -19,142 +31,172 @@ interface Trade {
   recipientpoke: string;
   recipientpokeid: number;
 }
-export default function Gift({
+
+type TradePageUser = {
+  id: string;
+  channel: string;
+  pokemonCollection: PokemonCollectionItem[];
+  otherUserNames: OtherUserName[];
+};
+
+export default function TradePage({
   user,
   sentTrades,
   receivedTrades,
 }: {
-  user: any;
-  sentTrades: any;
-  receivedTrades: any;
+  user: TradePageUser;
+  sentTrades: Trade[];
+  receivedTrades: Trade[];
 }) {
   const [selectedPokemon, setSelectedPokemon] = useState("");
   const [giftRecipient, setGiftRecipient] = useState("");
-  const [pokemonID, setPokemonID] = useState("");
-  const [pokemonTradeID, setPokemonTradeID] = useState("");
-  const [recipientPokemons, setRecipientPokemons] = useState<any>([]);
+  const [pokemonID, setPokemonID] = useState<number | null>(null);
+  const [pokemonTradeID, setPokemonTradeID] = useState<number | null>(null);
+  const [recipientPokemons, setRecipientPokemons] = useState<
+    PokemonCollectionItem[]
+  >([]);
   const [pokemonTradeName, setPokemonTradeName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const [selectedTrades, setSelectedTrades] = useState([]);
   const [showSentOffers, setShowSentOffers] = useState(true);
   const [isRotated, setIsRotated] = useState(false);
   const [hoveredPokemon, setHoveredPokemon] = useState<string | null>(null);
-  function handleCancel(tradeID: any) {
-    const cancelTrade = async () => {
-      const { error } = await supabase
-        .from("trades")
-        .delete()
-        .match({ id: tradeID });
+
+  const handleCancel = async (tradeID: number) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.from("trades").delete().match({ id: tradeID });
       if (error) {
         console.log("remove error", error);
-      } else {
-        setSelectedTrades((prevSelectedTrades) =>
-          prevSelectedTrades.filter((trade: Trade) => trade.id !== tradeID),
-        );
+        return;
       }
-    };
-    cancelTrade();
-  }
 
-  function handleAccept(
-    tradeID: any,
-    pokemonID: any,
-    giftRecipientID: any,
-    offererTwitchName: any,
-    userTwitchName: any,
-    offeredPokemon: any,
-    myPokeItem: any,
-  ) {
-    const removeMyPokemon = async () => {
-      const { error } = await supabase
+      await router.replace(router.asPath);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAccept = async (trade: Trade) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const { data: myNewPokemon, error: addMyPokemonError } = await supabase
+        .from("collections")
+        .insert([
+          {
+            poke: trade.poke,
+            user: user.channel,
+            channel: trade.user,
+          },
+        ])
+        .select("id")
+        .single();
+      if (addMyPokemonError || !myNewPokemon) {
+        console.log("add error", addMyPokemonError);
+        return;
+      }
+
+      const { data: offererNewPokemon, error: addOffererPokemonError } =
+        await supabase
+          .from("collections")
+          .insert([
+            {
+              poke: trade.recipientpoke,
+              user: trade.user,
+              channel: user.channel,
+            },
+          ])
+          .select("id")
+          .single();
+      if (addOffererPokemonError || !offererNewPokemon) {
+        await supabase.from("collections").delete().match({ id: myNewPokemon.id });
+        console.log("add error", addOffererPokemonError);
+        return;
+      }
+
+      const { error: removeMyPokemonError } = await supabase
         .from("collections")
         .delete()
-        .match({ id: giftRecipientID });
-      if (error) {
-        console.log("remove error", error);
+        .match({ id: trade.recipientpokeid });
+      if (removeMyPokemonError) {
+        console.log("remove error", removeMyPokemonError);
+        return;
       }
-    };
-    const removeOffererPokemon = async () => {
-      const { error } = await supabase
+
+      const { error: removeOffererPokemonError } = await supabase
         .from("collections")
         .delete()
-        .match({ id: pokemonID });
-      if (error) {
-        console.log("remove error", error);
+        .match({ id: trade.pokeid });
+      if (removeOffererPokemonError) {
+        console.log("remove error", removeOffererPokemonError);
+        return;
       }
-    };
-    const addMyPokemon = async () => {
-      const { error } = await supabase.from("collections").insert([
-        {
-          poke: offeredPokemon,
-          user: user.channel,
-          channel: offererTwitchName,
-        },
-      ]);
-      if (error) {
-        console.log("add error", error);
-      }
-    };
-    const addOffererPokemon = async () => {
-      const { error } = await supabase.from("collections").insert([
-        {
-          poke: myPokeItem,
-          user: offererTwitchName,
-          channel: user.channel,
-        },
-      ]);
-      if (error) {
-        console.log("add error", error);
-      }
-    };
 
-    const acceptTrade = async () => {
-      const { error } = await supabase
+      const { error: acceptTradeError } = await supabase
         .from("trades")
         .delete()
-        .match({ id: tradeID });
-      if (error) {
-        console.log("remove error", error);
+        .match({ id: trade.id });
+      if (acceptTradeError) {
+        console.log("remove error", acceptTradeError);
       }
-    };
-    removeMyPokemon();
-    removeOffererPokemon();
-    addMyPokemon();
-    addOffererPokemon();
-    acceptTrade();
-  }
 
-  function handleDeny(tradeId: any) {
-    const denyTrade = async () => {
-      const { error } = await supabase
-        .from("trades")
-        .delete()
-        .match({ id: tradeId });
+      await router.replace(router.asPath);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeny = async (tradeId: number) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.from("trades").delete().match({ id: tradeId });
       if (error) {
         console.log("remove error", error);
+        return;
       }
-    };
-    console.log("denying trade", tradeId);
-    denyTrade();
-  }
-  function handleTrade() {
-    if (!pokemonID || !giftRecipient || !pokemonTradeID || !pokemonTradeName) {
+
+      await router.replace(router.asPath);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleTrade = async () => {
+    if (
+      !pokemonID ||
+      !giftRecipient ||
+      !pokemonTradeID ||
+      !pokemonTradeName ||
+      isSubmitting
+    ) {
       console.log("missing data");
       return;
     }
 
-    const tradeRequest = async () => {
-      const { data: existingTrade } = await supabase
+    setIsSubmitting(true);
+    try {
+      const { data: existingTrade, error: existingTradeError } = await supabase
         .from("trades")
         .select("id")
         .eq("pokeid", pokemonID)
         .eq("user", user.channel)
-        .single();
+        .maybeSingle();
 
+      if (existingTradeError) {
+        console.log("trade check error", existingTradeError);
+        return;
+      }
       if (existingTrade) {
         console.log("You have already requested a trade for this Pokemon.");
         return;
       }
+
       const { error } = await supabase.from("trades").insert([
         {
           user: user.channel,
@@ -167,13 +209,19 @@ export default function Gift({
       ]);
       if (error) {
         console.log("add error", error);
+        return;
       }
-    };
-    tradeRequest();
-    setSelectedPokemon("");
-    setGiftRecipient("");
-    router.replace(router.asPath);
-  }
+
+      setSelectedPokemon("");
+      setGiftRecipient("");
+      setPokemonID(null);
+      setPokemonTradeID(null);
+      setPokemonTradeName("");
+      await router.replace(router.asPath);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Layout>
@@ -186,18 +234,16 @@ export default function Gift({
         <div className="container flex flex-row justify-center space-x-8">
           <div className="space-y-6">
             <UserPokemonsDropdown
-              key={user.pokemonCollection}
               user={user}
               onChange={(selectedPokemon, pokemonID) => {
                 setSelectedPokemon(selectedPokemon);
-                setPokemonID(pokemonID);
+                setPokemonID(Number(pokemonID));
               }}
             />
           </div>
           <GiftRecipientDropdown
-            key={user.otherUserNames}
             user={user}
-            onChange={async (selectedUser: SetStateAction<string>) => {
+            onChange={async (selectedUser: string) => {
               setGiftRecipient(selectedUser);
 
               const { data: recipientPokemonsData } = await supabase
@@ -205,21 +251,21 @@ export default function Gift({
                 .select()
                 .eq("user", selectedUser);
 
-              setRecipientPokemons(recipientPokemonsData);
+              setRecipientPokemons(recipientPokemonsData ?? []);
             }}
           />
           <UserPokemonsDropdown
-            key={recipientPokemons}
             user={{ pokemonCollection: recipientPokemons }}
             onChange={(selectedPokemon, pokemonTradeID) => {
-              setPokemonTradeID(pokemonTradeID);
+              setPokemonTradeID(Number(pokemonTradeID));
               setPokemonTradeName(selectedPokemon);
             }}
           />
           <Button
             className="mt-5 "
+            disabled={isSubmitting}
             onClick={() => {
-              handleTrade();
+              void handleTrade();
             }}>
             <div className="inline-flex items-center space-x-2">
               <span>Trade request</span>
@@ -301,9 +347,9 @@ export default function Gift({
                       <td className="px-10">
                         <Button
                           variant="danger"
+                          disabled={isSubmitting}
                           onClick={() => {
-                            handleCancel(trade.id);
-                            router.replace(router.asPath);
+                            void handleCancel(trade.id);
                           }}>
                           Cancel
                         </Button>
@@ -354,25 +400,17 @@ export default function Gift({
                       <td className="px-10">
                         <Button
                           variant="success"
+                          disabled={isSubmitting}
                           onClick={() => {
-                            handleAccept(
-                              trade.id,
-                              trade.pokeid,
-                              trade.recipientpokeid,
-                              trade.user,
-                              trade.recipient,
-                              trade.poke,
-                              trade.recipientpoke,
-                            );
-                            router.replace(router.asPath);
+                            void handleAccept(trade);
                           }}>
                           Accept
                         </Button>
                         <Button
                           variant="danger"
+                          disabled={isSubmitting}
                           onClick={() => {
-                            handleDeny(trade.id);
-                            router.replace(router.asPath);
+                            void handleDeny(trade.id);
                           }}>
                           Deny
                         </Button>
@@ -393,31 +431,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const { data } = await supabase
-    .from("accounts")
-    .select()
-    .eq("user_id", session?.user?.id)
-    .single();
 
-  const { data: pokemonData } = await supabase
-    .from("collections")
-    .select()
-    .eq("user", session?.user.user_metadata.name);
-
-  const { data: otherUserNames } = await supabase
-    .from("collections")
-    .select("user")
-    .neq("user", session?.user.user_metadata.name);
-
-  const user = data
-    ? {
-        ...data,
-        pokemonCollection: pokemonData,
-        otherUserNames: otherUserNames,
-      }
-    : null;
-
-  if (!user) {
+  if (!session) {
     return {
       redirect: {
         destination: "/",
@@ -426,17 +441,50 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
+  const { data } = await supabase
+    .from("accounts")
+    .select()
+    .eq("user_id", session.user.id)
+    .single();
+
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const userName = session.user.user_metadata.name as string;
+
+  const { data: pokemonData } = await supabase
+    .from("collections")
+    .select()
+    .eq("user", userName);
+
+  const { data: otherUserNames } = await supabase
+    .from("collections")
+    .select("user")
+    .neq("user", userName);
+
+  const user: TradePageUser = {
+    ...data,
+    pokemonCollection: pokemonData ?? [],
+    otherUserNames: otherUserNames ?? [],
+  };
+
   const { data: sentTradesData } = await supabase
     .from("trades")
     .select()
-    .eq("user", session?.user.user_metadata.name);
-  const sentTrades = sentTradesData ? sentTradesData : null;
+    .eq("user", userName);
+  const sentTrades = (sentTradesData ?? []) as Trade[];
 
   const { data: receivedTradesData } = await supabase
     .from("trades")
     .select()
-    .eq("recipient", user?.channel);
-  const receivedTrades = receivedTradesData ? receivedTradesData : null;
+    .eq("recipient", user.channel);
+  const receivedTrades = (receivedTradesData ?? []) as Trade[];
   return {
     props: {
       user: user,

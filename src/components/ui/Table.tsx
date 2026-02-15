@@ -19,6 +19,6 @@ export const Tr = ({ ...props }: React.ComponentProps<"tr">) => {
   );
 };
 
-export const Td = ({ ...props }: React.ComponentProps<"th">) => {
+export const Td = ({ ...props }: React.ComponentProps<"td">) => {
   return <td className="py-4 px-6" {...props} />;
 };

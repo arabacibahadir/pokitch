@@ -1,16 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 
 import Heading from "@/ui/Heading";
 import { supabase } from "@/utils/supabase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Props = {
   channel: string;
 };
 
 const getPokeHealthPercent = (health: number) => {
-  return (health * 2 + "%") as string;
+  const clampedHealth = Math.max(0, Math.min(health, 50));
+  return `${clampedHealth * 2}%`;
 };
 
 export default function ComponentOverlayPage({ channel }: Props) {
@@ -22,24 +22,30 @@ export default function ComponentOverlayPage({ channel }: Props) {
     name: null,
   });
 
-  const getCurrentPoke = async (channel: string) => {
-    await new Promise<void>(() =>
-      setTimeout(async () => {
-        const { data } = await supabase
-          .from("active_pokes")
-          .select()
-          .eq("channel", channel)
-          .single();
-        if (!data) return null;
+  const getCurrentPoke = useCallback(async () => {
+    const { data } = await supabase
+      .from("active_pokes")
+      .select("health, poke")
+      .eq("channel", channel)
+      .single();
 
-        setPokeState({ ...pokeState, health: data.health, name: data.poke });
-      }, 1000),
-    );
-  };
+    if (!data) {
+      setPokeState({
+        health: 0,
+        name: null,
+      });
+      return;
+    }
+
+    setPokeState({
+      health: data.health,
+      name: data.poke,
+    });
+  }, [channel]);
 
   useEffect(() => {
-    getCurrentPoke(channel);
-  }, [channel]);
+    void getCurrentPoke();
+  }, [getCurrentPoke]);
 
   // realtime subscription on supabase
   useEffect(() => {
@@ -48,23 +54,23 @@ export default function ComponentOverlayPage({ channel }: Props) {
     }).toString();
 
     const subs = supabase
-      .channel("active_pokes")
+      .channel(`active_pokes:${channel}`)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", filter: filters },
-        () => getCurrentPoke(channel),
+        () => void getCurrentPoke(),
       )
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", filter: filters },
-        () => getCurrentPoke(channel),
+        () => void getCurrentPoke(),
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(subs);
+      void supabase.removeChannel(subs);
     };
-  }, []);
+  }, [channel, getCurrentPoke]);
 
   if (!pokeState.name) {
     return <></>;

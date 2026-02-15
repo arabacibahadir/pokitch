@@ -34,7 +34,11 @@ const toggleButtonStyles = cva(
 
 export interface DropdownProps {
   label: string;
-  menuItems: { label: string; onClick: () => void }[];
+  menuItems: {
+    key?: string;
+    label: React.ReactNode;
+    onClick: () => void;
+  }[];
 }
 
 export default function Dropdown({ label, menuItems }: DropdownProps) {
@@ -87,15 +91,14 @@ export default function Dropdown({ label, menuItems }: DropdownProps) {
       </button>
       {isOpen && (
         <div className={dropdownMenuStyles()}>
-          {menuItems.map((item) => (
+          {menuItems.map((item, index) => (
             <button
-              key={item.label}
+              key={item.key ?? `item-${index}`}
               type="button"
               className={dropdownMenuLinkStyles()}
               onClick={() => {
                 handleMenuItemClick(item.onClick);
               }}
-              onChange={handleButtonClick}
             >
               {item.label}
             </button>

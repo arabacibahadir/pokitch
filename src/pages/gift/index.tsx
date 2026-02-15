@@ -6,62 +6,83 @@ import { supabase } from "@/utils/supabase";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
-export default function Gift({ user }: { user: any }) {
+type PokemonCollectionItem = {
+  id: number;
+  poke: string;
+};
+
+type OtherUserName = {
+  user: string;
+};
+
+type GiftPageUser = {
+  id: string;
+  channel: string;
+  pokemonCollection: PokemonCollectionItem[];
+  otherUserNames: OtherUserName[];
+};
+
+export default function Gift({ user }: { user: GiftPageUser }) {
   const [selectedPokemon, setSelectedPokemon] = useState("");
   const [giftRecipient, setGiftRecipient] = useState("");
-  const [pokemonID, setPokemonID] = useState("");
+  const [pokemonID, setPokemonID] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  if (!user) {
-    router.push("/");
-    return null;
-  }
-  function handleGift() {
-    if (!pokemonID || !giftRecipient) {
-      return null;
+  const handleGift = async () => {
+    if (pokemonID === null || !giftRecipient || isSubmitting) {
+      return;
     }
 
-    const removeTrade = async () => {
-      const { error } = await supabase
-        .from("trades")
-        .delete()
-        .match({ poke: selectedPokemon, user: user.channel });
+    setIsSubmitting(true);
+    try {
+      const { data: giftedRow, error: addError } = await supabase
+        .from("collections")
+        .insert([
+          {
+            poke: selectedPokemon,
+            user: giftRecipient,
+            channel: user.channel,
+          },
+        ])
+        .select("id")
+        .single();
 
-      if (error) {
-        console.log("remove error", error);
+      if (addError || !giftedRow) {
+        console.log("add error", addError);
+        return;
       }
-    };
-    const removePokemon = async () => {
-      const { error } = await supabase
+
+      const { error: removePokemonError } = await supabase
         .from("collections")
         .delete()
         .match({ id: pokemonID, user: user.channel });
 
-      if (error) {
-        console.log("remove error", error);
+      if (removePokemonError) {
+        await supabase.from("collections").delete().match({ id: giftedRow.id });
+        console.log("remove error", removePokemonError);
+        return;
       }
-    };
-    const addPokemon = async () => {
-      const { error } = await supabase.from("collections").insert([
-        {
-          poke: selectedPokemon,
-          user: giftRecipient,
-          channel: user.channel,
-        },
-      ]);
-      if (error) {
-        console.log("add error", error);
+
+      const { error: removeTradeError } = await supabase
+        .from("trades")
+        .delete()
+        .match({ poke: selectedPokemon, user: user.channel });
+
+      if (removeTradeError) {
+        console.log("remove error", removeTradeError);
       }
-    };
-    removePokemon();
-    removeTrade();
-    addPokemon();
-    setSelectedPokemon("");
-    setGiftRecipient("");
-    router.replace(router.asPath);
-  }
+
+      setSelectedPokemon("");
+      setGiftRecipient("");
+      setPokemonID(null);
+      await router.replace(router.asPath);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Layout>
@@ -69,7 +90,6 @@ export default function Gift({ user }: { user: any }) {
         <div className="container flex flex-row items-center  justify-center space-x-8">
           <div className="space-y-6">
             <UserPokemonsDropdown
-              key={user.pokemonCollection}
               user={user}
               onChange={(selectedPokemon, pokemonID) => {
                 setSelectedPokemon(selectedPokemon);
@@ -78,16 +98,16 @@ export default function Gift({ user }: { user: any }) {
             />
           </div>
           <GiftRecipientDropdown
-            key={user.otherUserNames}
             user={user}
-            onChange={(selectedUser: SetStateAction<string>) => {
+            onChange={(selectedUser: string) => {
               setGiftRecipient(selectedUser);
             }}
           />
           <Button
             className="mt-8"
+            disabled={isSubmitting || !pokemonID || !giftRecipient}
             onClick={() => {
-              handleGift();
+              void handleGift();
             }}
           >
             <div className="inline-flex items-center">
@@ -104,29 +124,48 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const { data } = await supabase
     .from("accounts")
     .select()
-    .eq("user_id", session?.user?.id)
+    .eq("user_id", session.user.id)
     .single();
+
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const userName = session.user.user_metadata.name as string;
 
   const { data: pokemonData } = await supabase
     .from("collections")
     .select()
-    .eq("user", session?.user.user_metadata.name);
+    .eq("user", userName);
 
   const { data: otherUserNames } = await supabase
     .from("collections")
     .select("user")
-    .neq("user", session?.user.user_metadata.name);
+    .neq("user", userName);
 
-  const user = data
-    ? {
-        ...data,
-        pokemonCollection: pokemonData,
-        otherUserNames: otherUserNames,
-      }
-    : null;
+  const user: GiftPageUser = {
+    ...data,
+    pokemonCollection: pokemonData ?? [],
+    otherUserNames: otherUserNames ?? [],
+  };
 
   return {
     props: {

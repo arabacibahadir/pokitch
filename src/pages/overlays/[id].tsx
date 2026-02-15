@@ -1,10 +1,11 @@
 import ComponentOverlayPage from "@/components/ComponentOverlayPage";
 import { connectDetector } from "@/utils/connectDetector";
 import { poke } from "@/utils/poke";
-import { supabase } from "@/utils/supabase";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { tmiClient } from "@/utils/tmi";
 import type { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
+import type { ChatUserstate } from "tmi.js";
 
 type Props = {
   channel: string;
@@ -55,7 +56,11 @@ export default function GameOverlay({ channel }: Props) {
       setClientConnected(false);
     };
 
-    const onChat = async (channel: string, tags: any, message: string) => {
+    const onChat = async (
+      channel: string,
+      tags: ChatUserstate,
+      message: string,
+    ) => {
       if (!message.toLowerCase().startsWith("!poke")) return;
 
       const cmd = message.slice(1).split(" ").pop()?.toLowerCase(); // remove (!) and pick up to last word as command
@@ -89,6 +94,7 @@ export default function GameOverlay({ channel }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const supabase = createServerSupabaseClient(ctx);
   const id = ctx.query.id as string;
 
   const { data } = await supabase

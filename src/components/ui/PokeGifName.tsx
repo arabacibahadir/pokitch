@@ -2,16 +2,11 @@ import Image from "next/image";
 import React from "react";
 
 type IPokemonItemProps = {
-  pokemon: any;
-  selectedPokemonName: string;
+  pokemon: { poke: string };
   onClick: () => void;
 };
 
-export const PokeGifName: React.FC<IPokemonItemProps> = ({
-  pokemon,
-  selectedPokemonName,
-  onClick,
-}) => {
+export const PokeGifName: React.FC<IPokemonItemProps> = ({ pokemon, onClick }) => {
   return (
     <div
       className="flex items-center"

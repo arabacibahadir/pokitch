@@ -3,7 +3,7 @@ import UserHeroHomePage from "@/components/UserHeroHomePage";
 import Heading from "@/ui/Heading";
 
 type Props = {
-  user: object;
+  user: { id: string; channel: string } | null;
 };
 
 export default function HeroHomePage({ user }: Props) {

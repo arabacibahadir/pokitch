@@ -14,41 +14,75 @@ export default function GameOverlay({ channel }: Props) {
   const [clientConnected, setClientConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check if the client and channel is connected. If not, connect to the server and set the state to true.
-    if (!clientConnected || connectDetector.getConnect(channel)) {
-      tmiClient.connect();
-      setClientConnected(true);
-    }
+    const connectAndJoin = async () => {
+      const readyState = tmiClient.readyState();
 
-    tmiClient
-      .on("connected", async (address) => {
-        console.log(`tmi: connected to irc server(${address})`);
-
-        if (clientConnected) {
-          connectDetector.setConnect(channel); // push channel to connectings
-          await poke.initialize(channel); // up to poke
-          await tmiClient.join(channel); // joint to chat
+      if (!clientConnected) {
+        if (readyState === "OPEN" || readyState === "CONNECTING") {
+          if (readyState === "OPEN") setClientConnected(true);
+          return;
         }
-      })
-      .on("disconnected", () => {
-        console.log("tmi: disconnected to irc server");
-      })
-      .on("chat", async (channel, tags, message) => {
-        if (!message.toLowerCase().startsWith("!poke")) return;
 
-        const cmd = message.slice(1).split(" ").pop()?.toLowerCase(); // remove (!) and pick up to last word as command
-        const channelName = channel.slice(1) as string; // remove (#) from channel
-        const userName = tags.username as string;
+        await tmiClient.connect();
+        setClientConnected(true);
+        return;
+      }
 
-        // commands
-        if (cmd === "welcomepack" || cmd === "wp") {
-          return await poke.welcomePack(tmiClient, userName, channelName);
-        } else if (cmd === "attack" || cmd === "a") {
-          return await poke.attack(tmiClient, userName, channelName);
-        } else if (cmd === "inventory" || cmd === "i") {
-          return await poke.inventory(tmiClient, userName, channelName);
-        }
-      });
+      if (tmiClient.readyState() !== "OPEN") return;
+      if (connectDetector.getConnect(channel)) return;
+
+      connectDetector.setConnect(channel);
+      await poke.initialize(channel);
+      if (!tmiClient.getChannels().includes(`#${channel}`)) {
+        await tmiClient.join(channel);
+      }
+    };
+
+    const onConnected = async (address: string) => {
+      console.log(`tmi: connected to irc server(${address})`);
+
+      if (connectDetector.getConnect(channel)) return;
+
+      connectDetector.setConnect(channel);
+      await poke.initialize(channel);
+      if (!tmiClient.getChannels().includes(`#${channel}`)) {
+        await tmiClient.join(channel);
+      }
+    };
+
+    const onDisconnected = () => {
+      console.log("tmi: disconnected to irc server");
+      setClientConnected(false);
+    };
+
+    const onChat = async (channel: string, tags: any, message: string) => {
+      if (!message.toLowerCase().startsWith("!poke")) return;
+
+      const cmd = message.slice(1).split(" ").pop()?.toLowerCase(); // remove (!) and pick up to last word as command
+      const channelName = channel.slice(1) as string; // remove (#) from channel
+      const userName = tags.username as string;
+
+      // commands
+      if (cmd === "welcomepack" || cmd === "wp") {
+        return await poke.welcomePack(tmiClient, userName, channelName);
+      } else if (cmd === "attack" || cmd === "a") {
+        return await poke.attack(tmiClient, userName, channelName);
+      } else if (cmd === "inventory" || cmd === "i") {
+        return await poke.inventory(tmiClient, userName, channelName);
+      }
+    };
+
+    tmiClient.on("connected", onConnected);
+    tmiClient.on("disconnected", onDisconnected);
+    tmiClient.on("chat", onChat);
+
+    connectAndJoin();
+
+    return () => {
+      tmiClient.removeListener("connected", onConnected);
+      tmiClient.removeListener("disconnected", onDisconnected);
+      tmiClient.removeListener("chat", onChat);
+    };
   }, [channel, clientConnected]);
 
   return <ComponentOverlayPage channel={channel} />;

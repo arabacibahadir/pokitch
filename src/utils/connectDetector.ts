@@ -2,6 +2,7 @@ class ConnectDetector {
   public connects = Array();
 
   setConnect = (channel: string) => {
+    if (this.getConnect(channel)) return;
     return this.connects.push(channel);
   };
 

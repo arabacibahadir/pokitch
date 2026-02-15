@@ -121,18 +121,23 @@ class Poke {
     if (this.isPlayerOnCooldown(user)) return;
     this.setPlayerCooldown(user);
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("active_pokes")
       .select()
       .eq("channel", channel)
       .single();
+    if (error || !data) return;
 
     const damage = this.damage();
     const newHealth = (data.health - damage) as number;
-    await supabase
+    const { data: updatedPokes, error: updateError } = await supabase
       .from("active_pokes")
       .update({ health: newHealth })
-      .eq("id", data.id);
+      .eq("id", data.id)
+      .select("id, poke, health");
+    if (updateError || !updatedPokes?.length) return;
+
+    const updatedPoke = updatedPokes[0];
 
     const attackMessages = [
       `${"@" + user} lands a hit! Dealt ${damage} damage.`,
@@ -177,28 +182,37 @@ class Poke {
 
     this.sendMessage(client, channel, randomAttackMessage);
 
-    if (newHealth <= 0) {
+    if (updatedPoke.health <= 0) {
+      // Claim the fainted pokemon by deleting the active row first.
+      // Only the request that actually deletes the row can award the catch.
+      const { data: removedPokes, error: removeError } = await supabase
+        .from("active_pokes")
+        .delete()
+        .eq("id", updatedPoke.id)
+        .select("id, poke");
+      if (removeError || !removedPokes?.length) return;
+
+      const capturedPoke = removedPokes[0];
+
       await supabase.from("collections").insert({
         user: user,
         channel: channel,
-        poke: data.poke,
+        poke: capturedPoke.poke,
       });
 
-      await supabase.from("active_pokes").delete().eq("id", data.id);
-
       const catchMessages = [
-        `${"@" + user} has successfully captured a ${data.poke}!`,
-        `A wild ${data.poke} has been caught by ${"@" + user}!`,
+        `${"@" + user} has successfully captured a ${capturedPoke.poke}!`,
+        `A wild ${capturedPoke.poke} has been caught by ${"@" + user}!`,
         `Congratulations, ${"@" + user} 've added a ${
-          data.poke
+          capturedPoke.poke
         } to collection!`,
-        `${"@" + user} is now the proud owner of a new ${data.poke}!`,
-        `A round of applause for ${"@" + user} who's caught a ${data.poke}!`,
-        `${"@" + user} has just caught a ${data.poke} - great job!`,
-        `The hunt is over, ${"@" + user} has caught a ${data.poke}!`,
-        `${"@" + user} has added a new member to collection - a ${data.poke}!`,
-        `Another successful catch! ${"@" + user} 've caught a ${data.poke}!`,
-        `${"@" + user} can now celebrate - caught a ${data.poke}!`,
+        `${"@" + user} is now the proud owner of a new ${capturedPoke.poke}!`,
+        `A round of applause for ${"@" + user} who's caught a ${capturedPoke.poke}!`,
+        `${"@" + user} has just caught a ${capturedPoke.poke} - great job!`,
+        `The hunt is over, ${"@" + user} has caught a ${capturedPoke.poke}!`,
+        `${"@" + user} has added a new member to collection - a ${capturedPoke.poke}!`,
+        `Another successful catch! ${"@" + user} 've caught a ${capturedPoke.poke}!`,
+        `${"@" + user} can now celebrate - caught a ${capturedPoke.poke}!`,
       ];
       const randomCatchMessage =
         catchMessages[Math.floor(Math.random() * catchMessages.length)];

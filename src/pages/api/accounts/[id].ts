@@ -1,10 +1,11 @@
-import { supabase } from "@/utils/supabase";
+import { createServerSupabaseClientFromApi } from "@/utils/supabase/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const supabase = createServerSupabaseClientFromApi(req, res);
   const id = req.query.id as string;
 
   try {

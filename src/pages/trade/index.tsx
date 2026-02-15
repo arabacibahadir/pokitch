@@ -4,8 +4,9 @@ import PokemonCard from "@/components/PokeCard";
 import UserPokemonsDropdown from "@/components/UserPokemonsDropdown";
 import Button from "@/ui/Button";
 import { supabase } from "@/utils/supabase";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { GetServerSideProps } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { SetStateAction, useState } from "react";
 import { FiRefreshCcw } from "react-icons/fi";
@@ -273,22 +274,28 @@ export default function Gift({
                   {sentTrades.map((trade: Trade) => (
                     <tr key={trade.id}>
                       <td className="px-8">
-                        <img
+                        <Image
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
                           alt={trade.poke}
+                          width={48}
+                          height={48}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
                           onMouseEnter={() => setHoveredPokemon(trade.poke)}
-                          onMouseLeave={() => setHoveredPokemon(null)}></img>
+                          onMouseLeave={() => setHoveredPokemon(null)}
+                        />
                         {trade.poke}
                       </td>
                       <td className="px-10">{trade.recipient}</td>
                       <td className="px-10">
-                        <img
+                        <Image
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
                           alt={trade.recipientpoke}
+                          width={48}
+                          height={48}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
                           onMouseEnter={() => setHoveredPokemon(trade.poke)}
-                          onMouseLeave={() => setHoveredPokemon(null)}></img>
+                          onMouseLeave={() => setHoveredPokemon(null)}
+                        />
                         {trade.recipientpoke}
                       </td>
                       <td className="px-10">
@@ -321,21 +328,27 @@ export default function Gift({
                     <tr key={trade.id}>
                       <td className="px-10">{trade.user}</td>
                       <td className="px-10">
-                        <img
+                        <Image
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.poke}.gif`}
                           alt={trade.poke}
+                          width={48}
+                          height={48}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
                           onMouseEnter={() => setHoveredPokemon(trade.poke)}
-                          onMouseLeave={() => setHoveredPokemon(null)}></img>
+                          onMouseLeave={() => setHoveredPokemon(null)}
+                        />
                         {trade.poke}
                       </td>
                       <td className="px-10">
-                        <img
+                        <Image
                           src={`https://projectpokemon.org/images/normal-sprite/${trade.recipientpoke}.gif`}
                           alt={trade.recipientpoke}
+                          width={48}
+                          height={48}
                           className="mr-2 inline-block max-h-12 w-12 object-contain object-center"
                           onMouseEnter={() => setHoveredPokemon(trade.poke)}
-                          onMouseLeave={() => setHoveredPokemon(null)}></img>
+                          onMouseLeave={() => setHoveredPokemon(null)}
+                        />
                         {trade.recipientpoke}
                       </td>
                       <td className="px-10">

@@ -1,4 +1,4 @@
-import { supabase } from "@/utils/supabase";
+import { createServerSupabaseClientFromApi } from "@/utils/supabase/server";
 import { twitch } from "@/utils/twitch";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -6,6 +6,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const supabase = createServerSupabaseClientFromApi(req, res);
   const code = req.query.code as string;
 
   try {

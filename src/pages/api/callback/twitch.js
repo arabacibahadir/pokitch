@@ -1,6 +1,7 @@
-import { supabase } from "@/utils/supabase";
+import { createServerSupabaseClientFromApi } from "@/utils/supabase/server";
 
 export default async function twitchCallback(req, res) {
+  const supabase = createServerSupabaseClientFromApi(req, res);
   try {
     const { error, user } = await supabase.auth.signIn(
       {

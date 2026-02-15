@@ -5,6 +5,7 @@ import SearchBar from "@/components/SearchBar";
 import Button from "@/ui/Button";
 import Heading from "@/ui/Heading";
 import { Table, Td, Th, Thead, Tr } from "@/ui/Table";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { supabase } from "@/utils/supabase";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -211,11 +212,11 @@ export default function Inventory({ user, channel, collections, poke }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const supabase = createServerSupabaseClient(ctx);
   const user = ctx.query.user as string;
   const channel = ctx.query.channel as string;
   const poke = ctx.query.poke as string;
 
-  //
   if (!user && !channel && !poke) {
     const { data } = await supabase
       .from("collections")

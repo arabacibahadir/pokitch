@@ -2,7 +2,7 @@ import FeaturesHomePage from "@/components/FeaturesHomePage";
 import HeroHomePage from "@/components/HeroHomePage";
 import HowToUseHomePage from "@/components/HowToUseHomePage";
 import Layout from "@/components/Layout";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { GetServerSideProps } from "next";
 
 export default function Home({ user }: { user: any }) {

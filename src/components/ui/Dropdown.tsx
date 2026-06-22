@@ -95,7 +95,6 @@ export default function Dropdown({ label, menuItems }: DropdownProps) {
               onClick={() => {
                 handleMenuItemClick(item.onClick);
               }}
-              onChange={handleButtonClick}
             >
               {item.label}
             </button>

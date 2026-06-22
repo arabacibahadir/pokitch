@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import { Open_Sans } from "@next/font/google";
+import { Open_Sans } from "next/font/google";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Session, SessionContextProvider } from "@supabase/auth-helpers-react";
 import { cx } from "class-variance-authority";

@@ -2,7 +2,7 @@ import FeaturesHomePage from "@/components/FeaturesHomePage";
 import HeroHomePage from "@/components/HeroHomePage";
 import HowToUseHomePage from "@/components/HowToUseHomePage";
 import Layout from "@/components/Layout";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
 
 export default function Home({ user }: { user: any }) {
@@ -16,7 +16,7 @@ export default function Home({ user }: { user: any }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const supabase = createServerSupabaseClient(ctx);
+  const supabase = createPagesServerClient(ctx);
   const {
     data: { session },
   } = await supabase.auth.getSession();

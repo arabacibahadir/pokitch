@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import UserPokemonsDropdown from "@/components/UserPokemonsDropdown";
 import Button from "@/ui/Button";
 import { supabase } from "@/utils/supabase";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { SetStateAction, useState } from "react";
@@ -100,7 +100,7 @@ export default function Gift({ user }: { user: any }) {
   );
 }
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const supabase = createServerSupabaseClient(ctx);
+  const supabase = createPagesServerClient(ctx);
   const {
     data: { session },
   } = await supabase.auth.getSession();

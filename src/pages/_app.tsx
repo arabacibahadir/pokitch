@@ -1,8 +1,9 @@
 import "@/styles/globals.css";
 import { Open_Sans } from "next/font/google";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { Session, SessionContextProvider } from "@supabase/auth-helpers-react";
+import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { cx } from "class-variance-authority";
+import type { Session } from "@supabase/supabase-js";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
@@ -18,7 +19,7 @@ export default function App({
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
   const [supabaseClient] = useState(() =>
-    createBrowserSupabaseClient({
+    createPagesBrowserClient({
       supabaseUrl:
         process.env.NEXT_PUBLIC_SUPABASE_URL ||
         "https://placeholder.supabase.co",

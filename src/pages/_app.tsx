@@ -18,15 +18,18 @@ export default function App({
   Component,
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
-  const [supabaseClient] = useState(() =>
-    createPagesBrowserClient({
-      supabaseUrl:
-        process.env.NEXT_PUBLIC_SUPABASE_URL ||
-        "https://placeholder.supabase.co",
-      supabaseKey:
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key",
-    })
-  );
+  const [supabaseClient] = useState(() => {
+    if (typeof window === "undefined") {
+      return createPagesBrowserClient({
+        supabaseUrl:
+          process.env.NEXT_PUBLIC_SUPABASE_URL ||
+          "https://placeholder.supabase.co",
+        supabaseKey:
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key",
+      });
+    }
+    return createPagesBrowserClient();
+  });
 
   return (
     <>

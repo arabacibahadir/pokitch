@@ -1,8 +1,8 @@
-FROM node:18-alpine AS base
+FROM node:26-alpine AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat && npm install -g yarn
 
 FROM base AS deps
 WORKDIR /app

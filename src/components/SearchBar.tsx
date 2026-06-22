@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { FiRefreshCcw, FiX } from "react-icons/fi";
 
-type Props = {};
-
-export default function SearchBar({}: Props) {
+export default function SearchBar() {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState<boolean | null>(true);

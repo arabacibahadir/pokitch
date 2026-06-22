@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import { Open_Sans } from "@next/font/google";
+import { Open_Sans } from "next/font/google";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Session, SessionContextProvider } from "@supabase/auth-helpers-react";
 import { cx } from "class-variance-authority";
@@ -17,7 +17,15 @@ export default function App({
   Component,
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
-  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
+  const [supabaseClient] = useState(() =>
+    createBrowserSupabaseClient({
+      supabaseUrl:
+        process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        "https://placeholder.supabase.co",
+      supabaseKey:
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key",
+    })
+  );
 
   return (
     <>

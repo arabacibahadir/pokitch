@@ -19,6 +19,7 @@ export default function App({
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
   const [supabaseClient] = useState(() => {
+    const isProd = process.env.NODE_ENV === "production";
     if (typeof window === "undefined") {
       return createPagesBrowserClient({
         supabaseUrl:
@@ -26,9 +27,24 @@ export default function App({
           "https://placeholder.supabase.co",
         supabaseKey:
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key",
+        cookieOptions: {
+          name: "sb-access-token",
+          path: "/",
+          domain: undefined,
+          secure: isProd,
+          sameSite: "lax",
+        },
       });
     }
-    return createPagesBrowserClient();
+    return createPagesBrowserClient({
+      cookieOptions: {
+        name: "sb-access-token",
+        path: "/",
+        domain: undefined,
+        secure: isProd,
+        sameSite: "lax",
+      },
+    });
   });
 
   return (

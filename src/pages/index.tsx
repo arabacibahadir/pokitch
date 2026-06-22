@@ -16,7 +16,15 @@ export default function Home({ user }: { user: any }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const supabase = createPagesServerClient(ctx);
+  const supabase = createPagesServerClient(ctx, {
+    cookieOptions: {
+      name: "sb-access-token",
+      path: "/",
+      domain: undefined,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    },
+  });
   const {
     data: { session },
   } = await supabase.auth.getSession();

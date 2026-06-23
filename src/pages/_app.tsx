@@ -41,6 +41,12 @@ export default function App({
           gtag('config', 'G-M9M9DRV5PT');
       `}
       </Script>
+      <Script
+        defer
+        src="https://analytics.labelop.com/script.js"
+        data-website-id="db6f60f9-9167-4eda-8228-12d9f5268281"
+        strategy="afterInteractive"
+      />
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Pokitch - Twitch-integrated Poke Catching Game with Chat</title>

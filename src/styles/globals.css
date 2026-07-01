@@ -1,3 +1,398 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  .theme {
+    --font-heading: var(--font-custom), ui-sans-serif, system-ui, sans-serif;
+    --font-sans: var(--font-custom), ui-sans-serif, system-ui, sans-serif;
+  }
+  :root {
+    --background: 0.16 0.035 274;
+    --foreground: 0.97 0.015 92;
+    --card: 0.205 0.045 273;
+    --card-foreground: 0.97 0.015 92;
+    --popover: 0.205 0.045 273;
+    --popover-foreground: 0.97 0.015 92;
+    --primary: 0.84 0.16 91;
+    --primary-foreground: 0.19 0.04 273;
+    --secondary: 0.29 0.08 285;
+    --secondary-foreground: 0.97 0.015 92;
+    --muted: 0.25 0.045 274;
+    --muted-foreground: 0.73 0.035 274;
+    --accent: 0.69 0.17 323;
+    --accent-foreground: 0.98 0.01 95;
+    --destructive: 0.58 0.22 28;
+    --destructive-foreground: 0.98 0.018 86;
+    --border: 0.39 0.075 278;
+    --input: 0.39 0.075 278;
+    --ring: 0.84 0.16 91;
+    --surface: 0.23 0.055 274;
+    --surface-foreground: 0.98 0.018 86;
+    --chart-1: 0.75 0.17 74;
+    --chart-2: 0.66 0.14 44;
+    --chart-3: 0.55 0.16 255;
+    --chart-4: 0.64 0.15 142;
+    --chart-5: 0.62 0.19 25;
+    --radius: 0.65rem;
+    --sidebar: 0.18 0.009 75;
+    --sidebar-foreground: 0.98 0.018 86;
+    --sidebar-primary: 0.75 0.17 74;
+    --sidebar-primary-foreground: 0.17 0.045 67;
+    --sidebar-accent: 0.31 0.058 67;
+    --sidebar-accent-foreground: 0.98 0.018 86;
+    --sidebar-border: 0.3 0.014 75;
+    --sidebar-ring: 0.78 0.16 76;
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply min-h-screen bg-background text-foreground antialiased;
+    background-image:
+      linear-gradient(oklch(var(--border) / 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(var(--border) / 0.1) 1px, transparent 1px),
+      radial-gradient(
+        circle at 50% -20%,
+        oklch(var(--secondary) / 0.7),
+        transparent 45%
+      );
+    background-size:
+      32px 32px,
+      32px 32px,
+      100% 100%;
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background: oklch(var(--primary));
+    color: oklch(var(--primary-foreground));
+  }
+}
+
+@layer components {
+  .game-panel {
+    @apply relative border-2 border-border bg-card;
+    box-shadow: 6px 6px 0 oklch(0.1 0.025 274 / 0.8);
+  }
+
+  .game-kicker {
+    @apply font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-primary;
+  }
+
+  .pixel-corners {
+    clip-path: polygon(
+      0 8px,
+      8px 8px,
+      8px 0,
+      calc(100% - 8px) 0,
+      calc(100% - 8px) 8px,
+      100% 8px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      8px 100%,
+      8px calc(100% - 8px),
+      0 calc(100% - 8px)
+    );
+  }
+
+  .scanlines::after {
+    content: "";
+    @apply pointer-events-none absolute inset-0 opacity-20;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0 3px,
+      #000 3px 4px
+    );
+  }
+
+  .overlay-viewport {
+    container-name: overlay;
+    container-type: size;
+    position: fixed;
+    inset: 0;
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    place-items: stretch;
+    background: transparent;
+  }
+
+  .overlay-card {
+    --overlay-gap: clamp(0.4rem, 3cqh, 0.75rem);
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    gap: var(--overlay-gap);
+    overflow: hidden;
+    border: clamp(1px, 0.8cqh, 2px) solid oklch(var(--primary) / 0.55);
+    border-radius: clamp(0.35rem, 2.5cqh, 0.75rem);
+    background: oklch(0.16 0.035 274 / 0.95);
+    padding: clamp(0.4rem, 3cqh, 1rem);
+    color: white;
+    animation: overlay-enter 240ms ease-out;
+  }
+
+  .overlay-sprite-frame {
+    display: flex;
+    width: clamp(2rem, 22cqw, 8rem);
+    height: min(82cqh, 8rem);
+    flex: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overlay-sprite {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+
+  .overlay-details {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .overlay-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: clamp(0.25rem, 2cqw, 1rem);
+    margin-bottom: clamp(0.25rem, 2cqh, 0.75rem);
+    font-size: clamp(0.65rem, 18cqh, 1.75rem);
+  }
+
+  .overlay-heading h1 {
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 800;
+    text-transform: capitalize;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .overlay-heading span {
+    flex: none;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .overlay-health-track {
+    height: clamp(0.3rem, 10cqh, 1rem);
+    overflow: hidden;
+    border-radius: 999px;
+    background: oklch(0.42 0.025 274 / 0.9);
+  }
+
+  .overlay-health-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: #22c55e;
+    transition:
+      width 500ms ease,
+      background-color 200ms ease;
+  }
+
+  .overlay-card[data-health="medium"] .overlay-health-fill {
+    background: #eab308;
+  }
+  .overlay-card[data-health="low"] .overlay-health-fill {
+    background: #ef4444;
+  }
+
+  .overlay-event {
+    position: absolute;
+    right: clamp(0.35rem, 2.5cqh, 0.75rem);
+    bottom: clamp(0.35rem, 2.5cqh, 0.75rem);
+    display: grid;
+    max-width: 68%;
+    gap: 0.1rem;
+    border: 1px solid oklch(var(--primary) / 0.75);
+    border-radius: clamp(0.2rem, 1.5cqh, 0.45rem);
+    background: oklch(0.1 0.025 274 / 0.94);
+    padding: clamp(0.2rem, 1.5cqh, 0.45rem) clamp(0.35rem, 2cqw, 0.65rem);
+    font-size: clamp(0.5rem, 12cqh, 0.8rem);
+    line-height: 1.15;
+    animation: overlay-feedback-in 180ms ease-out;
+  }
+
+  .overlay-event strong,
+  .overlay-event span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .overlay-event strong {
+    color: oklch(var(--primary));
+  }
+  .overlay-event span {
+    font-family: ui-monospace, monospace;
+  }
+
+  .overlay-catch {
+    inset: clamp(0.35rem, 3cqh, 0.8rem);
+    z-index: 2;
+    max-width: none;
+    place-content: center;
+    text-align: center;
+    background: oklch(0.1 0.025 274 / 0.9);
+  }
+
+  .overlay-card[data-event="hit"] .overlay-sprite {
+    animation: overlay-recoil 260ms ease-out;
+  }
+
+  .overlay-card[data-event="caught"] .overlay-sprite {
+    animation: overlay-caught 520ms ease-out;
+  }
+
+  .overlay-card[data-critical="true"] {
+    animation: overlay-critical 420ms ease-out;
+  }
+
+  .overlay-debug {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    border-radius: 3px;
+    background: rgb(0 0 0 / 0.75);
+    padding: 2px 5px;
+    color: white;
+    font:
+      10px/1.4 ui-monospace,
+      monospace;
+  }
+
+  .overlay-debug[data-connection="connected"] {
+    color: #86efac;
+  }
+  .overlay-debug[data-connection="reconnecting"],
+  .overlay-debug[data-connection="failed"] {
+    color: #fca5a5;
+  }
+
+  @container overlay (orientation: portrait) {
+    .overlay-card {
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .overlay-sprite-frame {
+      width: min(78cqw, 12rem);
+      height: min(52cqh, 12rem);
+    }
+    .overlay-details {
+      width: 100%;
+      flex: none;
+    }
+  }
+
+  @container overlay (min-width: 420px) and (orientation: landscape) {
+    .overlay-sprite-frame {
+      width: min(24cqw, 9rem);
+    }
+  }
+
+  .overlay-card[data-size="compact"] {
+    --overlay-gap: clamp(0.35rem, 2.5cqh, 0.75rem);
+  }
+
+  .overlay-card[data-size="large"] .overlay-heading {
+    font-size: clamp(0.85rem, 20cqh, 2rem);
+  }
+}
+
+body:has(.overlay-viewport) {
+  min-height: 0;
+  overflow: hidden;
+  background: transparent;
+  background-image: none;
+}
+
+@keyframes overlay-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes overlay-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes overlay-recoil {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-8%);
+  }
+  60% {
+    transform: translateX(5%);
+  }
+}
+
+@keyframes overlay-caught {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.12);
+    filter: brightness(1.8);
+  }
+  100% {
+    opacity: 0.35;
+    transform: scale(0.35);
+    filter: brightness(2.2);
+  }
+}
+
+@keyframes overlay-critical {
+  0%,
+  100% {
+    box-shadow: none;
+  }
+  35% {
+    box-shadow: inset 0 0 0 100vmax rgb(255 255 255 / 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

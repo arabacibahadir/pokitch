@@ -1,0 +1,39 @@
+import { describe, expect, it } from "vitest";
+
+import { getAppOrigin, getSafeNextPath } from "./origin";
+
+describe("getAppOrigin", () => {
+  it("normalizes the configured application URL", () => {
+    expect(
+      getAppOrigin({
+        NODE_ENV: "production",
+        NEXT_PUBLIC_APP_URL: "https://pokitch.tv/",
+      }),
+    ).toBe("https://pokitch.tv");
+  });
+
+  it("fails closed when production has no canonical URL", () => {
+    expect(() => getAppOrigin({ NODE_ENV: "production" })).toThrow(
+      "NEXT_PUBLIC_APP_URL is required",
+    );
+  });
+
+  it("uses localhost in development without trusting request headers", () => {
+    expect(getAppOrigin({ NODE_ENV: "development", PORT: "4000" })).toBe(
+      "http://localhost:4000",
+    );
+  });
+});
+
+describe("getSafeNextPath", () => {
+  it("allows local application paths", () => {
+    expect(getSafeNextPath("/collections?mode=poke")).toBe(
+      "/collections?mode=poke",
+    );
+  });
+
+  it.each(["https://attacker.test", "//attacker.test", "javascript:alert(1)"])(
+    "rejects external target %s",
+    (target) => expect(getSafeNextPath(target)).toBe("/"),
+  );
+});

@@ -1,42 +1,34 @@
-FROM node:26-alpine AS base
+FROM node:22-alpine AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
-
-RUN apk add --no-cache libc6-compat && npm install -g yarn
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
 
 FROM base AS deps
-WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+FROM base AS prod-deps
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
 FROM base AS builder
-WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ARG NEXT_PUBLIC_APP_URL
 ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ARG NEXT_PUBLIC_TWITCH_CLIENT_ID
-ARG NEXT_PUBLIC_TWITCH_CLIENT_CALLBACK_URI
-ARG NEXT_PUBLIC_TWITCH_BOT_USERNAME
-ARG NEXT_PUBLIC_TWITCH_BOT_OAUTH
 
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_TWITCH_CLIENT_ID=$NEXT_PUBLIC_TWITCH_CLIENT_ID
-ENV NEXT_PUBLIC_TWITCH_CLIENT_CALLBACK_URI=$NEXT_PUBLIC_TWITCH_CLIENT_CALLBACK_URI
-ENV NEXT_PUBLIC_TWITCH_BOT_USERNAME=$NEXT_PUBLIC_TWITCH_BOT_USERNAME
-ENV NEXT_PUBLIC_TWITCH_BOT_OAUTH=$NEXT_PUBLIC_TWITCH_BOT_OAUTH
 
-RUN yarn build
+RUN npm run build
 
-FROM base AS runner
-WORKDIR /app
-
+FROM base AS web
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
@@ -49,7 +41,18 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
-
 EXPOSE 3000
-
 CMD ["node", "server.js"]
+
+FROM base AS worker
+ENV NODE_ENV=production
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY package.json tsconfig.json ./
+COPY src/lib/supabase ./src/lib/supabase
+COPY src/storage/data.ts ./src/storage/data.ts
+COPY src/utils/pokemon-species.ts ./src/utils/pokemon-species.ts
+COPY src/worker ./src/worker
+
+USER node
+EXPOSE 3001
+CMD ["npm", "run", "worker:start"]

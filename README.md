@@ -50,12 +50,49 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 ## Tech-Stack
 
 - [Supabase](https://supabase.com/)
-- [Nextjs](https://nextjs.org/)
+- [Next.js App Router](https://nextjs.org/docs/app)
 - [Typescript](https://www.typescriptlang.org/)
 - [tmi.js](https://tmijs.com)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [CVA](https://github.com/joe-bell/cva)
-- [React-Icons](https://react-icons.github.io/react-icons/)
+- [shadcn/ui](https://ui.shadcn.com/)
+
+## Local development
+
+Copy `.env.example` to `.env` and configure Supabase plus Twitch bot
+credentials. The web application and Twitch bot run as separate processes:
+
+```bash
+npm install
+npm run dev
+npm run worker:dev
+```
+
+The bot credentials and Supabase secret key are server-only. Never prefix them
+with `NEXT_PUBLIC_`.
+
+## Database migration
+
+Run the migrations and pgTAP suite locally first:
+
+```bash
+npx supabase start
+npx supabase db reset
+npx supabase test db
+```
+
+Apply the ordered SQL migrations to a Supabase development branch before
+production. Then run `supabase/verification/secure_transfers.sql` and review
+the security and performance advisors. The production rollout and rollback
+gates are documented in [docs/operations.md](docs/operations.md).
+
+## Docker
+
+The web app and one long-lived Twitch bot process are deployed together:
+
+```bash
+docker compose up --build
+```
 
 ## Work in progress
 

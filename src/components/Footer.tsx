@@ -1,13 +1,20 @@
-import Link from "@/ui/Link";
+import Link from "next/link";
+
+const linkClassName =
+  "font-semibold text-primary underline-offset-4 hover:underline";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto bg-black py-6">
+    <footer className="mt-auto border-t-2 border-border bg-background/90 py-8">
       <div className="container">
-        <div className="text-center">
+        <div className="flex flex-col gap-1 text-center text-sm text-muted-foreground">
           <p>
-            <Link href="/">Pokitch</Link> is an open-source initiative.{" "}
+            <Link className={linkClassName} href="/">
+              Pokitch
+            </Link>{" "}
+            is an open-source initiative.{" "}
             <Link
+              className={linkClassName}
               href="https://github.com/pokitch-app/pokitch"
               target="_blank"
               rel="noreferrer"
@@ -15,9 +22,11 @@ export default function Footer() {
               Contribute!
             </Link>
           </p>
-          <p className="text-sm">
+          <p>
             Contact:{" "}
-            <Link href="mailto:pokitchbot@gmail.com">pokitchbot@gmail.com</Link>
+            <Link className={linkClassName} href="mailto:pokitchbot@gmail.com">
+              pokitchbot@gmail.com
+            </Link>
           </p>
         </div>
       </div>

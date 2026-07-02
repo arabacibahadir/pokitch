@@ -215,35 +215,31 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const channel = ctx.query.channel as string;
   const poke = ctx.query.poke as string;
 
-  //
-  if (!user && !channel && !poke) {
-    const { data } = await supabase
-      .from("collections")
-      .select()
-      .order("created_at", { ascending: false });
+  let query = supabase
+    .from("collections")
+    .select("id,poke,user,channel,created_at")
+    .order("created_at", { ascending: false });
 
-    return {
-      props: {
-        poke: null,
-        user: null,
-        channel: null,
-        collections: data,
-      },
-    };
+  if (user) {
+    query = query.eq("user", user);
+  } else if (channel) {
+    query = query.eq("channel", channel);
+  } else if (poke) {
+    query = query.eq("poke", poke);
   }
 
-  const { data } = await supabase
-    .from("collections")
-    .select()
-    .or(`user.eq.${user},channel.eq.${channel},poke.eq.${poke}`)
-    .order("created_at", { ascending: false });
+  const { data, error } = await query;
+
+  if (error) {
+    throw error;
+  }
 
   return {
     props: {
       poke: poke ? poke : null,
       user: user ? user : null,
       channel: channel ? channel : null,
-      collections: data,
+      collections: data ?? [],
     },
   };
 };

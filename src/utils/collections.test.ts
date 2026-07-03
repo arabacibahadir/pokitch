@@ -2,29 +2,30 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildCollectionsHref,
-  decodeCollectionCursor,
-  encodeCollectionCursor,
+  getPaginationItems,
   normalizeCollectionQuery,
 } from "./collections";
 
 describe("normalizeCollectionQuery", () => {
-  it("normalizes canonical mode and query values", () => {
+  it("normalizes filters, numbered pages, page size, and view", () => {
     expect(
       normalizeCollectionQuery({
         mode: "channel",
         q: "  poke_chat  ",
-        cursor: "opaque-cursor",
+        page: "3",
         perPage: "96",
+        view: "table",
       }),
     ).toEqual({
       mode: "channel",
       q: "poke_chat",
-      cursor: "opaque-cursor",
+      page: 3,
       perPage: 96,
+      view: "table",
     });
   });
 
-  it("supports legacy user, channel, and poke query links", () => {
+  it("supports legacy user, channel, and poke links", () => {
     expect(normalizeCollectionQuery({ user: "ash" })).toMatchObject({
       mode: "user",
       q: "ash",
@@ -44,75 +45,62 @@ describe("normalizeCollectionQuery", () => {
       normalizeCollectionQuery({
         mode: "bad",
         q: "pikachu",
-        cursor: ["first", "ignored"],
+        page: "-4",
         perPage: "500",
+        view: "unexpected",
       }),
     ).toEqual({
       mode: null,
       q: "",
-      cursor: "first",
+      page: 1,
       perPage: 24,
+      view: "grid",
     });
   });
 });
 
-describe("collection cursors", () => {
-  it("round-trips an ordered created-at and id cursor", () => {
-    const value = {
-      createdAt: "2026-06-29T18:00:00.000Z",
-      id: "52a9dbb7-8844-4402-8d61-e740583741e5",
-    };
-
-    expect(decodeCollectionCursor(encodeCollectionCursor(value))).toEqual(
-      value,
-    );
-  });
-
-  it("rejects malformed and non-UUID cursors", () => {
-    expect(decodeCollectionCursor("not-base64-json")).toBeNull();
-    expect(
-      decodeCollectionCursor(
-        Buffer.from(JSON.stringify({ createdAt: "today", id: "1" })).toString(
-          "base64url",
-        ),
-      ),
-    ).toBeNull();
-  });
-
-  it("rejects parseable but non-canonical cursor timestamps", () => {
-    expect(
-      decodeCollectionCursor(
-        Buffer.from(
-          JSON.stringify({
-            createdAt: "June 29, 2026",
-            id: "52a9dbb7-8844-4402-8d61-e740583741e5",
-          }),
-        ).toString("base64url"),
-      ),
-    ).toBeNull();
-  });
-});
-
 describe("buildCollectionsHref", () => {
-  it("omits empty filters and cursors", () => {
+  it("omits default pagination and view values", () => {
     expect(
       buildCollectionsHref({
         mode: null,
         q: "",
-        cursor: "",
+        page: 1,
         perPage: 24,
+        view: "grid",
       }),
     ).toBe("/collections");
   });
 
-  it("builds canonical filtered cursor links", () => {
+  it("preserves filters, page size, page, and table view", () => {
     expect(
       buildCollectionsHref({
         mode: "poke",
         q: "sprigatito",
-        cursor: "next-page",
+        page: 3,
         perPage: 48,
+        view: "table",
       }),
-    ).toBe("/collections?mode=poke&q=sprigatito&cursor=next-page&perPage=48");
+    ).toBe("/collections?mode=poke&q=sprigatito&page=3&perPage=48&view=table");
+  });
+});
+
+describe("getPaginationItems", () => {
+  it("shows all pages for short result sets", () => {
+    expect(getPaginationItems(5, 3)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it("uses a stable window with boundary ellipses", () => {
+    expect(getPaginationItems(10, 5)).toEqual([
+      1,
+      "ellipsis",
+      3,
+      4,
+      5,
+      6,
+      7,
+      "ellipsis",
+      10,
+    ]);
   });
 });

@@ -59,15 +59,11 @@ function EncounterPreview() {
           <p className="game-kicker">OBS // Browser source</p>
           <p className="mt-1 text-sm font-black">LIVE ENCOUNTER</p>
         </div>
-        <span className="flex items-center gap-2 font-mono text-[10px] font-bold text-emerald-300">
-          <span className="size-2 animate-pulse rounded-full bg-emerald-400" />
-          SYNCED
-        </span>
       </div>
 
-      <div className="relative z-10 grid min-h-[390px] content-between overflow-hidden bg-[radial-gradient(circle_at_50%_44%,oklch(var(--secondary)),transparent_26%),linear-gradient(180deg,oklch(var(--background))_0%,oklch(var(--surface))_100%)] p-5 tablet:p-7">
+      <div className="relative z-10 grid min-h-[330px] content-between overflow-hidden bg-[radial-gradient(circle_at_50%_50%,oklch(var(--secondary)),transparent_28%),linear-gradient(180deg,oklch(var(--background))_0%,oklch(var(--surface))_100%)] p-5 tablet:p-7">
         <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0 flex-1 border-2 border-border bg-background/90 p-3 shadow-[4px_4px_0_oklch(0.1_0.02_274)]">
+          <div className="pixel-shadow min-w-0 flex-1 border-2 border-border bg-background/90 p-3">
             <div className="flex items-center justify-between gap-3">
               <p className="truncate font-black uppercase tracking-wide">
                 Wild Pikachu
@@ -79,7 +75,7 @@ function EncounterPreview() {
                 HP
               </span>
               <div className="h-3 flex-1 border-2 border-background bg-muted">
-                <div className="h-full w-[72%] bg-emerald-400" />
+                <div className="h-full w-[72%] bg-success" />
               </div>
             </div>
           </div>
@@ -96,17 +92,6 @@ function EncounterPreview() {
               P
             </div>
           </div>
-        </div>
-
-        <div className="border-2 border-border bg-background/90 p-4 shadow-[4px_4px_0_oklch(0.1_0.02_274)]">
-          <p className="font-mono text-xs leading-relaxed text-muted-foreground">
-            <span className="font-bold text-accent">viewer_07</span> used
-            <span className="font-bold text-foreground"> !poke</span>
-          </p>
-          <p className="mt-2 font-mono text-sm font-bold">
-            A critical hit! <span className="text-primary">-14 HP</span>
-            <span className="ml-1 inline-block animate-pulse">▮</span>
-          </p>
         </div>
       </div>
     </div>

@@ -7,10 +7,9 @@ const steps = [
     "Add a browser source",
     "Paste the URL into OBS Studio or your preferred streaming software.",
   ],
-  ["Set the dimensions", "Use a width of 256 and a height of 76 pixels."],
   [
-    "Moderate the bot",
-    "Run /mod pokitch_bot in Twitch chat so commands work reliably.",
+    "Complete the checklist",
+    "Confirm the Twitch bot setup steps shown in your signed-in dashboard.",
   ],
   ["Go live", "The overlay updates automatically as viewers play."],
 ];
@@ -22,7 +21,7 @@ export default function HowToUseHomePage() {
         <div className="text-center">
           <p className="game-kicker">Quick start quest</p>
           <h2 className="mt-3 text-3xl font-black tracking-tight tablet:text-5xl">
-            Go live in five moves
+            Go live in four moves
           </h2>
           <p className="mt-3 text-muted-foreground">
             The public overlay URL remains stable after this upgrade.

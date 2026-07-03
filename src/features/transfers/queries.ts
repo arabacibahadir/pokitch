@@ -1,16 +1,9 @@
-import { redirect } from "next/navigation";
-
-import { getCurrentAccount } from "@/features/auth/queries";
+import { getCurrentAccount, type Account } from "@/features/auth/queries";
 import { createClient } from "@/lib/supabase/server";
 
 import type { CollectionOption, CollectorOption, TradeRow } from "./types";
 
-export async function getTransferContext() {
-  const account = await getCurrentAccount();
-  if (!account) {
-    redirect("/");
-  }
-
+export async function getTransferContext(account: Account) {
   const supabase = await createClient();
   const [
     { data: owned, error: ownedError },
@@ -49,8 +42,8 @@ export async function getTransferContext() {
   };
 }
 
-export async function getTradeContext() {
-  const base = await getTransferContext();
+export async function getTradeContext(account: Account) {
+  const base = await getTransferContext(account);
   const supabase = await createClient();
   const [
     { data: sent, error: sentError },

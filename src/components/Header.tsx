@@ -1,4 +1,4 @@
-import { Gamepad2, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -31,7 +31,7 @@ export default function Header() {
             <X className="hidden size-5 group-open:block" />
             <span className="sr-only">Toggle navigation</span>
           </summary>
-          <div className="absolute right-0 top-12 w-64 border-2 border-border bg-background p-3 shadow-[6px_6px_0_oklch(0.1_0.02_274)]">
+          <div className="pixel-shadow absolute right-0 top-12 w-64 border-2 border-border bg-background p-3">
             <nav className="flex flex-col gap-2">
               {menuItems.map((item) => (
                 <Link
@@ -57,9 +57,6 @@ function Brand() {
         <Image src="/favicon.ico" alt="" width={24} height={24} />
       </span>
       <span className="text-xl font-black tracking-tight">POKITCH</span>
-      <span className="hidden items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-widest text-emerald-300 laptop:inline-flex">
-        <Gamepad2 className="size-3" /> Live game
-      </span>
     </Link>
   );
 }

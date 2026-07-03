@@ -15,7 +15,6 @@
     "worker:start": "tsx src/worker/index.ts"
   },
   "dependencies": {
-    "@supabase/realtime-js": "^2.110.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "class-variance-authority": "^0.7.1",

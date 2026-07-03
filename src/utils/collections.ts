@@ -3,13 +3,9 @@ export type CollectionFilterMode = "user" | "channel" | "poke";
 export type CollectionQueryState = {
   mode: CollectionFilterMode | null;
   q: string;
-  cursor: string;
+  page: number;
   perPage: number;
-};
-
-export type CollectionCursor = {
-  createdAt: string;
-  id: string;
+  view: "grid" | "table";
 };
 
 type QueryValue = string | string[] | undefined;
@@ -26,7 +22,7 @@ export function normalizeCollectionQuery(
   const canonicalMode = getMode(getFirstValue(query.mode));
   const canonicalQuery = getFirstValue(query.q).trim();
   const legacyFilter = getLegacyFilter(query);
-  const cursor = getFirstValue(query.cursor).trim().slice(0, 512);
+  const page = getPositiveInteger(getFirstValue(query.page), 1);
   const requestedPerPage = getPositiveInteger(
     getFirstValue(query.perPage),
     DEFAULT_PER_PAGE,
@@ -34,48 +30,17 @@ export function normalizeCollectionQuery(
   const perPage = PER_PAGE_OPTIONS.has(requestedPerPage)
     ? requestedPerPage
     : DEFAULT_PER_PAGE;
+  const view = getFirstValue(query.view) === "table" ? "table" : "grid";
 
   if (canonicalMode && canonicalQuery) {
-    return { mode: canonicalMode, q: canonicalQuery, cursor, perPage };
+    return { mode: canonicalMode, q: canonicalQuery, page, perPage, view };
   }
 
   if (legacyFilter) {
-    return { ...legacyFilter, cursor, perPage };
+    return { ...legacyFilter, page, perPage, view };
   }
 
-  return { mode: null, q: "", cursor, perPage };
-}
-
-export function encodeCollectionCursor(cursor: CollectionCursor) {
-  return toBase64Url(JSON.stringify(cursor));
-}
-
-export function decodeCollectionCursor(value: string): CollectionCursor | null {
-  try {
-    const parsed = JSON.parse(
-      fromBase64Url(value),
-    ) as Partial<CollectionCursor>;
-    const createdAt = parsed.createdAt;
-    const id = parsed.id;
-
-    if (
-      typeof createdAt !== "string" ||
-      !/^\d{4}-\d{2}-\d{2}t\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:z|[+-]\d{2}:\d{2})$/i.test(
-        createdAt,
-      ) ||
-      Number.isNaN(Date.parse(createdAt)) ||
-      typeof id !== "string" ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        id,
-      )
-    ) {
-      return null;
-    }
-
-    return { createdAt: new Date(createdAt).toISOString(), id };
-  } catch {
-    return null;
-  }
+  return { mode: null, q: "", page, perPage, view };
 }
 
 export function buildCollectionsHref(state: CollectionQueryState) {
@@ -86,16 +51,51 @@ export function buildCollectionsHref(state: CollectionQueryState) {
     params.set("q", state.q);
   }
 
-  if (state.cursor) {
-    params.set("cursor", state.cursor);
+  if (state.page > 1) {
+    params.set("page", String(state.page));
   }
 
   if (state.perPage !== DEFAULT_PER_PAGE) {
     params.set("perPage", String(state.perPage));
   }
 
+  if (state.view === "table") {
+    params.set("view", "table");
+  }
+
   const query = params.toString();
   return query ? `/collections?${query}` : "/collections";
+}
+
+export type PaginationItem = number | "ellipsis";
+
+export function getPaginationItems(
+  totalPages: number,
+  currentPage: number,
+): PaginationItem[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = new Set([1, totalPages]);
+  for (
+    let page = Math.max(2, currentPage - 2);
+    page <= Math.min(totalPages - 1, currentPage + 2);
+    page += 1
+  ) {
+    pages.add(page);
+  }
+
+  const ordered = [...pages].sort((a, b) => a - b);
+  const result: PaginationItem[] = [];
+  for (const page of ordered) {
+    const previous = result.at(-1);
+    if (typeof previous === "number" && page - previous > 1) {
+      result.push("ellipsis");
+    }
+    result.push(page);
+  }
+  return result;
 }
 
 function getLegacyFilter(query: QueryInput) {
@@ -134,22 +134,4 @@ function getFirstValue(value: QueryValue) {
   }
 
   return value ?? "";
-}
-
-function toBase64Url(value: string) {
-  const bytes = new TextEncoder().encode(value);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary)
-    .replaceAll("+", "-")
-    .replaceAll("/", "_")
-    .replace(/=+$/, "");
-}
-
-function fromBase64Url(value: string) {
-  const base64 = value.replaceAll("-", "+").replaceAll("_", "/");
-  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
-  const binary = atob(padded);
-  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
 }

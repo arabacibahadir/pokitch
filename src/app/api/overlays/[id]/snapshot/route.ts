@@ -19,8 +19,30 @@ export async function GET(
     const poke = await getActivePoke(channel);
     return NextResponse.json(
       poke
-        ? { poke: poke.poke, health: poke.health, updatedAt: poke.updatedAt ?? null }
-        : { poke: null, health: null, updatedAt: null },
+        ? {
+            poke: poke.poke,
+            health: poke.health,
+            updatedAt: poke.updatedAt ?? null,
+            lastEventKind: poke.lastEventKind ?? null,
+            lastEventPlayer: poke.lastEventPlayer ?? null,
+            lastEventDamage: poke.lastEventDamage ?? null,
+            lastEventAt: poke.lastEventAt ?? null,
+            lastCatchPoke: poke.lastCatchPoke ?? null,
+            lastCatchPlayer: poke.lastCatchPlayer ?? null,
+            lastCatchAt: poke.lastCatchAt ?? null,
+          }
+        : {
+            poke: null,
+            health: null,
+            updatedAt: null,
+            lastEventKind: null,
+            lastEventPlayer: null,
+            lastEventDamage: null,
+            lastEventAt: null,
+            lastCatchPoke: null,
+            lastCatchPlayer: null,
+            lastCatchAt: null,
+          },
       { headers: NO_STORE },
     );
   } catch {

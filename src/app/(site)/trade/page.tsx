@@ -1,3 +1,5 @@
+import { SignInPrompt } from "@/components/SignInPrompt";
+import { getCurrentAccount } from "@/features/auth/queries";
 import { TradeForm } from "@/features/transfers/TradeForm";
 import { TradeList } from "@/features/transfers/TradeList";
 import { getTradeContext } from "@/features/transfers/queries";
@@ -5,7 +7,21 @@ import { getTradeContext } from "@/features/transfers/queries";
 export const dynamic = "force-dynamic";
 
 export default async function TradePage() {
-  const { owned, collectors, sent, received } = await getTradeContext();
+  const account = await getCurrentAccount();
+
+  if (!account) {
+    return (
+      <section className="container py-10 tablet:py-14">
+        <SignInPrompt
+          destination="/trade"
+          title="Sign in to trade Pokémon"
+          description="Sign in with Twitch to create offers and review trades sent by other collectors."
+        />
+      </section>
+    );
+  }
+
+  const { owned, collectors, sent, received } = await getTradeContext(account);
 
   return (
     <section className="container grid max-w-6xl gap-8 py-10 tablet:py-14">

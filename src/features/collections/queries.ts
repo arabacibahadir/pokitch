@@ -1,11 +1,32 @@
+import { unstable_cache } from "next/cache";
+
+import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
-import {
+import type {
+  CollectionFilterMode,
   CollectionQueryState,
-  decodeCollectionCursor,
-  encodeCollectionCursor,
 } from "@/utils/collections";
 
 import type { CollectionRow } from "./types";
+
+const getCachedCollectionCount = unstable_cache(
+  async (mode: CollectionFilterMode | "", value: string) => {
+    const supabase = createPublicClient();
+    let query = supabase
+      .from("collections")
+      .select("id", { count: "exact", head: true });
+
+    if (mode && value) {
+      query = query.eq(mode, value.toLowerCase());
+    }
+
+    const { count, error } = await query;
+    if (error) throw error;
+    return count ?? 0;
+  },
+  ["collection-count-v1"],
+  { revalidate: 300 },
+);
 
 export async function getCollections(filter: CollectionQueryState) {
   const supabase = await createClient();
@@ -19,29 +40,26 @@ export async function getCollections(filter: CollectionQueryState) {
     rowsQuery = rowsQuery.eq(filter.mode, filter.q.toLowerCase());
   }
 
-  const cursor = decodeCollectionCursor(filter.cursor);
-  if (cursor) {
-    rowsQuery = rowsQuery.or(
-      `created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
-    );
-  }
+  const from = (filter.page - 1) * filter.perPage;
+  const to = from + filter.perPage - 1;
+  const globalCountPromise = getCachedCollectionCount("", "");
+  const filteredCountPromise =
+    filter.mode && filter.q
+      ? getCachedCollectionCount(filter.mode, filter.q)
+      : globalCountPromise;
 
-  const { data, error } = await rowsQuery.limit(filter.perPage + 1);
+  const [{ data, error }, globalCount, filteredCount] = await Promise.all([
+    rowsQuery.range(from, to),
+    globalCountPromise,
+    filteredCountPromise,
+  ]);
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
-  const fetchedRows = (data ?? []) as CollectionRow[];
-  const rows = fetchedRows.slice(0, filter.perPage);
-  const lastRow = rows.at(-1);
-  const nextCursor =
-    fetchedRows.length > filter.perPage && lastRow
-      ? encodeCollectionCursor({
-          createdAt: lastRow.created_at,
-          id: lastRow.id,
-        })
-      : null;
-
-  return { rows, nextCursor };
+  return {
+    rows: (data ?? []) as CollectionRow[],
+    globalCount,
+    filteredCount,
+    totalPages: Math.max(1, Math.ceil(filteredCount / filter.perPage)),
+  };
 }

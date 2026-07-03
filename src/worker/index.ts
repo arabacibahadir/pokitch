@@ -35,12 +35,6 @@ const game = new PokemonGame(store, appUrl);
 
 let connected = false;
 let syncTimer: NodeJS.Timeout | undefined;
-let cleanupTimer: NodeJS.Timeout | undefined;
-
-async function cleanupEncounterEvents() {
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1_000).toISOString();
-  await store.cleanupEncounterEvents(cutoff);
-}
 
 async function syncChannels() {
   const { data, error } = await supabase
@@ -116,30 +110,16 @@ async function main() {
   healthServer.listen(healthPort, "0.0.0.0");
   await client.connect();
   await syncChannels();
-  await cleanupEncounterEvents().catch((error) =>
-    console.error("Initial encounter event cleanup failed:", error),
-  );
   syncTimer = setInterval(() => {
     void syncChannels().catch((error) =>
       console.error("Channel synchronization failed:", error),
     );
   }, 60_000);
-  cleanupTimer = setInterval(
-    () => {
-      void cleanupEncounterEvents().catch((error) =>
-        console.error("Encounter event cleanup failed:", error),
-      );
-    },
-    60 * 60 * 1_000,
-  );
 }
 
 async function shutdown() {
   if (syncTimer) {
     clearInterval(syncTimer);
-  }
-  if (cleanupTimer) {
-    clearInterval(cleanupTimer);
   }
   healthServer.close();
   await client.disconnect().catch(() => undefined);

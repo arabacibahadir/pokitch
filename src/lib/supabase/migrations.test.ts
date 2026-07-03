@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
@@ -7,6 +7,14 @@ const migrationDirectory = resolve(process.cwd(), "supabase", "migrations");
 
 function readMigration(name: string) {
   return readFileSync(resolve(migrationDirectory, name), "utf8").toLowerCase();
+}
+
+function readMigrationEndingWith(suffix: string) {
+  const name = readdirSync(migrationDirectory).find((entry) =>
+    entry.endsWith(suffix),
+  );
+  expect(name).toBeDefined();
+  return readMigration(name!);
 }
 
 describe("Supabase migration contracts", () => {
@@ -103,22 +111,46 @@ describe("Supabase migration contracts", () => {
     expect(sql).toContain("welcome_pack_claims_collection_id_idx");
   });
 
-  it("exposes read-only encounter events to Realtime", () => {
-    const sql = readMigration("20260701185252_add_encounter_events.sql");
+  it("removes active pokes from the unused Realtime publication", () => {
+    const sql = readMigrationEndingWith("remove_active_pokes_realtime.sql");
 
-    expect(sql).toContain("create table public.encounter_events");
     expect(sql).toContain(
-      "alter table public.encounter_events enable row level security",
+      "alter publication supabase_realtime drop table public.active_pokes",
     );
-    expect(sql).toContain(
-      "revoke all on table public.encounter_events from public, anon, authenticated",
-    );
-    expect(sql).toContain(
-      "grant select on table public.encounter_events to anon, authenticated",
-    );
-    expect(sql).toContain(
-      "alter publication supabase_realtime add table public.encounter_events",
-    );
-    expect(sql).toContain("encounter_events_created_at_idx");
+  });
+
+  it("surfaces combat events on the active encounter for the overlay", () => {
+    const sql = readMigrationEndingWith("add_overlay_events.sql");
+
+    for (const column of [
+      "last_event_kind",
+      "last_event_player",
+      "last_event_damage",
+      "last_event_at",
+      "last_catch_poke",
+      "last_catch_player",
+      "last_catch_at",
+    ]) {
+      expect(sql).toContain(`add column if not exists ${column}`);
+    }
+
+    // Attacks write the latest event; hits carry damage, catches persist a catch.
+    expect(sql).toContain("last_event_kind = 'hit'");
+    expect(sql).toContain("last_event_kind = 'caught'");
+    expect(sql).toContain("last_event_player = normalized_username");
+    expect(sql).toContain("last_event_damage = p_damage");
+    expect(sql).toContain("last_catch_poke = encounter.poke");
+    expect(sql).toContain("last_catch_player = normalized_username");
+
+    // The attack RPC returns the event so the worker can use it without a re-read.
+    // The migration file is read lowercased, so the camelCase JSON keys are too.
+    expect(sql).toContain("'lasteventkind', 'hit'");
+    expect(sql).toContain("'lasteventkind', 'caught'");
+    expect(sql).toContain("'lasteventplayer', normalized_username");
+    expect(sql).toContain("'lastcatchpoke', encounter.poke");
+
+    // Damage bounds stay unchanged.
+    expect(sql).toContain("p_damage < 5");
+    expect(sql).toContain("p_damage > 14");
   });
 });

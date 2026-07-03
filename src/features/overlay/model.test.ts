@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   applyActivePokeChange,
   applyOverlaySnapshot,
-  applyRealtimeChange,
-  applyEncounterEventChange,
   getHealthPercent,
   getHealthTone,
   parseOverlaySize,
@@ -35,11 +33,17 @@ describe("overlay presentation", () => {
   });
 });
 
+const EMPTY_STATE = {
+  event: { kind: null, player: null, damage: null, at: null },
+  catch: { poke: null, player: null, at: null },
+};
+
 describe("applyOverlaySnapshot", () => {
   it("accepts newer snapshots and rejects stale snapshots", () => {
     const current = {
       poke: { health: 30, poke: "eevee" },
       updatedAt: "2026-07-01T12:00:00.000Z",
+      ...EMPTY_STATE,
     };
 
     expect(
@@ -51,6 +55,8 @@ describe("applyOverlaySnapshot", () => {
     ).toEqual({
       poke: { health: 20, poke: "eevee" },
       updatedAt: "2026-07-01T12:00:01.000Z",
+      event: { kind: null, player: null, damage: null, at: null },
+      catch: { poke: null, player: null, at: null },
     });
 
     expect(
@@ -62,10 +68,66 @@ describe("applyOverlaySnapshot", () => {
     ).toEqual(current);
   });
 
+  it("carries combat events and persistent catch badges from the snapshot", () => {
+    const current = {
+      poke: { health: 30, poke: "eevee" },
+      updatedAt: "2026-07-01T12:00:00.000Z",
+      ...EMPTY_STATE,
+    };
+
+    const result = applyOverlaySnapshot(current, {
+      poke: "eevee",
+      health: 22,
+      updatedAt: "2026-07-01T12:00:02.000Z",
+      lastEventKind: "hit",
+      lastEventPlayer: "viewer",
+      lastEventDamage: 8,
+      lastEventAt: "2026-07-01T12:00:02.000Z",
+    });
+
+    expect(result.event).toEqual({
+      kind: "hit",
+      player: "viewer",
+      damage: 8,
+      at: "2026-07-01T12:00:02.000Z",
+    });
+    // No catch landed, so the catch badge stays empty.
+    expect(result.catch).toEqual({ poke: null, player: null, at: null });
+  });
+
+  it("updates the catch badge when a new catch lands", () => {
+    const current = {
+      poke: { health: 5, poke: "eevee" },
+      updatedAt: "2026-07-01T12:00:05.000Z",
+      ...EMPTY_STATE,
+    };
+
+    const result = applyOverlaySnapshot(current, {
+      poke: "pikachu",
+      health: 50,
+      updatedAt: "2026-07-01T12:00:06.000Z",
+      lastEventKind: "caught",
+      lastEventPlayer: "viewer",
+      lastEventDamage: null,
+      lastEventAt: "2026-07-01T12:00:06.000Z",
+      lastCatchPoke: "eevee",
+      lastCatchPlayer: "viewer",
+      lastCatchAt: "2026-07-01T12:00:06.000Z",
+    });
+
+    expect(result.event.kind).toBe("caught");
+    expect(result.catch).toEqual({
+      poke: "eevee",
+      player: "viewer",
+      at: "2026-07-01T12:00:06.000Z",
+    });
+  });
+
   it("clears on a valid empty snapshot but preserves state for malformed data", () => {
     const current = {
       poke: { health: 30, poke: "eevee" },
       updatedAt: "2026-07-01T12:00:00.000Z",
+      ...EMPTY_STATE,
     };
 
     expect(
@@ -74,7 +136,12 @@ describe("applyOverlaySnapshot", () => {
         health: null,
         updatedAt: "2026-07-01T12:00:01.000Z",
       }),
-    ).toEqual({ poke: null, updatedAt: "2026-07-01T12:00:01.000Z" });
+    ).toEqual({
+      poke: null,
+      updatedAt: "2026-07-01T12:00:01.000Z",
+      event: { kind: null, player: null, damage: null, at: null },
+      catch: { poke: null, player: null, at: null },
+    });
 
     expect(
       applyOverlaySnapshot(current, {
@@ -83,42 +150,6 @@ describe("applyOverlaySnapshot", () => {
         updatedAt: "2026-07-01T12:00:01.000Z",
       }),
     ).toEqual(current);
-  });
-});
-
-describe("applyRealtimeChange", () => {
-  it("ignores an update older than the current snapshot", () => {
-    const current = {
-      poke: { health: 20, poke: "eevee" },
-      updatedAt: "2026-07-01T12:00:02.000Z",
-    };
-
-    expect(
-      applyRealtimeChange(current, {
-        eventType: "UPDATE",
-        new: {
-          health: 40,
-          poke: "eevee",
-          updated_at: "2026-07-01T12:00:01.000Z",
-        },
-        old: {},
-      }),
-    ).toEqual(current);
-  });
-
-  it("clears the encounter on a delete event", () => {
-    const current = {
-      poke: { health: 20, poke: "eevee" },
-      updatedAt: "2026-07-01T12:00:02.000Z",
-    };
-
-    expect(
-      applyRealtimeChange(current, {
-        eventType: "DELETE",
-        new: {},
-        old: { updated_at: "2026-07-01T12:00:03.000Z" },
-      }),
-    ).toEqual({ poke: null, updatedAt: "2026-07-01T12:00:03.000Z" });
   });
 });
 
@@ -152,89 +183,6 @@ describe("applyActivePokeChange", () => {
       applyActivePokeChange(current, {
         eventType: "UPDATE",
         new: { health: "12", poke: "eevee" },
-      }),
-    ).toEqual(current);
-  });
-});
-
-describe("applyEncounterEventChange", () => {
-  it("maps a valid realtime insert into overlay event state", () => {
-    expect(
-      applyEncounterEventChange(null, {
-        eventType: "INSERT",
-        new: {
-          id: "event-1",
-          channel: "streamer",
-          combo: 3,
-          created_at: "2026-07-01T12:00:00.000Z",
-          critical: true,
-          damage: 14,
-          event_type: "hit",
-          health: 20,
-          max_combo: 3,
-          participants: 3,
-          poke: "pikachu",
-          username: "viewer",
-        },
-      }),
-    ).toEqual({
-      id: "event-1",
-      combo: 3,
-      createdAt: "2026-07-01T12:00:00.000Z",
-      critical: true,
-      damage: 14,
-      eventType: "hit",
-      health: 20,
-      maxCombo: 3,
-      participants: 3,
-      poke: "pikachu",
-      username: "viewer",
-    });
-  });
-
-  it("ignores malformed, non-insert, and stale events", () => {
-    const current = {
-      id: "event-2",
-      combo: 4,
-      createdAt: "2026-07-01T12:00:02.000Z",
-      critical: false,
-      damage: 8,
-      eventType: "hit" as const,
-      health: 12,
-      maxCombo: 4,
-      participants: 4,
-      poke: "pikachu",
-      username: "viewer-2",
-    };
-
-    expect(
-      applyEncounterEventChange(current, {
-        eventType: "UPDATE",
-        new: {},
-      }),
-    ).toEqual(current);
-    expect(
-      applyEncounterEventChange(current, {
-        eventType: "INSERT",
-        new: { id: "bad" },
-      }),
-    ).toEqual(current);
-    expect(
-      applyEncounterEventChange(current, {
-        eventType: "INSERT",
-        new: {
-          id: "event-1",
-          combo: 1,
-          created_at: "2026-07-01T12:00:01.000Z",
-          critical: false,
-          damage: 5,
-          event_type: "hit",
-          health: 45,
-          max_combo: 1,
-          participants: 1,
-          poke: "pikachu",
-          username: "viewer-1",
-        },
       }),
     ).toEqual(current);
   });

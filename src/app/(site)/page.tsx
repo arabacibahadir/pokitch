@@ -1,4 +1,5 @@
 import FeaturesHomePage from "@/components/FeaturesHomePage";
+import ChatCommandsHomePage from "@/components/ChatCommandsHomePage";
 import HeroHomePage from "@/components/HeroHomePage";
 import HowToUseHomePage from "@/components/HowToUseHomePage";
 import { getCurrentAccount } from "@/features/auth/queries";
@@ -14,6 +15,7 @@ export default async function HomePage() {
       <HeroHomePage user={user} />
       <FeaturesHomePage />
       <HowToUseHomePage />
+      <ChatCommandsHomePage />
     </>
   );
 }

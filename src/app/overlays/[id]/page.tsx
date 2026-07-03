@@ -5,6 +5,7 @@ import {
   getActivePoke,
   getOverlayChannel,
 } from "@/features/overlay/queries";
+import { loadOverlay } from "@/features/overlay/loader";
 import { parseOverlaySize } from "@/features/overlay/model";
 
 export const dynamic = "force-dynamic";
@@ -18,25 +19,16 @@ export default async function OverlayPage({
 }) {
   const { id } = await params;
   const query = await searchParams;
-  let channel: string | null = null;
-
-  try {
-    channel = await getOverlayChannel(id);
-  } catch {
-    notFound();
-  }
-
-  if (!channel) {
-    notFound();
-  }
-
-  const initialPoke = await getActivePoke(channel);
+  const result = await loadOverlay(id, {
+    getChannel: getOverlayChannel,
+    getPoke: getActivePoke,
+  });
+  if (result.status === "missing") notFound();
 
   return (
     <ComponentOverlayPage
-      channel={channel}
       debug={query.debug === "1"}
-      initialPoke={initialPoke}
+      initialPoke={result.initialPoke}
       overlayId={id}
       size={parseOverlaySize(query.size)}
     />

@@ -42,7 +42,7 @@ export default async function PokemonPage({ params }: PageProps) {
 
       <div className="grid gap-6 laptop:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]">
         <Card className="game-panel overflow-hidden border-2 shadow-none">
-          <CardContent className="grid min-h-[420px] place-items-center bg-[radial-gradient(circle,oklch(var(--secondary)),oklch(var(--background))_68%)] p-8">
+          <CardContent className="media-surface grid min-h-[420px] place-items-center p-8">
             <Image
               src={pokemon.image}
               alt={pokemon.name}

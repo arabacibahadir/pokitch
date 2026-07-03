@@ -19,9 +19,5 @@ export function getAppOrigin(env: RuntimeEnv = process.env) {
 }
 
 export function getSafeNextPath(value: string | null) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/";
-  }
-
-  return value.includes("\\") ? "/" : value;
+  return value === "/gift" || value === "/trade" ? value : "/";
 }

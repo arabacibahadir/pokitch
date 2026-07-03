@@ -2,30 +2,46 @@
 
 import { OverlayView } from "@/features/overlay/OverlayView";
 import type { ActivePoke, OverlaySize } from "@/features/overlay/model";
-import { useOverlayRealtime } from "@/features/overlay/use-overlay-realtime";
+import { useOverlayPolling } from "@/features/overlay/use-overlay-polling";
 
 export default function ComponentOverlayPage({
-  channel,
   debug,
   initialPoke,
   overlayId,
   size,
 }: {
-  channel: string;
   debug: boolean;
   initialPoke: ActivePoke | null;
   overlayId: string;
   size: OverlaySize;
 }) {
-  const { connection, event, poke } = useOverlayRealtime({
-    channel,
+  const { connection, poke, event, catch: lastCatch } = useOverlayPolling({
     initialPoke,
     overlayId,
   });
 
+  const showConnectionBadge =
+    connection === "reconnecting" || connection === "failed";
+
   return (
     <main className="overlay-viewport" data-testid="overlay" data-size={size}>
-      {poke ? <OverlayView event={event} poke={poke} size={size} /> : null}
+      {poke ? (
+        <OverlayView
+          poke={poke}
+          size={size}
+          event={event}
+          catch={lastCatch}
+        />
+      ) : null}
+      {showConnectionBadge ? (
+        <span
+          className="overlay-connection"
+          data-connection={connection}
+          role="status"
+        >
+          {connection}
+        </span>
+      ) : null}
       {debug ? (
         <output className="overlay-debug" data-connection={connection}>
           {connection}

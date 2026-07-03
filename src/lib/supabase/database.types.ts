@@ -29,6 +29,13 @@ export type Database = {
         created_at: string;
         health: number;
         id: string;
+        last_catch_at: string | null;
+        last_catch_player: string | null;
+        last_catch_poke: string | null;
+        last_event_at: string | null;
+        last_event_damage: number | null;
+        last_event_kind: string | null;
+        last_event_player: string | null;
         poke: string;
         updated_at: string;
       }>;
@@ -40,20 +47,6 @@ export type Database = {
         poke: string;
         updated_at: string;
         user: string;
-      }>;
-      encounter_events: Table<{
-        channel: string;
-        combo: number;
-        created_at: string;
-        critical: boolean;
-        damage: number;
-        event_type: "hit" | "caught";
-        health: number;
-        id: string;
-        max_combo: number;
-        participants: number;
-        poke: string;
-        username: string;
       }>;
       trade_reservations: Table<{
         collection_id: string;

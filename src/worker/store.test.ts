@@ -4,75 +4,6 @@ import { describe, expect, it } from "vitest";
 import { SupabaseGameStore } from "./store";
 
 describe("SupabaseGameStore", () => {
-  it("deletes encounter events older than the retention cutoff", async () => {
-    const calls: unknown[] = [];
-    const client = {
-      from: (table: string) => ({
-        delete: () => ({
-          lt: async (column: string, value: string) => {
-            calls.push({ table, column, value });
-            return { error: null };
-          },
-        }),
-      }),
-    } as unknown as SupabaseClient;
-    const store = new SupabaseGameStore(client);
-
-    await store.cleanupEncounterEvents("2026-07-01T00:00:00.000Z");
-
-    expect(calls).toEqual([
-      {
-        table: "encounter_events",
-        column: "created_at",
-        value: "2026-07-01T00:00:00.000Z",
-      },
-    ]);
-  });
-
-  it("writes a realtime encounter event with snake-case columns", async () => {
-    const calls: unknown[] = [];
-    const client = {
-      from: (table: string) => ({
-        insert: async (value: unknown) => {
-          calls.push({ table, value });
-          return { error: null };
-        },
-      }),
-    } as unknown as SupabaseClient;
-    const store = new SupabaseGameStore(client);
-
-    await store.recordEncounterEvent({
-      channel: "streamer",
-      combo: 3,
-      critical: true,
-      damage: 14,
-      eventType: "hit",
-      health: 20,
-      maxCombo: 3,
-      participants: 3,
-      poke: "pikachu",
-      username: "viewer",
-    });
-
-    expect(calls).toEqual([
-      {
-        table: "encounter_events",
-        value: {
-          channel: "streamer",
-          combo: 3,
-          critical: true,
-          damage: 14,
-          event_type: "hit",
-          health: 20,
-          max_combo: 3,
-          participants: 3,
-          poke: "pikachu",
-          username: "viewer",
-        },
-      },
-    ]);
-  });
-
   it("reads current status and the latest channel catch", async () => {
     const requests: Array<{ table: string; filters: unknown[] }> = [];
     const rows = {
@@ -151,6 +82,10 @@ describe("SupabaseGameStore", () => {
             damage: 8,
             health: 42,
             poke: "pikachu",
+            lastEventKind: "hit",
+            lastEventPlayer: "viewer",
+            lastEventDamage: 8,
+            lastEventAt: "2026-07-03T12:00:00.000Z",
           },
           error: null,
         };
@@ -183,6 +118,10 @@ describe("SupabaseGameStore", () => {
       damage: 8,
       health: 42,
       poke: "pikachu",
+      lastEventKind: "hit",
+      lastEventPlayer: "viewer",
+      lastEventDamage: 8,
+      lastEventAt: "2026-07-03T12:00:00.000Z",
     });
   });
 

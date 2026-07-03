@@ -3,19 +3,22 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { getAppOrigin } from "./origin";
+import { getAppOrigin, getSafeNextPath } from "./origin";
 
-export async function signInWithTwitch() {
+export async function signInWithTwitch(formData?: FormData) {
+  const next = getSafeNextPath(String(formData?.get("next") ?? "/"));
+  const callbackUrl = new URL("/auth/callback", getAppOrigin());
+  if (next !== "/") callbackUrl.searchParams.set("next", next);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "twitch",
     options: {
-      redirectTo: `${getAppOrigin()}/auth/callback`,
+      redirectTo: callbackUrl.toString(),
     },
   });
 
   if (error || !data.url) {
-    redirect("/?authError=oauth");
+    redirect(`${next === "/" ? "/" : next}?authError=oauth`);
   }
 
   redirect(data.url);

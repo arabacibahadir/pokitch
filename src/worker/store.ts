@@ -3,7 +3,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   AttackInput,
   AttackResult,
-  EncounterEventInput,
   GameStore,
   WelcomePackInput,
 } from "./game";
@@ -19,36 +18,6 @@ export class SupabaseGameStore implements GameStore {
     const { error } = await this.client.rpc("ensure_active_poke", {
       p_channel: input.channel,
       p_poke: input.poke,
-    });
-
-    if (error) {
-      throw error;
-    }
-  }
-
-  async cleanupEncounterEvents(before: string) {
-    const { error } = await this.client
-      .from("encounter_events")
-      .delete()
-      .lt("created_at", before);
-
-    if (error) {
-      throw error;
-    }
-  }
-
-  async recordEncounterEvent(input: EncounterEventInput) {
-    const { error } = await this.client.from("encounter_events").insert({
-      channel: input.channel,
-      combo: input.combo,
-      critical: input.critical,
-      damage: input.damage,
-      event_type: input.eventType,
-      health: input.health,
-      max_combo: input.maxCombo,
-      participants: input.participants,
-      poke: input.poke,
-      username: input.username,
     });
 
     if (error) {

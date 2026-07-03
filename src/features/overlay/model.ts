@@ -2,6 +2,13 @@ export type ActivePoke = {
   health: number;
   poke: string;
   updatedAt?: string;
+  lastEventKind?: string | null;
+  lastEventPlayer?: string | null;
+  lastEventDamage?: number | null;
+  lastEventAt?: string | null;
+  lastCatchPoke?: string | null;
+  lastCatchPlayer?: string | null;
+  lastCatchAt?: string | null;
 };
 
 export type OverlaySize = "auto" | "compact" | "standard" | "large";
@@ -9,39 +16,35 @@ export type OverlaySnapshot = {
   health: number | null;
   poke: string | null;
   updatedAt: string | null;
+  lastEventKind?: string | null;
+  lastEventPlayer?: string | null;
+  lastEventDamage?: number | null;
+  lastEventAt?: string | null;
+  lastCatchPoke?: string | null;
+  lastCatchPlayer?: string | null;
+  lastCatchAt?: string | null;
+};
+export type OverlayEvent = {
+  kind: "hit" | "caught" | null;
+  player: string | null;
+  damage: number | null;
+  at: string | null;
+};
+export type OverlayCatch = {
+  poke: string | null;
+  player: string | null;
+  at: string | null;
 };
 export type OverlayState = {
   poke: ActivePoke | null;
   updatedAt: string | null;
-};
-export type EncounterEvent = {
-  id: string;
-  combo: number;
-  createdAt: string;
-  critical: boolean;
-  damage: number;
-  eventType: "hit" | "caught";
-  health: number;
-  maxCombo: number;
-  participants: number;
-  poke: string;
-  username: string;
-};
-
-export type RealtimeEncounterEventChange = {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-  new: Record<string, unknown>;
+  event: OverlayEvent;
+  catch: OverlayCatch;
 };
 
 type ActivePokeChange = {
   eventType: "INSERT" | "UPDATE" | "DELETE";
   new: Record<string, unknown>;
-};
-
-export type RealtimePokeChange = {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-  new: Record<string, unknown>;
-  old: Record<string, unknown>;
 };
 
 export function getHealthPercent(health: number) {
@@ -69,7 +72,12 @@ export function applyOverlaySnapshot(
 
   if (nextTime < currentTime) return current;
   if (snapshot.poke === null && snapshot.health === null) {
-    return { poke: null, updatedAt: snapshot.updatedAt };
+    return {
+      poke: null,
+      updatedAt: snapshot.updatedAt,
+      event: { kind: null, player: null, damage: null, at: null },
+      catch: current.catch,
+    };
   }
   if (
     typeof snapshot.poke !== "string" ||
@@ -80,29 +88,32 @@ export function applyOverlaySnapshot(
     return current;
   }
 
+  const event: OverlayEvent = {
+    kind:
+      snapshot.lastEventKind === "hit" || snapshot.lastEventKind === "caught"
+        ? snapshot.lastEventKind
+        : null,
+    player: snapshot.lastEventPlayer ?? null,
+    damage: snapshot.lastEventDamage ?? null,
+    at: snapshot.lastEventAt ?? null,
+  };
+
+  // Only update the persistent catch badge when a new catch lands.
+  const catch_: OverlayCatch =
+    snapshot.lastCatchPoke && snapshot.lastCatchAt
+      ? {
+          poke: snapshot.lastCatchPoke,
+          player: snapshot.lastCatchPlayer ?? null,
+          at: snapshot.lastCatchAt,
+        }
+      : current.catch;
+
   return {
     poke: { health: snapshot.health, poke: snapshot.poke },
     updatedAt: snapshot.updatedAt,
+    event,
+    catch: catch_,
   };
-}
-
-export function applyRealtimeChange(
-  current: OverlayState,
-  change: RealtimePokeChange,
-): OverlayState {
-  const record = change.eventType === "DELETE" ? change.old : change.new;
-  const updatedAt =
-    typeof record.updated_at === "string" ? record.updated_at : null;
-
-  if (change.eventType === "DELETE") {
-    return { poke: null, updatedAt: updatedAt ?? current.updatedAt };
-  }
-
-  return applyOverlaySnapshot(current, {
-    health: typeof record.health === "number" ? record.health : Number.NaN,
-    poke: typeof record.poke === "string" ? record.poke : "",
-    updatedAt,
-  });
 }
 
 export function applyActivePokeChange(
@@ -119,59 +130,4 @@ export function applyActivePokeChange(
   }
 
   return { health, poke };
-}
-
-export function applyEncounterEventChange(
-  current: EncounterEvent | null,
-  change: RealtimeEncounterEventChange,
-): EncounterEvent | null {
-  if (change.eventType !== "INSERT") {
-    return current;
-  }
-
-  const record = change.new;
-  const eventType = record.event_type;
-  if (
-    typeof record.id !== "string" ||
-    typeof record.created_at !== "string" ||
-    typeof record.critical !== "boolean" ||
-    typeof record.poke !== "string" ||
-    typeof record.username !== "string" ||
-    (eventType !== "hit" && eventType !== "caught") ||
-    !isFiniteNumber(record.damage) ||
-    !isFiniteNumber(record.health) ||
-    !isFiniteNumber(record.combo) ||
-    !isFiniteNumber(record.max_combo) ||
-    !isFiniteNumber(record.participants)
-  ) {
-    return current;
-  }
-
-  const nextTime = Date.parse(record.created_at);
-  const currentTime = current ? Date.parse(current.createdAt) : 0;
-  if (
-    !Number.isFinite(nextTime) ||
-    nextTime < currentTime ||
-    (nextTime === currentTime && current && record.id <= current.id)
-  ) {
-    return current;
-  }
-
-  return {
-    id: record.id,
-    combo: record.combo,
-    createdAt: record.created_at,
-    critical: record.critical,
-    damage: record.damage,
-    eventType,
-    health: record.health,
-    maxCombo: record.max_combo,
-    participants: record.participants,
-    poke: record.poke,
-    username: record.username,
-  };
-}
-
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
 }

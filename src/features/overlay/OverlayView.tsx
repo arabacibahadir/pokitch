@@ -1,40 +1,42 @@
 import Image from "next/image";
 
+import { getPokemonSpriteUrl } from "@/features/pokemon/presentation";
+
 import {
   getHealthPercent,
   getHealthTone,
   type ActivePoke,
-  type EncounterEvent,
+  type OverlayCatch,
+  type OverlayEvent,
   type OverlaySize,
 } from "./model";
 
 export function OverlayView({
-  event,
   poke,
   size,
+  event,
+  catch: lastCatch,
 }: {
-  event: EncounterEvent | null;
   poke: ActivePoke;
   size: OverlaySize;
+  event: OverlayEvent;
+  catch: OverlayCatch;
 }) {
-  const displayPoke = event?.eventType === "caught" ? event.poke : poke.poke;
-  const health = Math.max(0, Math.min(50, event?.health ?? poke.health));
+  const health = Math.max(0, Math.min(50, poke.health));
   const tone = getHealthTone(health);
 
   return (
     <article
-      key={`${displayPoke}-${health}-${event?.id ?? "idle"}`}
+      key={`${poke.poke}-${health}`}
       data-testid="overlay-card"
       data-size={size}
       data-health={tone}
-      data-event={event?.eventType ?? "idle"}
-      data-critical={event?.critical ? "true" : "false"}
       className="overlay-card"
     >
       <figure className="overlay-sprite-frame">
         <Image
           unoptimized
-          src={`https://projectpokemon.org/images/normal-sprite/${displayPoke}.gif`}
+          src={getPokemonSpriteUrl(poke.poke)}
           alt=""
           width={128}
           height={128}
@@ -44,10 +46,22 @@ export function OverlayView({
             event.currentTarget.src = "/pokeball.svg";
           }}
         />
+        {event.kind && event.at ? (
+          <span
+            key={event.at}
+            className="overlay-event"
+            data-kind={event.kind}
+            role="status"
+          >
+            {event.kind === "caught"
+              ? `CAUGHT @${event.player}`
+              : `-${event.damage ?? 0} @${event.player}`}
+          </span>
+        ) : null}
       </figure>
       <div className="overlay-details">
         <div className="overlay-heading">
-          <h1>{displayPoke}</h1>
+          <h1>{poke.poke}</h1>
           <span>{health}/50</span>
         </div>
         <div
@@ -59,31 +73,12 @@ export function OverlayView({
             style={{ width: `${getHealthPercent(health)}%` }}
           />
         </div>
+        {lastCatch.poke && lastCatch.player ? (
+          <p className="overlay-last-catch">
+            Last: @<span>{lastCatch.player}</span> caught {lastCatch.poke}
+          </p>
+        ) : null}
       </div>
-      {event ? <EncounterFeedback event={event} /> : null}
     </article>
-  );
-}
-
-function EncounterFeedback({ event }: { event: EncounterEvent }) {
-  if (event.eventType === "caught") {
-    return (
-      <output className="overlay-event overlay-catch" aria-live="polite">
-        <strong>@{event.username} caught it!</strong>
-        <span>
-          {event.participants} trainers · max x{event.maxCombo}
-        </span>
-      </output>
-    );
-  }
-
-  return (
-    <output className="overlay-event" aria-live="polite">
-      <strong>@{event.username}</strong>
-      <span>
-        −{event.damage} HP
-        {event.critical ? " · CRITICAL" : ` · x${event.combo} combo`}
-      </span>
-    </output>
   );
 }

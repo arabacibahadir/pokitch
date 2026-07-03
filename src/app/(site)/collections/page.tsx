@@ -1,9 +1,21 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CollectionsView } from "@/features/collections/CollectionsView";
 import { getCollections } from "@/features/collections/queries";
 import {
+  buildCollectionsHref,
   type CollectionFilterMode,
   normalizeCollectionQuery,
 } from "@/utils/collections";
@@ -15,35 +27,42 @@ export default async function CollectionsPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const query = await searchParams;
-  const filter = normalizeCollectionQuery(query);
-  const view = query.view === "table" ? "table" : "grid";
-  const { rows, nextCursor } = await getCollections(filter);
+  const filter = normalizeCollectionQuery(await searchParams);
+  const { rows, globalCount, filteredCount, totalPages } =
+    await getCollections(filter);
+
+  if (filteredCount > 0 && filter.page > totalPages) {
+    redirect(buildCollectionsHref({ ...filter, page: totalPages }));
+  }
 
   return (
     <section className="container grid gap-6 py-10 tablet:py-14">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <p className="game-kicker">Community archive</p>
         <div className="flex flex-col gap-3 tablet:flex-row tablet:items-end tablet:justify-between">
           <div>
-            <h1 className="text-3xl font-black tracking-tight tablet:text-5xl">
-              {filter.q ? `Results for “${filter.q}”` : "Latest catches"}
-            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-3xl font-black tracking-tight tablet:text-5xl">
+                {filter.q ? `Results for “${filter.q}”` : "Latest catches"}
+              </h1>
+              <Badge variant="secondary">
+                {globalCount.toLocaleString("en-US")} total catches
+              </Badge>
+              {filter.q ? (
+                <Badge variant="outline">
+                  {filteredCount.toLocaleString("en-US")} matches
+                </Badge>
+              ) : null}
+            </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              Explore recent Pokémon catches without loading the entire archive.
+              Explore recent Pokémon catches by trainer, channel, or Pokémon.
             </p>
           </div>
           <CollectionFilters filter={filter} />
         </div>
       </div>
 
-      <CollectionsView
-        key={`${filter.mode ?? "all"}:${filter.q}:${filter.perPage}`}
-        rows={rows}
-        nextCursor={nextCursor}
-        filter={filter}
-        view={view}
-      />
+      <CollectionsView rows={rows} filter={filter} totalPages={totalPages} />
     </section>
   );
 }
@@ -54,48 +73,67 @@ function CollectionFilters({
   filter: ReturnType<typeof normalizeCollectionQuery>;
 }) {
   return (
-    <form
-      action="/collections"
-      className="game-panel grid gap-2 p-2 tablet:grid-cols-[120px_220px_auto_auto]"
-    >
-      <select
-        name="mode"
-        defaultValue={filter.mode ?? "user"}
-        className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-      >
-        {(["user", "channel", "poke"] as CollectionFilterMode[]).map((mode) => (
-          <option key={mode} value={mode}>
-            {mode[0].toUpperCase() + mode.slice(1)}
-          </option>
-        ))}
-      </select>
-      <input
-        type="search"
-        name="q"
-        defaultValue={filter.q}
-        placeholder="Exact name"
-        className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring"
-      />
-      <select
-        name="perPage"
-        defaultValue={String(filter.perPage)}
-        aria-label="Items per page"
-        className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-      >
-        <option value="24">24</option>
-        <option value="48">48</option>
-        <option value="96">96</option>
-      </select>
-      <div className="flex gap-2">
-        <Button className="flex-1" type="submit">
-          Search
-        </Button>
-        {filter.q ? (
-          <Button asChild variant="ghost">
-            <Link href="/collections">Clear</Link>
-          </Button>
-        ) : null}
-      </div>
+    <form action="/collections" className="game-panel p-3">
+      <input type="hidden" name="view" value={filter.view} />
+      <FieldGroup className="grid gap-3 tablet:grid-cols-[130px_220px_110px_auto]">
+        <Field>
+          <FieldLabel htmlFor="collection-mode">Search by</FieldLabel>
+          <Select name="mode" defaultValue={filter.mode ?? "user"}>
+            <SelectTrigger id="collection-mode" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {(["user", "channel", "poke"] as CollectionFilterMode[]).map(
+                  (mode) => (
+                    <SelectItem key={mode} value={mode}>
+                      {mode[0].toUpperCase() + mode.slice(1)}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="collection-query">Exact name</FieldLabel>
+          <Input
+            id="collection-query"
+            type="search"
+            name="q"
+            defaultValue={filter.q}
+            placeholder="e.g. pikachu"
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="collection-page-size">Per page</FieldLabel>
+          <Select name="perPage" defaultValue={String(filter.perPage)}>
+            <SelectTrigger id="collection-page-size" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {[24, 48, 96].map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field className="justify-end">
+          <FieldLabel className="sr-only">Search actions</FieldLabel>
+          <div className="flex gap-2">
+            <Button type="submit">Search</Button>
+            {filter.q ? (
+              <Button asChild variant="ghost">
+                <a href="/collections">Clear</a>
+              </Button>
+            ) : null}
+          </div>
+        </Field>
+      </FieldGroup>
     </form>
   );
 }

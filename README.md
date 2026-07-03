@@ -25,23 +25,19 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 > Open your broadcasting tool and add a new browser source. Paste the overlay link into the URL field.
 
-**Step 3: Set up the sizes**
+**Step 3: Complete the setup checklist**
 
-> Width: 256, Height: 76. The dimensions should be set to 256x76.
+> Use the signed-in dashboard to confirm the remaining Twitch and OBS setup steps.
 
-**Step 4: Assign as moderator role**
-
-> In order to use the bot properly, you must assign it as a 'mod' role: /mod pokitch_bot
-
-**Step 5: And done!**
+**Step 4: And done!**
 
 https://user-images.githubusercontent.com/32988819/208307876-4d941a2d-2bbd-4ee9-ad81-4faee840a921.mp4
 
 ## Brief
 
-### How did we use _Supabase Realtime_ function?
+### How does the overlay stay updated?
 
-We used Supabase Realtime for inserts and updates of poke's in our database. We used the event:"UPDATE" to check the realtime data of the active poke on the Twitch channel and update the overlay in realtime when its health is low. We used the event:"INSERT" to check if the active poke has been caught and swapped with the new random poke, and update the overlay with if there is the new data.
+The overlay requests its latest snapshot through the application API every two seconds. Each snapshot includes the active Pokémon, its health, and an update timestamp so stale responses cannot overwrite newer state.
 
 ### How did we use _Supabase Database_?
 

@@ -12,7 +12,7 @@ export default function Footer() {
             <Link className={linkClassName} href="/">
               Pokitch
             </Link>{" "}
-            is an open-source initiative.{" "}
+            is an open-source project.{" "}
             <Link
               className={linkClassName}
               href="https://github.com/pokitch-app/pokitch"

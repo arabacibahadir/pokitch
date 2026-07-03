@@ -1,7 +1,7 @@
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 
-import OverlayControls from "@/components/OverlayControls";
+import { StreamerSetup } from "@/components/StreamerSetup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -35,26 +35,15 @@ export default function UserHeroHomePage({
           </p>
         </div>
 
-        <div className="grid gap-2 tablet:grid-cols-3">
-          <OverlayControls url={url} />
-          <form action={signOut}>
-            <Button className="w-full" variant="outline" type="submit">
-              <LogOut className="size-4" />
-              Log out
-            </Button>
-          </form>
-        </div>
+        <StreamerSetup accountId={data.id} url={url} />
 
         <Separator />
 
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">Important:</span>{" "}
-          grant the bot moderator status with{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5">
-            /mod pokitch_bot
-          </code>
-          .
-        </p>
+        <form action={signOut}>
+          <Button variant="outline" type="submit">
+            <LogOut data-icon="inline-start" /> Log out
+          </Button>
+        </form>
       </CardContent>
     </Card>
   );

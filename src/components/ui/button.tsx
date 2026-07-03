@@ -19,12 +19,10 @@ const buttonVariants = cva(
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
         transparent:
           "bg-background/20 text-foreground hover:bg-background/35 aria-expanded:bg-background/35",
-        twitch:
-          "bg-violet-700 text-violet-50 hover:bg-violet-800 focus-visible:ring-violet-500/40",
         success:
-          "bg-emerald-700 text-emerald-50 hover:bg-emerald-800 focus-visible:ring-emerald-500/40",
+          "bg-success text-success-foreground hover:bg-success/85 focus-visible:ring-success/40",
         danger:
-          "bg-destructive/90 text-white hover:bg-destructive focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/85 focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",

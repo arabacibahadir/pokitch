@@ -26,10 +26,10 @@ describe("getAppOrigin", () => {
 });
 
 describe("getSafeNextPath", () => {
-  it("allows local application paths", () => {
-    expect(getSafeNextPath("/collections?mode=poke")).toBe(
-      "/collections?mode=poke",
-    );
+  it("allows only supported post-login destinations", () => {
+    expect(getSafeNextPath("/gift")).toBe("/gift");
+    expect(getSafeNextPath("/trade")).toBe("/trade");
+    expect(getSafeNextPath("/collections?mode=poke")).toBe("/");
   });
 
   it.each(["https://attacker.test", "//attacker.test", "javascript:alert(1)"])(

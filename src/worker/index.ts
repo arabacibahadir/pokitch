@@ -15,8 +15,11 @@ import {
 import { PokemonGame } from "./game";
 import { SupabaseGameStore } from "./store";
 
-const username = process.env.TWITCH_BOT_USERNAME;
-const password = process.env.TWITCH_BOT_OAUTH;
+const username =
+  process.env.TWITCH_BOT_USERNAME ||
+  process.env.NEXT_PUBLIC_TWITCH_BOT_USERNAME;
+const password =
+  process.env.TWITCH_BOT_OAUTH || process.env.NEXT_PUBLIC_TWITCH_BOT_OAUTH;
 const appUrl = getAppOrigin();
 const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3001);
 

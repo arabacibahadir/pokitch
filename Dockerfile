@@ -32,10 +32,7 @@ FROM base AS worker
 ENV NODE_ENV=production
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY package.json tsconfig.json ./
-COPY src/lib/supabase ./src/lib/supabase
-COPY src/storage/data.ts ./src/storage/data.ts
-COPY src/utils/pokemon-species.ts ./src/utils/pokemon-species.ts
-COPY src/worker ./src/worker
+COPY src/ ./src/
 
 USER node
 EXPOSE 3001

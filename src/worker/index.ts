@@ -5,6 +5,12 @@ import tmi from "tmi.js";
 import { getAppOrigin } from "@/features/auth/origin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+console.log("=== WORKER DEBUG ===");
+console.log("Environment variable keys available:");
+console.log(Object.keys(process.env).filter(k => k.includes('URL') || k.includes('TWITCH') || k.includes('SUPA')));
+console.log("====================");
+
+
 import {
   ChannelQueue,
   CommandGate,

@@ -28,6 +28,19 @@ ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 RUN npm run build
 
+FROM base AS worker
+ENV NODE_ENV=production
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY package.json tsconfig.json ./
+COPY src/lib/supabase ./src/lib/supabase
+COPY src/storage/data.ts ./src/storage/data.ts
+COPY src/utils/pokemon-species.ts ./src/utils/pokemon-species.ts
+COPY src/worker ./src/worker
+
+USER node
+EXPOSE 3001
+CMD ["npm", "run", "worker:start"]
+
 FROM base AS web
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -44,15 +57,3 @@ USER nextjs
 EXPOSE 3000
 CMD ["node", "server.js"]
 
-FROM base AS worker
-ENV NODE_ENV=production
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY package.json tsconfig.json ./
-COPY src/lib/supabase ./src/lib/supabase
-COPY src/storage/data.ts ./src/storage/data.ts
-COPY src/utils/pokemon-species.ts ./src/utils/pokemon-species.ts
-COPY src/worker ./src/worker
-
-USER node
-EXPOSE 3001
-CMD ["npm", "run", "worker:start"]

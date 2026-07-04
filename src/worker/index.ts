@@ -40,6 +40,7 @@ const game = new PokemonGame(store, appUrl);
 
 let connected = false;
 let syncTimer: NodeJS.Timeout | undefined;
+const joiningChannels = new Set<string>();
 
 async function syncChannels() {
   const { data, error } = await supabase
@@ -62,13 +63,24 @@ async function syncChannels() {
     }
   }
 
-  for (const channel of plan.join) {
-    try {
-      await client.join(channel);
-      await game.initialize(channel);
-    } catch (error) {
-      console.error(`Failed to join channel ${channel}:`, error);
-    }
+  const channelsToJoin = plan.join.filter(
+    (channel) => !joiningChannels.has(channel),
+  );
+
+  for (const channel of channelsToJoin) {
+    joiningChannels.add(channel);
+    void (async () => {
+      try {
+        await client.join(channel);
+        await game.initialize(channel);
+      } catch (error) {
+        console.error(`Failed to join channel ${channel}:`, error);
+      } finally {
+        joiningChannels.delete(channel);
+      }
+    })();
+    // Stagger the initiation of join requests to avoid Twitch rate limits
+    await new Promise((resolve) => setTimeout(resolve, 600));
   }
 }
 

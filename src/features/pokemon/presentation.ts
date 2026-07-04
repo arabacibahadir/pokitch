@@ -8,6 +8,7 @@ export function formatCatchDate(value: string, locale = "en-GB") {
   return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
+    year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "UTC",

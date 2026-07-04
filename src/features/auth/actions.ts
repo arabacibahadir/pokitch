@@ -18,6 +18,7 @@ export async function signInWithTwitch(formData?: FormData) {
   });
 
   if (error || !data.url) {
+    console.error("signInWithTwitch error:", error);
     redirect(`${next === "/" ? "/" : next}?authError=oauth`);
   }
 

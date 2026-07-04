@@ -33,33 +33,71 @@ export function CollectionResults({
   );
 }
 
+import { Calendar, Tv, User } from "lucide-react";
+
 function CollectionGrid({ rows }: { rows: CollectionRow[] }) {
   return (
-    <div className="grid grid-cols-2 gap-3 tablet:grid-cols-3 laptop:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2 laptop:grid-cols-3 desktop:grid-cols-4">
       {rows.map((row) => (
         <Card
           key={row.id}
-          className="game-panel overflow-hidden border-2 bg-card shadow-none transition-transform hover:-translate-y-1"
+          className="game-panel group/card overflow-hidden border-2 bg-card shadow-none transition-transform hover:-translate-y-1"
         >
-          <CardContent className="flex h-full flex-col gap-3 p-3">
+          <CardContent className="flex items-center gap-4 p-3 h-28">
             <Link
               href={`/pokemon/${encodeURIComponent(row.poke)}`}
               aria-label={`View ${row.poke} details`}
-              className="media-surface group grid min-h-36 place-items-center gap-2 border-2 border-border p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="media-surface group relative flex size-20 shrink-0 items-center justify-center border-2 border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md overflow-hidden"
             >
               <Image
                 unoptimized
                 src={getPokemonSpriteUrl(row.poke)}
                 alt={`${row.poke} sprite`}
-                width={80}
-                height={80}
-                className="max-h-20 w-auto object-contain [image-rendering:pixelated] transition group-hover:scale-110"
+                width={64}
+                height={64}
+                className="max-h-16 w-auto object-contain [image-rendering:pixelated] transition-transform duration-300 group-hover:scale-110 group-hover/card:scale-110"
+                style={{ width: "auto", height: "auto" }}
               />
-              <span className="font-black capitalize tracking-wide transition group-hover:text-primary">
-                {row.poke}
-              </span>
             </Link>
-            <CollectionMeta row={row} />
+
+            <div className="flex flex-1 flex-col justify-between min-w-0 h-full py-0.5">
+              <div className="min-w-0">
+                <Link
+                  href={`/pokemon/${encodeURIComponent(row.poke)}`}
+                  className="font-black capitalize tracking-wide transition text-foreground hover:text-primary block truncate text-base"
+                >
+                  {row.poke}
+                </Link>
+                <div className="truncate text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                  <User className="size-3 text-muted-foreground/70 shrink-0" />
+                  <span>by</span>
+                  <Link
+                    href={`/collections?mode=user&q=${encodeURIComponent(row.user)}`}
+                    className="hover:text-foreground font-semibold text-primary transition"
+                  >
+                    {row.user}
+                  </Link>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-0.5 border-t border-border/40 pt-1.5 mt-1.5">
+                <div className="truncate font-mono text-[9px] uppercase tracking-wider text-muted-foreground/80 flex items-center gap-1">
+                  <Tv className="size-2.5 text-primary shrink-0" />
+                  <a
+                    href={`https://twitch.tv/${row.channel}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-foreground underline decoration-dotted underline-offset-2 transition font-bold"
+                  >
+                    {row.channel}
+                  </a>
+                </div>
+                <div className="truncate font-mono text-[9px] uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1">
+                  <Calendar className="size-2.5 text-muted-foreground/70 shrink-0" />
+                  <span>{formatCatchDate(row.created_at)}</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       ))}
@@ -119,7 +157,14 @@ function CollectionTable({
                 </Link>
               </TableCell>
               <TableCell className="hidden tablet:table-cell">
-                {row.channel}
+                <a
+                  href={`https://twitch.tv/${row.channel}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary underline decoration-dotted underline-offset-4"
+                >
+                  {row.channel}
+                </a>
               </TableCell>
               <TableCell className="hidden text-right text-xs text-muted-foreground tablet:table-cell">
                 {formatCatchDate(row.created_at)}
@@ -132,21 +177,3 @@ function CollectionTable({
   );
 }
 
-function CollectionMeta({ row }: { row: CollectionRow }) {
-  return (
-    <div className="min-w-0">
-      <p className="truncate text-xs text-muted-foreground">
-        by{" "}
-        <Link
-          href={`/collections?mode=user&q=${encodeURIComponent(row.user)}`}
-          className="hover:text-foreground"
-        >
-          {row.user}
-        </Link>
-      </p>
-      <p className="mt-2 truncate font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-        {row.channel} · {formatCatchDate(row.created_at)}
-      </p>
-    </div>
-  );
-}

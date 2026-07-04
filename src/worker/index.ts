@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 
 import tmi from "tmi.js";
 
+import { getAppOrigin } from "@/features/auth/origin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 import {
@@ -16,7 +17,7 @@ import { SupabaseGameStore } from "./store";
 
 const username = process.env.TWITCH_BOT_USERNAME;
 const password = process.env.TWITCH_BOT_OAUTH;
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const appUrl = getAppOrigin();
 const healthPort = Number(process.env.WORKER_HEALTH_PORT ?? 3001);
 
 if (!username || !password) {

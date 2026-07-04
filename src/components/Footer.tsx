@@ -22,12 +22,6 @@ export default function Footer() {
               Contribute!
             </Link>
           </p>
-          <p>
-            Contact:{" "}
-            <Link className={linkClassName} href="mailto:pokitchbot@gmail.com">
-              pokitchbot@gmail.com
-            </Link>
-          </p>
         </div>
       </div>
     </footer>

@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 import * as React from "react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -36,9 +37,9 @@ function PaginationLink({
   className,
   isActive,
   ...props
-}: React.ComponentProps<"a"> & { isActive?: boolean }) {
+}: React.ComponentProps<typeof Link> & { isActive?: boolean }) {
   return (
-    <a
+    <Link
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       className={cn(
@@ -53,27 +54,27 @@ function PaginationLink({
   );
 }
 
-function PaginationPrevious(props: React.ComponentProps<"a">) {
+function PaginationPrevious(props: React.ComponentProps<typeof Link>) {
   return (
-    <a
+    <Link
       aria-label="Go to previous page"
       className={buttonVariants({ variant: "ghost" })}
       {...props}
     >
-      <ChevronLeft data-icon="inline-start" /> Previous
-    </a>
+      <ChevronLeft data-icon="inline-start" />
+    </Link>
   );
 }
 
-function PaginationNext(props: React.ComponentProps<"a">) {
+function PaginationNext(props: React.ComponentProps<typeof Link>) {
   return (
-    <a
+    <Link
       aria-label="Go to next page"
       className={buttonVariants({ variant: "ghost" })}
       {...props}
     >
-      Next <ChevronRight data-icon="inline-end" />
-    </a>
+      <ChevronRight data-icon="inline-end" />
+    </Link>
   );
 }
 

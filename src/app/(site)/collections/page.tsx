@@ -1,3 +1,5 @@
+import { LayoutGrid, List } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +77,7 @@ function CollectionFilters({
   return (
     <form action="/collections" className="game-panel p-3">
       <input type="hidden" name="view" value={filter.view} />
-      <FieldGroup className="grid gap-3 tablet:grid-cols-[130px_220px_110px_auto]">
+      <FieldGroup className="grid gap-3 tablet:grid-cols-[130px_220px_110px_70px_auto]">
         <Field>
           <FieldLabel htmlFor="collection-mode">Search by</FieldLabel>
           <Select name="mode" defaultValue={filter.mode ?? "user"}>
@@ -121,6 +123,35 @@ function CollectionFilters({
               </SelectGroup>
             </SelectContent>
           </Select>
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="collection-view">View</FieldLabel>
+          <div className="flex h-9 items-center gap-0.5 rounded-lg border border-border bg-muted/45 p-1 w-[60px]">
+            <Button
+              asChild
+              size="icon-xs"
+              variant={filter.view === "grid" ? "secondary" : "ghost"}
+            >
+              <Link
+                aria-label="Grid view"
+                href={buildCollectionsHref({ ...filter, page: 1, view: "grid" })}
+              >
+                <LayoutGrid className="size-3.5" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="icon-xs"
+              variant={filter.view === "table" ? "secondary" : "ghost"}
+            >
+              <Link
+                aria-label="Table view"
+                href={buildCollectionsHref({ ...filter, page: 1, view: "table" })}
+              >
+                <List className="size-3.5" />
+              </Link>
+            </Button>
+          </div>
         </Field>
         <Field className="justify-end">
           <FieldLabel className="sr-only">Search actions</FieldLabel>

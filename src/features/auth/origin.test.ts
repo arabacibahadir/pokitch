@@ -23,12 +23,33 @@ describe("getAppOrigin", () => {
       "http://localhost:4000",
     );
   });
+
+  it("falls back to localhost in development if a production URL is configured", () => {
+    expect(
+      getAppOrigin({
+        NODE_ENV: "development",
+        NEXT_PUBLIC_APP_URL: "https://pokitch.app",
+        PORT: "4000",
+      }),
+    ).toBe("http://localhost:4000");
+  });
+
+  it("respects a configured localhost URL in development", () => {
+    expect(
+      getAppOrigin({
+        NODE_ENV: "development",
+        NEXT_PUBLIC_APP_URL: "http://localhost:5000",
+        PORT: "4000",
+      }),
+    ).toBe("http://localhost:5000");
+  });
 });
 
 describe("getSafeNextPath", () => {
   it("allows only supported post-login destinations", () => {
     expect(getSafeNextPath("/gift")).toBe("/gift");
     expect(getSafeNextPath("/trade")).toBe("/trade");
+    expect(getSafeNextPath("/setup")).toBe("/setup");
     expect(getSafeNextPath("/collections?mode=poke")).toBe("/");
   });
 

@@ -24,7 +24,8 @@ export default function HowToUseHomePage() {
             Go live in four moves
           </h2>
           <p className="mt-3 text-muted-foreground">
-            The public overlay URL remains stable after this upgrade.
+            Set up the overlay once, keep the same stream-facing URL, and let
+            chat start building collections right away.
           </p>
         </div>
         <ol className="game-panel mt-10 divide-y-2 divide-border overflow-hidden">

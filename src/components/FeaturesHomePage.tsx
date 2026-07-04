@@ -10,33 +10,39 @@ import {
 const features = [
   {
     icon: Zap,
-    title: "Fast setup",
-    description: "Add one browser source to OBS and start playing.",
+    title: "Streamer setup",
+    description:
+      "Sign in, copy your browser-source URL, and bring the game into OBS without extra production clutter.",
   },
   {
     icon: MessageSquareText,
-    title: "Chat commands",
-    description: "Viewers attack, claim welcome packs, and open collections.",
+    title: "Chat-driven play",
+    description:
+      "Viewers attack encounters, check status, claim welcome packs, and jump into the game from chat.",
   },
   {
     icon: ShieldCheck,
-    title: "Minimal permissions",
-    description: "Authentication is handled through Twitch and Supabase.",
+    title: "Account-linked actions",
+    description:
+      "Twitch sign-in gates gifting, trading, and setup so collector actions stay tied to the right identity.",
   },
   {
     icon: Archive,
-    title: "Collections",
-    description: "Every catch is searchable by trainer, channel, or Pokémon.",
+    title: "Collections that stick",
+    description:
+      "Every catch is saved and searchable by trainer, channel, or Pokémon, turning one stream into a long-running meta game.",
   },
   {
     icon: Repeat2,
-    title: "Trading",
-    description: "Exchange Pokémon through validated, atomic offers.",
+    title: "Safe trading",
+    description:
+      "Collectors can send offers, review incoming trades, and complete exchanges through validated handoffs.",
   },
   {
     icon: Gift,
-    title: "Gifting",
-    description: "Transfer a Pokémon to another collector in one step.",
+    title: "Direct gifting",
+    description:
+      "Send a Pokémon from one collection to another in a single flow when you want rewards, giveaways, or community moments.",
   },
 ];
 
@@ -47,11 +53,12 @@ export default function FeaturesHomePage() {
         <div className="max-w-2xl">
           <p className="game-kicker">Core systems</p>
           <h2 className="mt-3 text-3xl font-black tracking-tight tablet:text-5xl">
-            One stream. A whole world.
+            Built for the whole stream loop
           </h2>
           <p className="mt-3 text-muted-foreground">
-            A focused set of tools for running an interactive collection game
-            without adding another dashboard to your stream workflow.
+            Chat plays together, the
+            overlay stays readable, and progress carries forward after the
+            stream ends.
           </p>
         </div>
         <div className="mt-10 grid gap-4 tablet:grid-cols-2 laptop:grid-cols-3">

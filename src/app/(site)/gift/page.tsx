@@ -10,11 +10,11 @@ export default async function GiftPage() {
 
   if (!account) {
     return (
-      <section className="container py-10 tablet:py-14">
+      <section className="container flex justify-center py-10 tablet:py-14">
         <SignInPrompt
           destination="/gift"
-          title="Sign in to gift Pokémon"
-          description="Sign in with Twitch to choose a Pokémon from your collection and send it to another collector."
+          title="Unlock the gift terminal"
+          description="Sign in with Twitch to pick a Pokémon from your collection and send it to another collector."
         />
       </section>
     );

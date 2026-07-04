@@ -1,7 +1,3 @@
-import { LayoutGrid, List } from "lucide-react";
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -29,36 +25,10 @@ export function CollectionsView({
   filter: CollectionQueryState;
   totalPages: number;
 }) {
-  const baseFilter = { ...filter, page: 1 };
 
   return (
     <div className="grid gap-4">
-      <div className="flex justify-end gap-1">
-        <Button
-          asChild
-          size="icon"
-          variant={filter.view === "grid" ? "secondary" : "ghost"}
-        >
-          <Link
-            aria-label="Grid view"
-            href={buildCollectionsHref({ ...baseFilter, view: "grid" })}
-          >
-            <LayoutGrid />
-          </Link>
-        </Button>
-        <Button
-          asChild
-          size="icon"
-          variant={filter.view === "table" ? "secondary" : "ghost"}
-        >
-          <Link
-            aria-label="Table view"
-            href={buildCollectionsHref({ ...baseFilter, view: "table" })}
-          >
-            <List />
-          </Link>
-        </Button>
-      </div>
+
 
       {!rows.length ? (
         <div className="rounded-xl border border-dashed border-border bg-muted/20 px-6 py-16 text-center">

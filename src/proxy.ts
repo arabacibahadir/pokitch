@@ -5,6 +5,13 @@ import { createPublicClient } from "@/lib/supabase/public";
 import { updateSession } from "@/lib/supabase/proxy";
 
 export async function proxy(request: NextRequest) {
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && request.nextUrl.pathname !== "/auth/callback") {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/auth/callback";
+    return NextResponse.redirect(callbackUrl);
+  }
+
   const match = request.nextUrl.pathname.match(/^\/overlays\/([^/]+)$/);
   if (match && match[1] !== "unavailable") {
     const { data, error } = await createPublicClient().rpc(

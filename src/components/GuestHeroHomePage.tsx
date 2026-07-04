@@ -1,21 +1,22 @@
-import Button from "@/ui/Button";
-import { supabase } from "@/utils/supabase";
-import { FaTwitch } from "react-icons/fa";
+import { Radio } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { signInWithTwitch } from "@/features/auth/actions";
 
 export default function GuestHeroHomePage() {
-  async function signInWithTwitch() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "twitch",
-      options: {
-        redirectTo: process.env.NEXT_PUBLIC_APP_URL + "/redirectlogin/",
-      },
-    });
-    if (error) console.log(error);
-  }
-
   return (
-    <Button variant="twitch" onClick={signInWithTwitch}>
-      <FaTwitch style={{ marginRight: "8px" }} /> Sign in with Twitch
-    </Button>
+    <div className="flex">
+      <form action={signInWithTwitch}>
+        <Button
+          className="pixel-shadow h-12 border-2 px-6 font-bold"
+          variant="primary"
+          size="lg"
+          type="submit"
+        >
+          <Radio className="size-5" />
+          Sign in with Twitch
+        </Button>
+      </form>
+    </div>
   );
 }

@@ -1,76 +1,45 @@
-import Button from "@/ui/Button";
-import Heading from "@/ui/Heading";
-import Link from "@/ui/Link";
-import { useState } from "react";
-import { BiShow } from "react-icons/bi";
-import { FaClipboardCheck, FaTwitch } from "react-icons/fa";
+import { LogOut } from "lucide-react";
+import Link from "next/link";
 
-export const getBaseUrl = () => {
-  if (process.env.NEXT_PUBLIC_APP_URL) {
-    return process.env.NEXT_PUBLIC_APP_URL;
-  }
-  return `http://localhost:${process.env.PORT ?? 3000}`;
-};
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { signOut } from "@/features/auth/actions";
 
-const copyURL = (id: string) => {
-  navigator.clipboard.writeText(`${getBaseUrl()}/overlays/${id}`);
-  return alert("The URL has been copied!");
-};
-
-const signout = async () => {
-  document.cookie.split(";").forEach(function (c) {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/");
-  });
-  window.location.reload();
-};
-
-export default function GuestHeroHomePage({ data }: { data: any }) {
-  const [showURL, setShowURL] = useState(false);
-  const url = getBaseUrl() + `/overlays/${data.id}`;
+export default function UserHeroHomePage({
+  data,
+}: {
+  data: { id: string; channel: string };
+}) {
   return (
-    <div className="space-y-3 rounded-md bg-green-400/25 p-6 shadow">
-      <div className="space-y-3">
-        <Heading variant="h3">Welcome {data.channel}! </Heading>
-        <p>
-          Your Pokitch Overlay was successfully generated. Please{" "}
-          <Link href="#how-to-use">click here</Link> to follow the instructions.
-        </p>
-      </div>
-      <div className="flex flex-row items-center justify-center gap-2">
-        <Button
-          variant="success"
-          startIcon={<FaClipboardCheck />}
-          onClick={() => copyURL(data.id)}
-        >
-          Copy URL
-        </Button>
-        <Button
-          variant="success"
-          startIcon={<BiShow />}
-          onClick={() => setShowURL(!showURL)}
-        >
-          Show URL
-        </Button>
-        <Button variant="twitch" onClick={signout}>
-          <FaTwitch className="mr-2" /> Log Out
-        </Button>
-      </div>
-      {showURL ? (
-        <div
-          className={
-            "inline-flex select-all rounded-md bg-black bg-opacity-25 p-2 transition-display"
-          }
-        >
-          <p>{url}</p>
+    <Card className="game-panel border-2 border-border bg-card text-left shadow-none">
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2 text-left">
+          <h2 className="text-2xl font-bold">Welcome, {data.channel}!</h2>
+          <p className="text-sm text-muted-foreground">
+            Your stream setup is ready when you are. Open your setup page to
+            copy the overlay URL and finish the OBS checklist.
+          </p>
         </div>
-      ) : null}
-      <p className="text-sm text-red-400">
-        <span className="font-bold">Important!</span> In order to use the bot
-        properly, you must assign it as a &quot;mod&quot; role:{" "}
-        <span className="font-bold">/mod pokitch_bot</span>
-      </p>
-    </div>
+
+        <div>
+          <Button asChild variant="primary">
+            <Link
+              href="/setup"
+            >
+              Open setup page
+            </Link>
+          </Button>
+        </div>
+
+        <Separator />
+
+        <form action={signOut}>
+          <Button variant="outline" type="submit">
+            <LogOut data-icon="inline-start" /> Log out
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

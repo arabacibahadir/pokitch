@@ -25,23 +25,19 @@ https://user-images.githubusercontent.com/32988819/208307217-91159b3a-e0bf-4cfc-
 
 > Open your broadcasting tool and add a new browser source. Paste the overlay link into the URL field.
 
-**Step 3: Set up the sizes**
+**Step 3: Complete the setup checklist**
 
-> Width: 256, Height: 76. The dimensions should be set to 256x76.
+> Use the signed-in dashboard to confirm the remaining Twitch and OBS setup steps.
 
-**Step 4: Assign as moderator role**
-
-> In order to use the bot properly, you must assign it as a 'mod' role: /mod pokitch_bot
-
-**Step 5: And done!**
+**Step 4: And done!**
 
 https://user-images.githubusercontent.com/32988819/208307876-4d941a2d-2bbd-4ee9-ad81-4faee840a921.mp4
 
 ## Brief
 
-### How did we use _Supabase Realtime_ function?
+### How does the overlay stay updated?
 
-We used Supabase Realtime for inserts and updates of poke's in our database. We used the event:"UPDATE" to check the realtime data of the active poke on the Twitch channel and update the overlay in realtime when its health is low. We used the event:"INSERT" to check if the active poke has been caught and swapped with the new random poke, and update the overlay with if there is the new data.
+The overlay requests its latest snapshot through the application API every two seconds. Each snapshot includes the active Pokémon, its health, and an update timestamp so stale responses cannot overwrite newer state.
 
 ### How did we use _Supabase Database_?
 
@@ -50,12 +46,49 @@ Supabase Database is where we keep track of viewer poke collections and when on 
 ## Tech-Stack
 
 - [Supabase](https://supabase.com/)
-- [Nextjs](https://nextjs.org/)
+- [Next.js App Router](https://nextjs.org/docs/app)
 - [Typescript](https://www.typescriptlang.org/)
 - [tmi.js](https://tmijs.com)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [CVA](https://github.com/joe-bell/cva)
-- [React-Icons](https://react-icons.github.io/react-icons/)
+- [shadcn/ui](https://ui.shadcn.com/)
+
+## Local development
+
+Copy `.env.example` to `.env` and configure Supabase plus Twitch bot
+credentials. The web application and Twitch bot run as separate processes:
+
+```bash
+npm install
+npm run dev
+npm run worker:dev
+```
+
+The bot credentials and Supabase secret key are server-only. Never prefix them
+with `NEXT_PUBLIC_`.
+
+## Database migration
+
+Run the migrations and pgTAP suite locally first:
+
+```bash
+npx supabase start
+npx supabase db reset
+npx supabase test db
+```
+
+Apply the ordered SQL migrations to a Supabase development branch before
+production. Then run `supabase/verification/secure_transfers.sql` and review
+the security and performance advisors. The production rollout and rollback
+gates are documented in [docs/operations.md](docs/operations.md).
+
+## Docker
+
+The web app and one long-lived Twitch bot process are deployed together:
+
+```bash
+docker compose up --build
+```
 
 ## Work in progress
 

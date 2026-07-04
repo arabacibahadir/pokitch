@@ -5,7 +5,7 @@ test("home and collections provide the primary public journey", async ({
 }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Your chat. Their adventure." }),
+    page.getByRole("heading", { name: "Let chat catch, battle, gift, and trade." }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Sign in with Twitch" }),
@@ -41,13 +41,13 @@ test("protected transfer pages explain sign-in without redirecting", async ({
   await page.goto("/gift");
   await expect(page).toHaveURL("/gift");
   await expect(
-    page.getByRole("heading", { name: "Sign in to gift Pokémon" }),
+    page.getByText("Unlock the gift terminal"),
   ).toBeVisible();
 
   await page.goto("/trade");
   await expect(page).toHaveURL("/trade");
   await expect(
-    page.getByRole("heading", { name: "Sign in to trade Pokémon" }),
+    page.getByText("Sign in to trade Pokémon"),
   ).toBeVisible();
 });
 

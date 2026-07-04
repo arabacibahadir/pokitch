@@ -102,7 +102,7 @@ describe("PokemonGame", () => {
     expect(messages).toEqual([]);
   });
 
-  it("records a caught Pokemon on the overlay without announcing it in chat", async () => {
+  it("announces a caught Pokemon in chat", async () => {
     const store: GameStore = {
       ensureEncounter: async () => undefined,
       attack: async () => ({
@@ -130,8 +130,13 @@ describe("PokemonGame", () => {
       username: "viewer",
     });
 
-    // The catch is surfaced on the overlay, not echoed to chat.
-    expect(messages).toEqual([]);
+    // The catch is surfaced on the overlay and announced in chat.
+    expect(messages).toEqual([
+      {
+        channel: "streamer",
+        message: "🎉 @viewer caught Mew! A wild Eevee has appeared.",
+      },
+    ]);
   });
 
   it("claims a welcome pack once using the stable Twitch identity", async () => {

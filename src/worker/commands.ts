@@ -103,6 +103,13 @@ export class CooldownStore {
     this.expiresAt.set(key, currentTime + this.durationMs);
     return true;
   }
+
+  getRemainingCooldown(channel: string, user: string): number {
+    const key = `${channel.toLowerCase()}:${user.toLowerCase()}`;
+    const currentTime = this.now();
+    const expiry = this.expiresAt.get(key) ?? 0;
+    return expiry > currentTime ? Math.ceil((expiry - currentTime) / 1000) : 0;
+  }
 }
 
 const INFORMATION_COMMANDS = new Set<PokeCommand>([
@@ -134,6 +141,19 @@ export class CommandGate {
       return this.welcomePackCooldowns.consume(channel, user);
     }
     return true;
+  }
+
+  getRemainingCooldown(command: PokeCommand, channel: string, user: string): number {
+    if (command === "attack") {
+      return this.attackCooldowns.getRemainingCooldown(channel, user);
+    }
+    if (INFORMATION_COMMANDS.has(command)) {
+      return this.informationCooldowns.getRemainingCooldown(channel, command);
+    }
+    if (command === "welcome-pack") {
+      return this.welcomePackCooldowns.getRemainingCooldown(channel, user);
+    }
+    return 0;
   }
 }
 

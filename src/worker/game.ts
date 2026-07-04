@@ -175,20 +175,28 @@ export class PokemonGame {
   }
 
   private async attack(
-    _client: tmi.Client,
+    client: tmi.Client,
     channel: string,
     player: GamePlayer,
   ) {
     const damage = this.dependencies.rollDamage();
-    // Combat outcomes (hit damage, the catcher) are rendered on the OBS overlay
-    // rather than echoed to chat, keeping the chat readable while the overlay
-    // stays the live scoreboard.
-    await this.store.attack({
+    // Combat outcomes (hit damage) are silent in chat and rendered on the OBS overlay,
+    // but successful catches are announced to celebrate the capture.
+    const result = await this.store.attack({
       channel,
       damage,
       nextPoke: await this.dependencies.getRandomPokemon(),
       twitchId: player.twitchId,
       username: player.username,
     });
+
+    if (result.outcome === "caught") {
+      const caughtPoke = result.poke.charAt(0).toUpperCase() + result.poke.slice(1);
+      const nextPoke = result.nextPoke.charAt(0).toUpperCase() + result.nextPoke.slice(1);
+      await client.say(
+        channel,
+        `🎉 @${player.username} caught ${caughtPoke}! A wild ${nextPoke} has appeared.`
+      );
+    }
   }
 }

@@ -191,16 +191,22 @@
     align-items: center;
     gap: var(--overlay-gap);
     overflow: hidden;
-    border: clamp(1px, 0.8cqh, 2px) solid oklch(var(--primary) / 0.55);
+    border: clamp(1px, 0.8cqh, 2px) solid oklch(var(--primary) / 0.4);
     border-radius: clamp(0.35rem, 2.5cqh, 0.75rem);
-    background: oklch(var(--background) / 0.95);
+    background: oklch(var(--card) / 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 
+      0 10px 30px -10px oklch(var(--shadow) / 0.5),
+      inset 0 1px 1px oklch(1 0 0 / 0.05);
     padding: clamp(0.4rem, 3cqh, 1rem);
     color: oklch(var(--foreground));
-    animation: overlay-enter 240ms ease-out;
+    animation: overlay-enter 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .overlay-sprite-frame {
     display: flex;
+    position: relative;
     width: clamp(2rem, 22cqw, 8rem);
     height: min(82cqh, 8rem);
     flex: none;
@@ -215,6 +221,10 @@
     max-height: 100%;
     object-fit: contain;
     image-rendering: pixelated;
+    animation: 
+      sprite-spawn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      sprite-idle 3s ease-in-out infinite alternate 0.5s;
+    transform-origin: bottom center;
   }
 
   .overlay-details {
@@ -238,9 +248,10 @@
     text-transform: capitalize;
     text-overflow: ellipsis;
     white-space: nowrap;
+    letter-spacing: -0.01em;
   }
   .overlay-card[data-size="compact"] .overlay-heading h1 {
-    /* Long names like "Porygon-Z" wrap to a second line in tight sources. */
+    /* Wrap long names in tight widgets */
     white-space: normal;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -249,32 +260,44 @@
 
   .overlay-heading span {
     flex: none;
-    font-weight: 400;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
     transition: color 200ms ease;
+    opacity: 0.9;
   }
 
   .overlay-health-track {
     height: clamp(0.3rem, 10cqh, 1rem);
     overflow: hidden;
     border-radius: 999px;
-    background: oklch(var(--muted) / 0.9);
+    background: oklch(var(--muted) / 0.6);
+    border: 1px solid oklch(var(--border) / 0.3);
   }
 
   .overlay-health-fill {
     height: 100%;
     border-radius: inherit;
-    background: oklch(var(--success));
+    background: linear-gradient(90deg, oklch(var(--success) / 0.8) 0%, oklch(var(--success)) 100%);
+    box-shadow: 0 0 8px oklch(var(--success) / 0.4);
     transition:
-      width 500ms ease,
-      background-color 200ms ease;
+      width 500ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 300ms ease,
+      box-shadow 300ms ease;
   }
 
   .overlay-card[data-health="medium"] .overlay-health-fill {
-    background: oklch(var(--warning));
+    background: linear-gradient(90deg, oklch(var(--warning) / 0.8) 0%, oklch(var(--warning)) 100%);
+    box-shadow: 0 0 8px oklch(var(--warning) / 0.4);
   }
   .overlay-card[data-health="low"] .overlay-health-fill {
-    background: oklch(var(--destructive));
+    background: linear-gradient(90deg, oklch(var(--destructive) / 0.8) 0%, oklch(var(--destructive)) 100%);
+    box-shadow: 0 0 12px oklch(var(--destructive) / 0.6);
+    animation: health-pulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes health-pulse {
+    0% { filter: brightness(0.95); }
+    100% { filter: brightness(1.2); }
   }
 
   .overlay-debug {
@@ -298,52 +321,73 @@
     color: oklch(var(--destructive));
   }
 
-  /* Floating combat event that pops over the sprite and fades out.
-     Re-mounted via a `key` on the event timestamp, so the animation replays. */
+  /* Floating combat event that pops over the sprite and fades out. */
   .overlay-event {
     position: absolute;
     inset-inline: 0;
-    top: clamp(-1.4rem, -8cqh, -0.5rem);
+    top: clamp(-1.8rem, -10cqh, -0.6rem);
     display: grid;
     place-items: center;
     pointer-events: none;
     border-radius: clamp(0.2rem, 1.5cqh, 0.4rem);
-    padding: clamp(0.1rem, 1cqh, 0.3rem) clamp(0.3rem, 2cqw, 0.6rem);
+    padding: clamp(0.15rem, 1.2cqh, 0.4rem) clamp(0.4rem, 2.5cqw, 0.8rem);
     font:
-      600 clamp(0.5rem, 8cqh, 0.95rem)/1.2 ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: 0.02em;
+      700 clamp(0.55rem, 9cqh, 1.05rem)/1.2 ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     white-space: nowrap;
     color: oklch(var(--background));
-    background: oklch(var(--foreground) / 0.92);
-    animation: overlay-event-pop 1.6s ease-out forwards;
+    background: oklch(var(--foreground) / 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: overlay-event-pop 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    z-index: 20;
   }
   .overlay-event[data-kind="caught"] {
     color: oklch(var(--background));
     background: oklch(var(--success) / 0.95);
+    border: 1px solid oklch(var(--success));
   }
   .overlay-event[data-kind="hit"] {
     color: oklch(var(--background));
-    background: oklch(var(--destructive) / 0.92);
+    background: oklch(var(--destructive) / 0.95);
+    border: 1px solid oklch(var(--destructive));
   }
 
   /* Persistent badge for the most recent catch in this channel. */
   .overlay-last-catch {
+    margin-top: clamp(0.2rem, 2cqh, 0.5rem);
+    overflow: hidden;
+    font:
+      400 clamp(0.45rem, 6cqh, 0.75rem)/1.3 ui-sans-serif, system-ui, sans-serif;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    color: oklch(var(--muted-foreground));
+    opacity: 0.85;
+  }
+  .overlay-last-catch span {
+    font-weight: 700;
+    color: oklch(var(--foreground) / 0.9);
+  }
+
+  .overlay-last-attack {
     margin-top: clamp(0.15rem, 1.5cqh, 0.4rem);
     overflow: hidden;
     font:
       400 clamp(0.45rem, 6cqh, 0.75rem)/1.3 ui-sans-serif, system-ui, sans-serif;
     text-overflow: ellipsis;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     white-space: nowrap;
     color: oklch(var(--muted-foreground));
     opacity: 0.85;
   }
-  .overlay-last-catch span {
-    font-weight: 600;
-    color: oklch(var(--foreground) / 0.9);
+  .overlay-last-attack span {
+    font-weight: 700;
+    color: oklch(var(--destructive));
   }
+
 
   /* Connection status shown outside debug mode only when the overlay stalls. */
   .overlay-connection {
@@ -359,6 +403,195 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
+
+  /* Animation helpers for Sprite & Pokéball */
+  .overlay-sprite-frame.is-damaged .overlay-sprite {
+    animation: sprite-damage 0.5s ease-in-out !important;
+  }
+
+  .overlay-sprite-frame.is-catching.phase-suck .overlay-sprite {
+    animation: sprite-suck 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+  }
+
+  .overlay-sprite-frame.is-catching.phase-wiggle .overlay-sprite,
+  .overlay-sprite-frame.is-catching.phase-success .overlay-sprite {
+    opacity: 0;
+    animation: none !important;
+  }
+
+  .overlay-pokeball-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .overlay-pokeball {
+    image-rendering: pixelated;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+    transform-origin: bottom center;
+  }
+
+  .phase-suck .overlay-pokeball {
+    animation: sprite-spawn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .phase-wiggle .overlay-pokeball {
+    animation: pokeball-wiggle 0.5s ease-in-out infinite;
+  }
+
+  .phase-success .overlay-pokeball {
+    animation: pokeball-success 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  .phase-reveal .overlay-pokeball {
+    animation: pokeball-fade-out 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  /* Success Sparkles */
+  .overlay-sparkles {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .sparkle-0 { animation: sparkle-out-0 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; background: oklch(var(--warning)); box-shadow: 0 0 6px oklch(var(--warning)); }
+  .sparkle-1 { animation: sparkle-out-1 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; background: oklch(var(--destructive)); box-shadow: 0 0 6px oklch(var(--destructive)); }
+  .sparkle-2 { animation: sparkle-out-2 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; background: oklch(var(--info)); box-shadow: 0 0 6px oklch(var(--info)); }
+  .sparkle-3 { animation: sparkle-out-3 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; background: oklch(var(--success)); box-shadow: 0 0 6px oklch(var(--success)); }
+  .sparkle-4 { animation: sparkle-out-4 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; background: oklch(var(--accent)); box-shadow: 0 0 6px oklch(var(--accent)); }
+  .sparkle-5 { animation: sparkle-out-5 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards; background: oklch(var(--primary)); box-shadow: 0 0 6px oklch(var(--primary)); }
+
+
+  /* Keyframe Animations */
+  @keyframes sprite-idle {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-4cqh) scale(1.02); }
+  }
+
+  @keyframes sprite-spawn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translateY(20px);
+      filter: brightness(2) contrast(1.2);
+    }
+    70% {
+      transform: scale(1.1) translateY(-2px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: none;
+    }
+  }
+
+  @keyframes sprite-damage {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+      filter: none;
+    }
+    15% {
+      transform: translate(-10px, -4px) rotate(-6deg) scale(0.95);
+      filter: brightness(1.3) sepia(1) saturate(6) hue-rotate(-50deg);
+    }
+    30% {
+      transform: translate(10px, 4px) rotate(6deg) scale(0.95);
+      filter: brightness(1.3) sepia(1) saturate(6) hue-rotate(-50deg);
+    }
+    45% {
+      transform: translate(-8px, 2px) rotate(-4deg) scale(0.98);
+      filter: brightness(1.3) sepia(1) saturate(6) hue-rotate(-50deg);
+    }
+    60% {
+      transform: translate(8px, -2px) rotate(4deg) scale(0.98);
+      filter: brightness(1.2) sepia(0.6) saturate(4) hue-rotate(-50deg);
+    }
+    75% {
+      transform: translate(-4px, 0px) rotate(-2deg);
+      filter: brightness(1.1) sepia(0.3) saturate(2) hue-rotate(-50deg);
+    }
+    90% {
+      transform: translate(2px, 0px) rotate(0deg);
+    }
+  }
+
+  @keyframes sprite-suck {
+    0% {
+      transform: scale(1) translateY(0) rotate(0deg);
+      filter: brightness(1);
+      opacity: 1;
+    }
+    35% {
+      transform: scale(0.8) translateY(-10px) rotate(-20deg);
+      filter: brightness(1.5) sepia(0.2) hue-rotate(180deg);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(0) translateY(30px) rotate(720deg);
+      filter: brightness(3) sepia(0.5) hue-rotate(180deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes pokeball-wiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    15% { transform: rotate(-20deg) translate(-2px, -1px); }
+    30% { transform: rotate(20deg) translate(2px, -1px); }
+    45% { transform: rotate(-12deg) translate(-1px, 0); }
+    60% { transform: rotate(12deg) translate(1px, 0); }
+    75% { transform: rotate(0deg) scale(1); }
+  }
+
+  @keyframes pokeball-success {
+    0% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 0 oklch(var(--success)));
+    }
+    40% {
+      transform: scale(1.3);
+      filter: drop-shadow(0 0 15px oklch(var(--success))) brightness(1.3);
+    }
+    70% {
+      transform: scale(0.95);
+      filter: drop-shadow(0 0 25px oklch(var(--success))) brightness(1.1);
+    }
+    100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 5px oklch(var(--success) / 0.5));
+    }
+  }
+
+  @keyframes pokeball-fade-out {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0) translateY(-15px);
+    }
+  }
+
+  @keyframes sparkle-out-0 { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(-35px, -35px) scale(1.2); opacity: 0; } }
+  @keyframes sparkle-out-1 { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(35px, -35px) scale(1.2); opacity: 0; } }
+  @keyframes sparkle-out-2 { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(-45px, 5px) scale(1.2); opacity: 0; } }
+  @keyframes sparkle-out-3 { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(45px, 5px) scale(1.2); opacity: 0; } }
+  @keyframes sparkle-out-4 { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(-20px, 40px) scale(1.2); opacity: 0; } }
+  @keyframes sparkle-out-5 { 0% { transform: translate(0, 0) scale(0); opacity: 1; } 100% { transform: translate(20px, 40px) scale(1.2); opacity: 0; } }
 
   @container overlay (orientation: portrait) {
     .overlay-card {
@@ -391,40 +624,44 @@
   }
 }
 
-body:has(.overlay-viewport) {
-  min-height: 0;
-  overflow: hidden;
-  background: transparent;
-  background-image: none;
-}
 
-@keyframes overlay-enter {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
+  body:has(.overlay-viewport) {
+    min-height: 0;
+    overflow: hidden;
+    background: transparent;
+    background-image: none;
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
-@keyframes overlay-event-pop {
-  0% {
-    opacity: 0;
-    transform: translateY(20%) scale(0.85);
+  @keyframes overlay-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
-  15% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-15%) scale(0.95);
+
+  @keyframes overlay-event-pop {
+    0% {
+      opacity: 0;
+      transform: translateY(20%) scale(0.85);
+    }
+    15% {
+      opacity: 1;
+      transform: translateY(0) scale(1.05);
+    }
+    20% {
+      transform: translateY(0) scale(1);
+    }
+    75% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-15%) scale(0.95);
   }
 }
 

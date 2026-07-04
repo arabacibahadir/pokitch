@@ -111,6 +111,21 @@ describe("CommandGate", () => {
     expect(gate.consume("welcome-pack", "channel", "viewer")).toBe(false);
     expect(gate.consume("attack", "channel", "viewer")).toBe(true);
   });
+
+  it("calculates the remaining cooldown accurately", () => {
+    let now = 1_000;
+    const gate = new CommandGate(() => now);
+
+    expect(gate.getRemainingCooldown("attack", "channel", "viewer")).toBe(0);
+    expect(gate.consume("attack", "channel", "viewer")).toBe(true);
+    expect(gate.getRemainingCooldown("attack", "channel", "viewer")).toBe(31);
+
+    now += 15_000;
+    expect(gate.getRemainingCooldown("attack", "channel", "viewer")).toBe(16);
+
+    now += 17_000;
+    expect(gate.getRemainingCooldown("attack", "channel", "viewer")).toBe(0);
+  });
 });
 
 describe("ChannelQueue", () => {

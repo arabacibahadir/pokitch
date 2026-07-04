@@ -106,9 +106,15 @@ client.on("message", (rawChannel, tags, message, self) => {
   }
 
   const channel = rawChannel.replace(/^#/, "").toLowerCase();
-  if (!commandGate.consume(command, channel, player.twitchId)) {
+  const remaining = commandGate.getRemainingCooldown(command, channel, player.twitchId);
+  if (remaining > 0) {
+    void client.say(
+      rawChannel,
+      `@${player.username}, !poke ${command} is on cooldown (${remaining}s remaining).`
+    );
     return;
   }
+  commandGate.consume(command, channel, player.twitchId);
 
   void queue
     .run(channel, () => game.handle(command, client, channel, player))

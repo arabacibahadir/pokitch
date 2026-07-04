@@ -5,11 +5,6 @@ import tmi from "tmi.js";
 import { getAppOrigin } from "@/features/auth/origin";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-console.log("=== WORKER DEBUG ===");
-console.log("Environment variable keys available:");
-console.log(Object.keys(process.env).filter(k => k.includes('URL') || k.includes('TWITCH') || k.includes('SUPA')));
-console.log("====================");
-
 
 import {
   ChannelQueue,
@@ -60,12 +55,20 @@ async function syncChannels() {
   const plan = getChannelSyncPlan(desiredChannels, client.getChannels());
 
   for (const channel of plan.part) {
-    await client.part(channel);
+    try {
+      await client.part(channel);
+    } catch (error) {
+      console.error(`Failed to leave channel ${channel}:`, error);
+    }
   }
 
   for (const channel of plan.join) {
-    await client.join(channel);
-    await game.initialize(channel);
+    try {
+      await client.join(channel);
+      await game.initialize(channel);
+    } catch (error) {
+      console.error(`Failed to join channel ${channel}:`, error);
+    }
   }
 }
 

@@ -47,14 +47,6 @@ export default async function CollectionsPage({
               <h1 className="text-3xl font-black tracking-tight tablet:text-5xl">
                 {filter.q ? `Results for “${filter.q}”` : "Latest catches"}
               </h1>
-              <Badge variant="secondary">
-                {globalCount.toLocaleString("en-US")} total catches
-              </Badge>
-              {filter.q ? (
-                <Badge variant="outline">
-                  {filteredCount.toLocaleString("en-US")} matches
-                </Badge>
-              ) : null}
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
               Explore recent Pokémon catches by trainer, channel, or Pokémon.

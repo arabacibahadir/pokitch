@@ -1,8 +1,9 @@
-import { LogIn, Menu, Settings2, UserRound, X } from "lucide-react";
+import { LogIn, Menu, X } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { getCurrentAccount } from "@/features/auth/queries";
+import UserDropdown from "./UserDropdown";
 
 const menuItems = [
   { name: "Collections", path: "/collections" },
@@ -97,27 +98,5 @@ function HeaderAccount({
     );
   }
 
-  return (
-    <div className={mobile ? "flex flex-col gap-2" : "flex items-center gap-2"}>
-      <Link
-        href={`/collections?mode=user&q=${channel}`}
-        className={`inline-flex items-center gap-2 rounded-lg border border-border bg-card/70 px-3 py-2 text-sm hover:bg-muted/50 transition ${
-          mobile ? "" : "tablet:order-last"
-        }`}
-      >
-        <UserRound className="size-4 text-primary" />
-        <span className="max-w-32 truncate font-semibold">{channel}</span>
-      </Link>
-      <Button
-        asChild
-        variant="primary"
-        size={mobile ? "default" : "sm"}
-        className={mobile ? "" : "tablet:order-first"}
-      >
-        <Link href="/setup">
-          <Settings2 data-icon="inline-start" /> Setup
-        </Link>
-      </Button>
-    </div>
-  );
+  return <UserDropdown channel={channel} mobile={mobile} />;
 }

@@ -30,7 +30,7 @@ export default async function SetupPage() {
           Prepare your overlay for stream
         </h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          Copy your browser-source URL, add it to OBS, and work through the
+          Copy your browser-source URL, add it to OBS (recommended size: <strong>300 × 130</strong>), and work through the
           checklist once. Your viewers can keep playing against the same public
           overlay after setup is done.
         </p>

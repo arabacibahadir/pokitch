@@ -19,11 +19,25 @@ export function OverlayView({
   size,
   event,
   catch: lastCatch,
+  hideCatch = false,
+  hideAttack = false,
+  primaryColor,
+  cardColor,
+  textColor,
+  theme = "default",
+  hideTicker = false,
 }: {
   poke: ActivePoke;
   size: OverlaySize;
   event: OverlayEvent;
   catch: OverlayCatch;
+  hideCatch?: boolean;
+  hideAttack?: boolean;
+  primaryColor?: string;
+  cardColor?: string;
+  textColor?: string;
+  theme?: string;
+  hideTicker?: boolean;
 }) {
   const [catchingState, setCatchingState] = useState<{
     isCatching: boolean;
@@ -99,12 +113,29 @@ export function OverlayView({
     );
   };
 
+  const customStyles: React.CSSProperties = {};
+  if (primaryColor) {
+    const formattedPrimary = primaryColor.startsWith("#") ? primaryColor : `#${primaryColor}`;
+    customStyles["--overlay-primary" as any] = formattedPrimary;
+    customStyles["--overlay-primary-border" as any] = `${formattedPrimary}66`;
+  }
+  if (cardColor) {
+    customStyles["--overlay-card" as any] = cardColor.startsWith("#") ? cardColor : `#${cardColor}`;
+  }
+  if (textColor) {
+    const formattedText = textColor.startsWith("#") ? textColor : `#${textColor}`;
+    customStyles["--overlay-text" as any] = formattedText;
+    customStyles["--overlay-muted-text" as any] = `${formattedText}bf`;
+  }
+
   return (
     <article
       data-testid="overlay-card"
       data-size={size}
       data-health={tone}
+      data-theme={theme}
       className="overlay-card"
+      style={customStyles}
     >
       <figure
         className={`overlay-sprite-frame ${isDamaged ? "is-damaged" : ""} ${
@@ -138,18 +169,6 @@ export function OverlayView({
           </div>
         ) : null}
 
-        {event.kind && event.at ? (
-          <span
-            key={event.at}
-            className="overlay-event"
-            data-kind={event.kind}
-            role="status"
-          >
-            {event.kind === "caught"
-              ? `🎉 CAUGHT @${event.player}`
-              : `💥 -${event.damage ?? 0} @${event.player}`}
-          </span>
-        ) : null}
       </figure>
       <div className="overlay-details">
         <div className="overlay-heading">
@@ -165,17 +184,36 @@ export function OverlayView({
             style={{ width: `${getHealthPercent(displayHealth)}%` }}
           />
         </div>
-        {lastCatch.poke && lastCatch.player ? (
+        {!hideCatch && lastCatch.poke && lastCatch.player ? (
           <p className="overlay-last-catch">
             Last: @<span>{lastCatch.player}</span> caught {lastCatch.poke}
           </p>
         ) : null}
-        {event.player && event.kind === "hit" ? (
+        {!hideAttack && event.player && event.kind === "hit" ? (
           <p className="overlay-last-attack">
             Hit: @<span>{event.player}</span> (-{event.damage ?? 0} HP)
           </p>
         ) : null}
+        {!hideTicker && (
+          <div className="overlay-ticker" role="marquee">
+            <span className="overlay-ticker-text">
+              Visit pokitch.app for more info • Type !poke attack to battle & catch! •
+            </span>
+          </div>
+        )}
       </div>
+      {event.kind && event.at ? (
+        <span
+          key={event.at}
+          className="overlay-event"
+          data-kind={event.kind}
+          role="status"
+        >
+          {event.kind === "caught"
+            ? `🎉 CAUGHT @${event.player}`
+            : `💥 -${event.damage ?? 0} @${event.player}`}
+        </span>
+      ) : null}
     </article>
   );
 }

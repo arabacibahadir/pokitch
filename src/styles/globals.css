@@ -183,6 +183,12 @@
   }
 
   .overlay-card {
+    --overlay-primary: oklch(var(--primary));
+    --overlay-primary-border: oklch(var(--primary) / 0.4);
+    --overlay-card: oklch(var(--card) / 0.85);
+    --overlay-text: oklch(var(--foreground));
+    --overlay-muted-text: oklch(var(--muted-foreground));
+
     --overlay-gap: clamp(0.4rem, 3cqh, 0.75rem);
     display: flex;
     position: relative;
@@ -191,16 +197,16 @@
     align-items: center;
     gap: var(--overlay-gap);
     overflow: hidden;
-    border: clamp(1px, 0.8cqh, 2px) solid oklch(var(--primary) / 0.4);
+    border: clamp(1px, 0.8cqh, 2px) solid var(--overlay-primary-border);
     border-radius: clamp(0.35rem, 2.5cqh, 0.75rem);
-    background: oklch(var(--card) / 0.85);
+    background: var(--overlay-card);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 
       0 10px 30px -10px oklch(var(--shadow) / 0.5),
       inset 0 1px 1px oklch(1 0 0 / 0.05);
     padding: clamp(0.4rem, 3cqh, 1rem);
-    color: oklch(var(--foreground));
+    color: var(--overlay-text);
     animation: overlay-enter 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
@@ -324,8 +330,11 @@
   /* Floating combat event that pops over the sprite and fades out. */
   .overlay-event {
     position: absolute;
-    inset-inline: 0;
-    top: clamp(-1.8rem, -10cqh, -0.6rem);
+    left: 50%;
+    top: clamp(0.2rem, 2.2cqh, 0.5rem);
+    transform: translate(-50%, 0);
+    width: max-content;
+    max-width: 90%;
     display: grid;
     place-items: center;
     pointer-events: none;
@@ -343,12 +352,12 @@
     z-index: 20;
   }
   .overlay-event[data-kind="caught"] {
-    color: oklch(var(--background));
+    color: #ffffff;
     background: oklch(var(--success) / 0.95);
     border: 1px solid oklch(var(--success));
   }
   .overlay-event[data-kind="hit"] {
-    color: oklch(var(--background));
+    color: #ffffff;
     background: oklch(var(--destructive) / 0.95);
     border: 1px solid oklch(var(--destructive));
   }
@@ -363,12 +372,12 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     white-space: nowrap;
-    color: oklch(var(--muted-foreground));
+    color: var(--overlay-muted-text);
     opacity: 0.85;
   }
   .overlay-last-catch span {
     font-weight: 700;
-    color: oklch(var(--foreground) / 0.9);
+    color: var(--overlay-text);
   }
 
   .overlay-last-attack {
@@ -380,12 +389,12 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     white-space: nowrap;
-    color: oklch(var(--muted-foreground));
+    color: var(--overlay-muted-text);
     opacity: 0.85;
   }
   .overlay-last-attack span {
     font-weight: 700;
-    color: oklch(var(--destructive));
+    color: var(--overlay-text);
   }
 
 
@@ -622,6 +631,93 @@
   .overlay-card[data-size="large"] .overlay-heading {
     font-size: clamp(0.85rem, 20cqh, 2rem);
   }
+
+  /* Scrolling information ticker at the bottom of the card */
+  .overlay-ticker {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid oklch(var(--border) / 0.3);
+    margin-top: clamp(0.25rem, 2cqh, 0.5rem);
+    padding-top: clamp(0.2rem, 1.5cqh, 0.4rem);
+    display: flex;
+    align-items: center;
+  }
+  
+  .overlay-ticker-text {
+    display: inline-block;
+    padding-left: 100%;
+    font: 600 clamp(0.45rem, 6cqh, 0.65rem)/1 ui-sans-serif, system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--overlay-muted-text);
+    animation: overlay-ticker-scroll 20s linear infinite;
+  }
+
+  @keyframes overlay-ticker-scroll {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+
+  /* Retro GameBoy Theme Style Overrides */
+  .overlay-card[data-theme="retro"] {
+    --overlay-card: #8bac0f;
+    --overlay-primary: #0f380f;
+    --overlay-primary-border: #0f380f;
+    --overlay-text: #0f380f;
+    --overlay-muted-text: #306230;
+    border: 3px solid #0f380f;
+    border-radius: 0;
+    box-shadow: 6px 6px 0 #0f380f;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .overlay-card[data-theme="retro"] .overlay-sprite {
+    filter: contrast(1.4) grayscale(1) brightness(0.9);
+    image-rendering: pixelated;
+  }
+  .overlay-card[data-theme="retro"] .overlay-health-track {
+    border: 2px solid #0f380f;
+    background: #9bbc0f;
+    border-radius: 0;
+  }
+  .overlay-card[data-theme="retro"] .overlay-health-fill {
+    background: #306230;
+  }
+  .overlay-card[data-theme="retro"] .overlay-ticker {
+    border-top: 2px solid #0f380f;
+  }
+
+  /* Pokédex Sci-Fi Theme Style Overrides */
+  .overlay-card[data-theme="pokedex"] {
+    --overlay-card: #dc2626;
+    --overlay-primary: #f87171;
+    --overlay-primary-border: #7f1d1d;
+    --overlay-text: #ffffff;
+    --overlay-muted-text: #fca5a6;
+    border: 3px solid #7f1d1d;
+    border-radius: clamp(0.5rem, 3cqh, 1rem);
+    box-shadow: 
+      0 0 20px rgba(220, 38, 38, 0.35),
+      inset 0 2px 4px rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #ee4444 0%, #b91c1c 100%);
+  }
+  .overlay-card[data-theme="pokedex"] .overlay-health-track {
+    border: 1px solid #7f1d1d;
+    background: #450a0a;
+    border-radius: 4px;
+  }
+  .overlay-card[data-theme="pokedex"] .overlay-health-fill {
+    background: #06b6d4;
+    box-shadow: 0 0 8px #06b6d4;
+  }
+  .overlay-card[data-theme="pokedex"] .overlay-ticker {
+    border-top: 1px solid #f87171;
+  }
 }
 
 
@@ -646,24 +742,24 @@
   @keyframes overlay-event-pop {
     0% {
       opacity: 0;
-      transform: translateY(20%) scale(0.85);
+      transform: translate(-50%, 20%) scale(0.85);
     }
     15% {
       opacity: 1;
-      transform: translateY(0) scale(1.05);
+      transform: translate(-50%, 0) scale(1.05);
     }
     20% {
-      transform: translateY(0) scale(1);
+      transform: translate(-50%, 0) scale(1);
     }
     75% {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translate(-50%, 0) scale(1);
     }
     100% {
       opacity: 0;
-      transform: translateY(-15%) scale(0.95);
+      transform: translate(-50%, -15%) scale(0.95);
+    }
   }
-}
 
 @media (prefers-reduced-motion: reduce) {
   html {

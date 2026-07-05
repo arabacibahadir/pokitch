@@ -15,7 +15,17 @@ export default async function OverlayPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ debug?: string; size?: string }>;
+  searchParams: Promise<{
+    debug?: string;
+    size?: string;
+    hideCatch?: string;
+    hideAttack?: string;
+    primary?: string;
+    card?: string;
+    text?: string;
+    theme?: string;
+    hideTicker?: string;
+  }>;
 }) {
   const { id } = await params;
   const query = await searchParams;
@@ -31,6 +41,13 @@ export default async function OverlayPage({
       initialPoke={result.initialPoke}
       overlayId={id}
       size={parseOverlaySize(query.size)}
+      hideCatch={query.hideCatch === "true" || query.hideCatch === "1"}
+      hideAttack={query.hideAttack === "true" || query.hideAttack === "1"}
+      primaryColor={query.primary}
+      cardColor={query.card}
+      textColor={query.text}
+      theme={query.theme}
+      hideTicker={query.hideTicker === "true" || query.hideTicker === "1"}
     />
   );
 }

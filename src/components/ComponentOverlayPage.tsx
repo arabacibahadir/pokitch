@@ -9,11 +9,25 @@ export default function ComponentOverlayPage({
   initialPoke,
   overlayId,
   size,
+  hideCatch,
+  hideAttack,
+  primaryColor,
+  cardColor,
+  textColor,
+  theme,
+  hideTicker,
 }: {
   debug: boolean;
   initialPoke: ActivePoke | null;
   overlayId: string;
   size: OverlaySize;
+  hideCatch?: boolean;
+  hideAttack?: boolean;
+  primaryColor?: string;
+  cardColor?: string;
+  textColor?: string;
+  theme?: string;
+  hideTicker?: boolean;
 }) {
   const { connection, poke, event, catch: lastCatch } = useOverlayPolling({
     initialPoke,
@@ -31,6 +45,13 @@ export default function ComponentOverlayPage({
           size={size}
           event={event}
           catch={lastCatch}
+          hideCatch={hideCatch}
+          hideAttack={hideAttack}
+          primaryColor={primaryColor}
+          cardColor={cardColor}
+          textColor={textColor}
+          theme={theme}
+          hideTicker={hideTicker}
         />
       ) : null}
       {showConnectionBadge ? (

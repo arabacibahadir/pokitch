@@ -73,7 +73,7 @@ export function StreamerSetup({
           />
           <ChecklistItem
             checked={progress.browserSourceAdded}
-            label="Browser source added to OBS"
+            label="Browser source added to OBS (recommended size: 300 × 130)"
             onCheckedChange={(checked) =>
               update({ browserSourceAdded: checked === true })
             }

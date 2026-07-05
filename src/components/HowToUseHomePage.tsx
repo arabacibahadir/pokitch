@@ -5,7 +5,7 @@ const steps = [
   ],
   [
     "Add a browser source",
-    "Paste the URL into OBS Studio or your preferred streaming software.",
+    "Paste the URL into OBS Studio (recommended size: 300 × 130) or your preferred streaming software.",
   ],
   [
     "Complete the checklist",

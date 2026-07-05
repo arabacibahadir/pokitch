@@ -5,7 +5,7 @@ import { buildOverlayUrl, OVERLAY_PRESETS } from "./presets";
 describe("overlay presets", () => {
   it("exposes the supported OBS dimensions", () => {
     expect(OVERLAY_PRESETS.compact.dimensions).toBe("256 × 76");
-    expect(OVERLAY_PRESETS.standard.dimensions).toBe("420 × 120");
+    expect(OVERLAY_PRESETS.standard.dimensions).toBe("300 × 130");
     expect(OVERLAY_PRESETS.large.dimensions).toBe("640 × 180");
   });
 

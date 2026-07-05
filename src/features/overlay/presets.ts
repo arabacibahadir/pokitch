@@ -3,7 +3,7 @@ import type { OverlaySize } from "./model";
 export const OVERLAY_PRESETS = {
   auto: { label: "Auto", dimensions: "Responsive" },
   compact: { label: "Compact", dimensions: "256 × 76" },
-  standard: { label: "Standard", dimensions: "420 × 120" },
+  standard: { label: "Standard", dimensions: "300 × 130" },
   large: { label: "Large", dimensions: "640 × 180" },
 } as const satisfies Record<OverlaySize, { label: string; dimensions: string }>;
 

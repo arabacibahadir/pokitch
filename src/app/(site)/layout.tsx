@@ -23,6 +23,12 @@ export default function SiteLayout({
           gtag('config', 'G-M9M9DRV5PT');
         `}
       </Script>
+      <Script
+        defer
+        src="https://analytics.labelop.com/script.js"
+        data-website-id="db6f60f9-9167-4eda-8228-12d9f5268281"
+        strategy="afterInteractive"
+      />
     </div>
   );
 }

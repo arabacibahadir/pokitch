@@ -15,7 +15,7 @@ type PollingOptions = {
   onSnapshot: (snapshot: OverlaySnapshot) => void;
 };
 
-const POLLING_INTERVAL_MS = 2_000;
+export const POLLING_INTERVAL_MS = 5_000;
 // Back off when the server is unreachable or returns errors, so a flaky
 // overlay does not hammer the database while nothing can change on screen.
 const BACKOFF_INTERVAL_MS = 5_000;

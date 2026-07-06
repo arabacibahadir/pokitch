@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { startOverlayPolling } from "./polling";
+import { startOverlayPolling, POLLING_INTERVAL_MS } from "./polling";
 
 const snapshot = {
   health: 42,
@@ -17,7 +17,7 @@ describe("startOverlayPolling", () => {
     vi.useRealTimers();
   });
 
-  it("fetches immediately and waits two seconds after completion", async () => {
+  it("fetches immediately and waits after completion", async () => {
     const fetchSnapshot = vi.fn().mockResolvedValue(snapshot);
     const onSnapshot = vi.fn();
 
@@ -31,7 +31,7 @@ describe("startOverlayPolling", () => {
     await vi.runAllTicks();
     expect(onSnapshot).toHaveBeenCalledWith(snapshot);
 
-    await vi.advanceTimersByTimeAsync(1_999);
+    await vi.advanceTimersByTimeAsync(POLLING_INTERVAL_MS - 1);
     expect(fetchSnapshot).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(1);
     expect(fetchSnapshot).toHaveBeenCalledTimes(2);
@@ -61,7 +61,7 @@ describe("startOverlayPolling", () => {
 
     resolveFirst(snapshot);
     await vi.runAllTicks();
-    await vi.advanceTimersByTimeAsync(2_000);
+    await vi.advanceTimersByTimeAsync(POLLING_INTERVAL_MS);
     expect(fetchSnapshot).toHaveBeenCalledTimes(2);
 
     stop();
@@ -89,7 +89,7 @@ describe("startOverlayPolling", () => {
     await vi.advanceTimersByTimeAsync(5_000);
     expect(onConnection).toHaveBeenLastCalledWith("connected");
 
-    await vi.advanceTimersByTimeAsync(2_000);
+    await vi.advanceTimersByTimeAsync(POLLING_INTERVAL_MS);
     expect(onConnection).toHaveBeenLastCalledWith("reconnecting");
 
     await vi.advanceTimersByTimeAsync(5_000);

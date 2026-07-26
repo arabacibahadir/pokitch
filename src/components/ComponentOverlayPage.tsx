@@ -2,9 +2,10 @@
 
 import { OverlayView } from "@/features/overlay/OverlayView";
 import type { ActivePoke, OverlaySize } from "@/features/overlay/model";
-import { useOverlayPolling } from "@/features/overlay/use-overlay-polling";
+import { useOverlayRealtime } from "@/features/overlay/use-overlay-realtime";
 
 export default function ComponentOverlayPage({
+  channel,
   debug,
   initialPoke,
   overlayId,
@@ -17,6 +18,7 @@ export default function ComponentOverlayPage({
   theme,
   hideTicker,
 }: {
+  channel: string;
   debug: boolean;
   initialPoke: ActivePoke | null;
   overlayId: string;
@@ -29,7 +31,8 @@ export default function ComponentOverlayPage({
   theme?: string;
   hideTicker?: boolean;
 }) {
-  const { connection, poke, event, catch: lastCatch } = useOverlayPolling({
+  const { connection, poke, event, catch: lastCatch } = useOverlayRealtime({
+    channel,
     initialPoke,
     overlayId,
   });

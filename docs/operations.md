@@ -50,7 +50,9 @@ substitute for local migration tests.
 
 - Web health: HTTP 200 from `/`.
 - Worker health: HTTP 200 from `:3001/health`, including `connected: true` and a
-  nonzero channel count when accounts exist.
+  nonzero channel count when accounts exist. `channelSync.status` should be
+  `subscribed`, and `channelSync.lastSuccessAt` should continue advancing after
+  account changes or the 15-minute safety reconciliation.
 - Alert on repeated RPC failures, reconnect loops, or worker health failures.
 - Track API 4xx errors for malformed filters and RPC authorization failures.
 - Track Postgres statement latency for collection reads and atomic game RPCs.

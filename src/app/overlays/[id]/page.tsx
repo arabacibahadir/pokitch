@@ -37,6 +37,7 @@ export default async function OverlayPage({
 
   return (
     <ComponentOverlayPage
+      channel={result.channel}
       debug={query.debug === "1"}
       initialPoke={result.initialPoke}
       overlayId={id}

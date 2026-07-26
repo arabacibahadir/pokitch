@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { createPublicClient } from "@/lib/supabase/public";
+
 import {
   applyOverlaySnapshot,
   type ActivePoke,
@@ -12,8 +14,8 @@ import {
 } from "./model";
 import {
   type OverlayConnection,
-  startOverlayPolling,
-} from "./polling";
+  startOverlayRealtime,
+} from "./realtime";
 
 const EMPTY_EVENT: OverlayEvent = {
   kind: null,
@@ -27,10 +29,12 @@ const EMPTY_CATCH: OverlayCatch = {
   at: null,
 };
 
-export function useOverlayPolling({
+export function useOverlayRealtime({
+  channel,
   initialPoke,
   overlayId,
 }: {
+  channel: string;
   initialPoke: ActivePoke | null;
   overlayId: string;
 }) {
@@ -45,7 +49,22 @@ export function useOverlayPolling({
 
   useEffect(
     () =>
-      startOverlayPolling({
+      startOverlayRealtime({
+        subscribe({ onBroadcast, onStatus }) {
+          const supabase = createPublicClient();
+          const realtimeChannel = supabase
+            .channel(`overlay:${channel}`)
+            .on(
+              "broadcast",
+              { event: "snapshot" },
+              ({ payload }) => onBroadcast(payload as OverlaySnapshot),
+            )
+            .subscribe(onStatus);
+
+          return () => {
+            void supabase.removeChannel(realtimeChannel);
+          };
+        },
         async fetchSnapshot(signal) {
           const response = await fetch(`/api/overlays/${overlayId}/snapshot`, {
             cache: "no-store",
@@ -59,7 +78,7 @@ export function useOverlayPolling({
           setState((current) => applyOverlaySnapshot(current, snapshot));
         },
       }),
-    [overlayId],
+    [channel, overlayId],
   );
 
   return { connection, poke: state.poke, event: state.event, catch: state.catch };

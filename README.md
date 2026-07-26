@@ -37,7 +37,10 @@ https://user-images.githubusercontent.com/32988819/208307876-4d941a2d-2bbd-4ee9-
 
 ### How does the overlay stay updated?
 
-The overlay requests its latest snapshot through the application API every two seconds. Each snapshot includes the active Pokémon, its health, and an update timestamp so stale responses cannot overwrite newer state.
+The database broadcasts a snapshot after each encounter change. The overlay
+subscribes to that channel and refreshes once when it first connects or
+reconnects; it does not poll while the game is idle. Each snapshot includes an
+update timestamp so a delayed response cannot overwrite newer state.
 
 ### How did we use _Supabase Database_?
 

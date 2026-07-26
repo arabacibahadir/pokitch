@@ -153,4 +153,23 @@ describe("Supabase migration contracts", () => {
     expect(sql).toContain("p_damage < 5");
     expect(sql).toContain("p_damage > 14");
   });
+
+  it("broadcasts overlay snapshots without republishing active pokes", () => {
+    const sql = readMigrationEndingWith("event_driven_game_updates.sql");
+
+    expect(sql).toContain("function private.broadcast_active_poke_snapshot");
+    expect(sql).toContain("realtime.send");
+    expect(sql).toContain("'overlay:' || new.channel");
+    expect(sql).toContain("'snapshot'");
+    expect(sql).toContain("false");
+    expect(sql).toContain(
+      "alter publication supabase_realtime add table public.accounts",
+    );
+    expect(sql).not.toContain(
+      "alter publication supabase_realtime add table public.active_pokes",
+    );
+    expect(sql).toContain(
+      "revoke all on function private.broadcast_active_poke_snapshot()",
+    );
+  });
 });
